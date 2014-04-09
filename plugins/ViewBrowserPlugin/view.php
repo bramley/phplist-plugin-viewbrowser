@@ -48,7 +48,9 @@ if (!(isset($plugins['CommonPlugin']) && isset($plugins['ViewBrowserPlugin']))) 
     echo 'ViewBrowserPlugin and CommonPlugin must be installed';
     exit;
 }
-include $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
+error_reporting(-1);
+
+include_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
 $email = $plugins['ViewBrowserPlugin']->createEmail($_GET["m"], isset($_GET["uid"]) ? $_GET["uid"]: null);
 
 ob_end_clean();

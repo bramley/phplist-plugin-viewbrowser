@@ -200,7 +200,6 @@ END
 
     public function createEmail($mid, $uid)
     {
-        error_reporting(-1);
         $dao = new ViewBrowserPlugin_DAO(new CommonPlugin_DB());
         $row = $dao->messageData($mid);
 
