@@ -125,32 +125,54 @@ class ViewBrowserPlugin extends phplistPlugin
         return $p;
     }
 
-    private function addHead(DOMNode $node, $title, $styles)
+    private function addHead($message, $title, $styles)
     {
         $title = htmlspecialchars($title);
+        $doc = new DOMDocument;
+        $doc->loadHTML($message);
         $xsl = new DOMDocument;
         $xsl->loadXML(<<<END
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="html" indent="yes" encoding="UTF-8"/>
+    <!-- identity transformation -->
     <xsl:template match="@*|node()">
         <xsl:copy>
             <xsl:apply-templates select="@*|node()"/>
         </xsl:copy>
     </xsl:template>
-    <xsl:template match="body">
+
+    <!-- match html that does not have a head element -->
+    <xsl:template match="//*[local-name()='html' and not(head)]">
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
     <head>
         <title>$title</title>
         $styles
     </head>
-        <xsl:copy-of select="."/>
+            <xsl:apply-templates select="node()"/>
+        </xsl:copy>
     </xsl:template>
+
+<!-- match head that does not have a title element -->
+    <xsl:template match="head[not(title)]">
+        <xsl:copy>
+        <title>$title</title>
+            <xsl:apply-templates select="node()"/>
+        </xsl:copy>
+    </xsl:template>
+
+<!-- match title element -->
+    <xsl:template match="head/title">
+        <title>$title</title>
+    </xsl:template>
+
 </xsl:stylesheet>
 END
     );
         $proc = new XSLTProcessor;
         $proc->importStyleSheet($xsl);
 
-        return $proc->transformToXML($node);
+        return $proc->transformToXML($doc);
 
     }
     /*
@@ -202,15 +224,8 @@ END
         }
         $message = $this->replacePlaceholder($message, $mid, $uid);
 
-        $dom = new DOMDocument;
-        $dom->loadHTML($message);
-
-        $head = $dom->getElementsByTagName('head');
-
-        if ($head->length == 0) {
-            $styles = $template ? '' : trim(getConfig("html_email_style"));
-            $message = $this->addHead($dom, $subject, $styles);
-        }
+        $styles = $template ? '' : trim(getConfig("html_email_style"));
+        $message = $this->addHead($message, $subject, $styles);
 
         return $message;
     }
