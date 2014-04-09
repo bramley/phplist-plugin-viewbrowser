@@ -125,19 +125,47 @@ class ViewBrowserPlugin extends phplistPlugin
         return $p;
     }
 
+    private function addHead(DOMNode $node, $title, $styles)
+    {
+        $title = htmlspecialchars($title);
+        $xsl = new DOMDocument;
+        $xsl->loadXML(<<<END
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output method="html" indent="yes" encoding="UTF-8"/>
+    <xsl:template match="@*|node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="body">
+    <head>
+        <title>$title</title>
+        $styles
+    </head>
+        <xsl:copy-of select="."/>
+    </xsl:template>
+</xsl:stylesheet>
+END
+    );
+        $proc = new XSLTProcessor;
+        $proc->importStyleSheet($xsl);
+
+        return $proc->transformToXML($node);
+
+    }
     /*
      * Public functions
      */
-	public function adminmenu()
-	{
-		return array();
-	}
+    public function adminmenu()
+    {
+        return array();
+    }
  
-	public function __construct()
-	{
+    public function __construct()
+    {
         global $pageroot;
 
-		$this->coderoot = dirname(__FILE__) . '/ViewBrowserPlugin/';
+        $this->coderoot = dirname(__FILE__) . '/ViewBrowserPlugin/';
         $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
             ? file_get_contents($f)
             : '';
@@ -146,7 +174,7 @@ class ViewBrowserPlugin extends phplistPlugin
         $this->personalise = getConfig('viewbrowser_personalise');
         $this->linkText = htmlspecialchars(getConfig('viewbrowser_link'));
         $this->url = sprintf('http://%s%s/view.php?', getConfig('website'), $pageroot);
-	}
+    }
 
     public function createEmail($mid, $uid)
     {
@@ -161,7 +189,6 @@ class ViewBrowserPlugin extends phplistPlugin
         $message = $row['message'];
         $template = $row['template'];
 
-
         if ($template) {
             $template = str_replace('\"', '"', $template);
             $message = str_ireplace('[CONTENT]', $message, $template);
@@ -175,28 +202,15 @@ class ViewBrowserPlugin extends phplistPlugin
         }
         $message = $this->replacePlaceholder($message, $mid, $uid);
 
-        $dom = DOMDocument::loadHTML($message);
+        $dom = new DOMDocument;
+        $dom->loadHTML($message);
 
-        if (!$template) {
-            $defaultStyle = getConfig("html_email_style");
-            $head = $dom->getElementsByTagName('head');
+        $head = $dom->getElementsByTagName('head');
 
-            if ($head->length == 0) {
-                $bodyElement = $dom->getElementsByTagName('body')->item(0);
-                $headElement = $dom->createElement('head');
-                $bodyElement->parentNode->insertBefore($headElement, $bodyElement);
-            } else {
-                $headElement = $head->item(0);
-            }
-
-            $styleElement = $dom->createElement('style', 'css goes here');
-            $typeAttr = $dom->createAttribute('type');
-            $typeAttr->value = 'text/css';
-            $styleElement->appendChild($typeAttr);
-            $headElement->appendChild($styleElement);
+        if ($head->length == 0) {
+            $styles = $template ? '' : trim(getConfig("html_email_style"));
+            $message = $this->addHead($dom, $subject, $styles);
         }
-        $dom->formatOutput = true;
-        $message = $dom->saveHTML();
 
         return $message;
     }
