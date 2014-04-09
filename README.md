@@ -27,6 +27,8 @@ Check that these files are in the plugin directory. If not then you will need to
 * the file ViewBrowserPlugin.php
 * the directory ViewBrowserPlugin
 
+Then click the small orange icon to enable the plugin.
+
 ### Install manually ###
 Download the plugin zip file from <https://github.com/bramley/phplist-plugin-viewbrowser/archive/master.zip>
 
@@ -52,11 +54,11 @@ You can also select whether the email should be personalised by replacing placeh
 
 ## Usage ##
 Include the placeholder [VIEWBROWSER] in a message or template. When phplist generates the emails for the campaign, the placeholder
-will be expanded to a link to the view page. The link URL includes the message id and, if the email is to be personalised,
+will be replaced by a link to the view page. The link URL includes the message id and, if the email is to be personalised,
 the subscriber's uid.
 
 When a subscriber clicks the link the plugin generates the email as a web page using the message, the template (if used),
-and by expanding placeholders.
+and by replacing placeholders.
 
 ## Donation ##
 
