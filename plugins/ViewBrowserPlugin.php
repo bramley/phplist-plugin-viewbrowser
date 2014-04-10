@@ -125,6 +125,22 @@ class ViewBrowserPlugin extends phplistPlugin
         return $p;
     }
 
+    private function replaceUserTrack($content, $mid, $uid)
+    {
+        global $public_scheme, $pageroot;
+
+        $content = preg_replace(
+            '/\[USERTRACK]/i',
+            sprintf(
+                '<img src="%s://%s%s/ut.php?u=%s&amp;m=%d" width="1" height="1" border="0" />',
+                $public_scheme, getConfig('website'), $pageroot, $uid, $mid
+            ),
+            $content,
+            1
+        );
+        return str_ireplace('[USERTRACK]', '', $content);
+    }
+
     private function addHead($message, $title, $styles)
     {
         $title = htmlspecialchars($title);
@@ -222,6 +238,7 @@ END
             $message = parsePlaceHolders($message, $this->systemPlaceholders($uid, $user['email'], $mid));
         }
         $message = $this->replacePlaceholder($message, $mid, $uid);
+        $message = $this->replaceUserTrack($message, $mid, $uid);
 
         $styles = $template ? '' : trim(getConfig("html_email_style"));
         $message = $this->addHead($message, $subject, $styles);
