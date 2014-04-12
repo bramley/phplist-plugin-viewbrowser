@@ -63,13 +63,7 @@ class ViewBrowserPlugin extends phplistPlugin
      */
     private function replacePlaceholder($content, $messageid, $uid)
     {
-        $params = array('m' => $messageid);
-
-        if ($this->personalise && $uid) {
-            $params['uid'] = $uid;
-        }
-
-        $link = sprintf('<a href="%s">%s</a>', htmlspecialchars($this->url . http_build_query($params)), $this->linkText);
+        $link = sprintf('<a href="%s/view.php?m=%d&amp;uid=%s">%s</a>', $this->rootUrl, $messageid, $uid, $this->linkText);
         return str_ireplace('[VIEWBROWSER]', $link, $content);
     }
 
@@ -125,29 +119,26 @@ class ViewBrowserPlugin extends phplistPlugin
         return $p;
     }
 
-    private function replaceUserTrack($content, $mid, $uid)
+    private function useUserTrack($content, $mid, $uid)
     {
-        global $public_scheme, $pageroot;
+        $image = false;
 
-        $content = preg_replace(
-            '/\[USERTRACK]/i',
-            sprintf(
-                '<img src="%s://%s%s/ut.php?u=%s&amp;m=%d" width="1" height="1" border="0" />',
-                $public_scheme, getConfig('website'), $pageroot, $uid, $mid
-            ),
-            $content,
-            1
-        );
-        return str_ireplace('[USERTRACK]', '', $content);
+        if (ALWAYS_ADD_USERTRACK || (stripos($content, '[USERTRACK]') !== false)) {
+            $image = sprintf(
+                '<img src="%s/ut.php?u=%s&amp;m=%d" width="1" height="1" border="0" />',
+                $this->rootUrl, $uid, $mid
+            );
+        }
+        return $image;
     }
 
-    private function addHead($message, $title, $styles)
+    private function transform($message, $title, $styles, $userTrack)
     {
         $title = htmlspecialchars($title);
         $doc = new DOMDocument;
         $doc->loadHTML($message);
         $xsl = new DOMDocument;
-        $xsl->loadXML(<<<END
+        $ss = <<<END
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="html" indent="yes" encoding="UTF-8"/>
     <!-- identity transformation -->
@@ -169,7 +160,7 @@ class ViewBrowserPlugin extends phplistPlugin
         </xsl:copy>
     </xsl:template>
 
-<!-- match head that does not have a title element -->
+    <!-- match head that does not have a title element -->
     <xsl:template match="head[not(title)]">
         <xsl:copy>
         <title>$title</title>
@@ -177,19 +168,30 @@ class ViewBrowserPlugin extends phplistPlugin
         </xsl:copy>
     </xsl:template>
 
-<!-- match title element -->
+    <!-- match title element -->
     <xsl:template match="head/title">
         <title>$title</title>
     </xsl:template>
+END;
 
+        if ($userTrack) {
+            $ss .= <<<END
+    <!-- match body element -->
+    <xsl:template match="body">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()"/>
+        $userTrack
+        </xsl:copy>
+    </xsl:template>
+END;
+        }
+        $ss .= <<<END
 </xsl:stylesheet>
-END
-    );
+END;
+        $xsl->loadXML($ss);
         $proc = new XSLTProcessor;
-        $proc->importStyleSheet($xsl);
-
+        $proc->importStylesheet($xsl);
         return $proc->transformToXML($doc);
-
     }
     /*
      * Public functions
@@ -201,7 +203,7 @@ END
  
     public function __construct()
     {
-        global $pageroot;
+        global $public_scheme, $pageroot;
 
         $this->coderoot = dirname(__FILE__) . '/ViewBrowserPlugin/';
         $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
@@ -211,7 +213,7 @@ END
 
         $this->personalise = getConfig('viewbrowser_personalise');
         $this->linkText = htmlspecialchars(getConfig('viewbrowser_link'));
-        $this->url = sprintf('http://%s%s/view.php?', getConfig('website'), $pageroot);
+        $this->rootUrl = sprintf('%s://%s%s', $public_scheme, getConfig('website'), $pageroot);
     }
 
     public function createEmail($mid, $uid)
@@ -230,18 +232,20 @@ END
             $template = str_replace('\"', '"', $template);
             $message = str_ireplace('[CONTENT]', $message, $template);
         }
+        $userTrack = false;
 
         if ($uid && ($user = $dao->userByUniqid($uid))) {
             $attributeValues = getUserAttributeValues($user['email']);
             $message = parsePlaceHolders($message, $user);
             $message = parsePlaceHolders($message, $attributeValues);
             $message = parsePlaceHolders($message, $this->systemPlaceholders($uid, $user['email'], $mid));
+            $userTrack = $this->useUserTrack($message, $mid, $uid);
         }
+        $message = str_ireplace('[USERTRACK]', '', $message);
         $message = $this->replacePlaceholder($message, $mid, $uid);
-        $message = $this->replaceUserTrack($message, $mid, $uid);
 
         $styles = $template ? '' : trim(getConfig("html_email_style"));
-        $message = $this->addHead($message, $subject, $styles);
+        $message = $this->transform($message, $subject, $styles, $userTrack);
 
         return $message;
     }
