@@ -54,5 +54,5 @@ include_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
 $email = $plugins['ViewBrowserPlugin']->createEmail($_GET["m"], isset($_GET["uid"]) ? $_GET["uid"]: null);
 
 ob_end_clean();
-header('Content-Type: text/html');
+header('Content-Type: text/html; charset=UTF-8');
 echo $email;
