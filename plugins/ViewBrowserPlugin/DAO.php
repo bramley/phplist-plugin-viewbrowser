@@ -26,10 +26,21 @@
  */
 class ViewBrowserPlugin_DAO extends CommonPlugin_DAO_User
 {
-    public function messageData($id)
+    public function forwardId($url)
+    {
+        $url = sql_escape($url);
+        $sql = 
+            "SELECT id
+            FROM {$this->tables['linktrack_forward']} AS ltf
+            WHERE ltf.url = '$url'";
+
+        return $this->dbCommand->queryOne($sql, 'id');
+    }
+
+    public function message($id)
     {
         $sql = sprintf('
-            SELECT subject, message, t.template
+            SELECT t.template
             FROM %s AS m
             LEFT JOIN %s AS t ON t.id = m.template
             WHERE m.id = %d',
