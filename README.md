@@ -69,5 +69,6 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2014-04-14  Support for click tracking and further placeholders
     2014-04-12  Support for user tracking
     2014-04-09  Added to GitHub

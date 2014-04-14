@@ -35,6 +35,7 @@ class ViewBrowserPlugin extends phplistPlugin
     private $personalise;
     private $linkText;
     private $url;
+    private $dao;
 
     /*
      *  Inherited variables
@@ -43,13 +44,6 @@ class ViewBrowserPlugin extends phplistPlugin
     public $authors = 'Duncan Cameron';
     public $enabled = 1;
     public $settings = array(
-        'viewbrowser_personalise' => array (
-          'value' => true,
-          'description' => 'personalise the email',
-          'type' => 'boolean',
-          'allowempty' => true,
-          'category'=> 'View in Browser',
-        ),
         'viewbrowser_link' => array (
           'value' => 'View in browser',
           'description' => 'The text of the link',
@@ -61,16 +55,66 @@ class ViewBrowserPlugin extends phplistPlugin
     /*
      * Private functions
      */
-    private function replacePlaceholder($content, $messageid, $uid)
+    private function viewUrl($messageid, $uid)
     {
-        $link = sprintf('<a href="%s/view.php?m=%d&amp;uid=%s">%s</a>', $this->rootUrl, $messageid, $uid, $this->linkText);
-        return str_ireplace('[VIEWBROWSER]', $link, $content);
+        $params = array('m' => $messageid);
+
+        if ($this->personalise && $uid) {
+            $params['uid'] = $uid;
+        }
+
+        return $this->rootUrl . '/view.php?' . http_build_query($params);
     }
 
-    private function systemPlaceholders($uid, $email, $messageid)
+    private function viewLink($messageid, $uid)
+    {
+        return sprintf('<a href="%s">%s</a>', $this->viewUrl($messageid, $uid), $this->linkText);
+    }
+
+    private function replaceSignature($content, $signature)
+    {
+        $content = str_ireplace('[SIGNATURE]', $signature, $content, $count);
+
+        if ($count == 0 && $signature) {
+            $content = addHTMLFooter($content, $signature);
+        }
+        return $content;
+    }
+
+    private function replaceFooter($content, $footer)
+    {
+        $content = str_ireplace('[FOOTER]', $footer, $content, $count);
+
+        if ($count == 0 && $footer) {
+            $content = addHTMLFooter($content, '<br />' . $footer);
+        }
+        return $content;
+    }
+
+    private function replaceUserTrack($content, $mid, $uid)
+    {
+        $image = sprintf(
+            '<img src="%s/ut.php?u=%s&amp;m=%d" width="1" height="1" border="0" />',
+            $this->rootUrl, $uid, $mid
+        );
+
+        $content = preg_replace('/\[USERTRACK]/i', $image, $content, 1, $count);
+
+        if ($count == 0) {
+            if (ALWAYS_ADD_USERTRACK) {
+                $content = addHTMLFooter($content, $image);
+            }
+        } else {
+            $content = str_ireplace('[USERTRACK]', '', $content);
+        }
+        return $content;
+    }
+
+    private function systemPlaceholders($uid, $email, $message)
     {
         global $strUnsubscribe, $strThisLink, $strForward;
 
+        $messageid = $message['id'];
         $p = array();
         $url = getConfig("unsubscribeurl");
         $sep = strpos($url, '?') === false ? '?':'&';
@@ -91,7 +135,6 @@ class ViewBrowserPlugin extends phplistPlugin
         $sep = strpos($url, '?') === false ? '?':'&';
         $p["forwardurl"] = sprintf('%s%suid=%s&amp;mid=%d', $url, htmlspecialchars($sep), $uid, $messageid);
         $p["forward"] = sprintf('<a href="%s">%s</a>', $p["forwardurl"], $strThisLink);
-        $p["messageid"] = $messageid;
 
         $url = getConfig("forwardurl");
         $p["forwardform"] = sprintf(
@@ -114,29 +157,66 @@ class ViewBrowserPlugin extends phplistPlugin
         $sep = strpos($url,'?') === false ? '?':'&';
         $p["confirmationurl"] = sprintf('%s%suid=%s', $url, htmlspecialchars($sep), $uid);
 
+        $p["messageid"] = $messageid;
         $p['website'] = $GLOBALS['website'];
         $p['domain'] = $GLOBALS['domain'];
         return $p;
     }
 
-    private function useUserTrack($content, $mid, $uid)
+    private function addLinkTrack(DOMDocument $dom, $mid, array $user)
     {
-        $image = false;
+        $linkTrackUrl = $this->rootUrl . '/lt.php?id=';
+        $nodes = $dom->getElementsByTagName('a');
 
-        if (ALWAYS_ADD_USERTRACK || (stripos($content, '[USERTRACK]') !== false)) {
-            $image = sprintf(
-                '<img src="%s/ut.php?u=%s&amp;m=%d" width="1" height="1" border="0" />',
-                $this->rootUrl, $uid, $mid
-            );
+        foreach ($nodes as $node) {
+            $text = $node->textContent;
+            $href = $node->getAttribute('href');
+
+            if (stripos($text, 'http') === 0 || stripos($href, 'www.phplist.com') !== false
+                || stripos($href, $linkTrackUrl) !== false ) {
+                continue;
+            }
+
+            $url = cleanUrl($href, array('PHPSESSID', 'uid'));
+            $linkid = $this->dao->forwardId($url);
+
+            if ($linkid) {
+                $masked = "H|$linkid|$mid|" . $user['id'] ^ XORmask;
+                $masked = urlencode(base64_encode($masked));
+                $node->setAttribute('href', $linkTrackUrl . $masked);
+            }
         }
-        return $image;
+    }
+    private function toHtml(DOMDocument $doc)
+    {
+        $xsl = new DOMDocument;
+        $ss = <<<END
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output method="html" indent="yes" encoding="UTF-8"/>
+    <!-- identity transformation -->
+    <xsl:template match="@*|node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <!-- start output from html element -->
+    <xsl:template match="/">
+        <xsl:apply-templates select="html"/>
+    </xsl:template>
+
+</xsl:stylesheet>
+END;
+        $xsl->loadXML($ss);
+        $proc = new XSLTProcessor;
+        $proc->importStylesheet($xsl);
+        return $proc->transformToXML($doc);
     }
 
-    private function transform($message, $title, $styles, $userTrack)
+
+    private function transform(DOMDocument $doc, $title, $styles)
     {
         $title = htmlspecialchars($title);
-        $doc = new DOMDocument;
-        $doc->loadHTML($message);
         $xsl = new DOMDocument;
         $ss = <<<END
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -172,26 +252,12 @@ class ViewBrowserPlugin extends phplistPlugin
     <xsl:template match="head/title">
         <title>$title</title>
     </xsl:template>
-END;
-
-        if ($userTrack) {
-            $ss .= <<<END
-    <!-- match body element -->
-    <xsl:template match="body">
-        <xsl:copy>
-            <xsl:apply-templates select="@*|node()"/>
-        $userTrack
-        </xsl:copy>
-    </xsl:template>
-END;
-        }
-        $ss .= <<<END
 </xsl:stylesheet>
 END;
         $xsl->loadXML($ss);
         $proc = new XSLTProcessor;
         $proc->importStylesheet($xsl);
-        return $proc->transformToXML($doc);
+        return $proc->transformToDoc($doc);
     }
     /*
      * Public functions
@@ -211,43 +277,52 @@ END;
             : '';
         parent::__construct();
 
-        $this->personalise = getConfig('viewbrowser_personalise');
+        $this->personalise = true;
         $this->linkText = htmlspecialchars(getConfig('viewbrowser_link'));
         $this->rootUrl = sprintf('%s://%s%s', $public_scheme, getConfig('website'), $pageroot);
     }
 
     public function createEmail($mid, $uid)
     {
-        $dao = new ViewBrowserPlugin_DAO(new CommonPlugin_DB());
-        $row = $dao->messageData($mid);
+        global $PoweredByText, $PoweredByImage;
+
+        $this->dao = new ViewBrowserPlugin_DAO(new CommonPlugin_DB());
+        $row = $this->dao->message($mid);
 
         if (!$row) {
             return "Message with id $mid does not exist";
         }
-        $subject = $row['subject'];
-        $message = $row['message'];
+        $message = loadMessageData($mid);
+        $content = $message['message'];
         $template = $row['template'];
 
         if ($template) {
             $template = str_replace('\"', '"', $template);
-            $message = str_ireplace('[CONTENT]', $message, $template);
+            $content = str_ireplace('[CONTENT]', $content, $template);
         }
-        $userTrack = false;
+        
+        $content = $this->replaceFooter($content, $message['footer']);
+        $content = $this->replaceSignature($content, EMAILTEXTCREDITS ? $PoweredByText : $PoweredByImage);
 
-        if ($uid && ($user = $dao->userByUniqid($uid))) {
+        if ($uid && ($user = $this->dao->userByUniqid($uid))) {
             $attributeValues = getUserAttributeValues($user['email']);
-            $message = parsePlaceHolders($message, $user);
-            $message = parsePlaceHolders($message, $attributeValues);
-            $message = parsePlaceHolders($message, $this->systemPlaceholders($uid, $user['email'], $mid));
-            $userTrack = $this->useUserTrack($message, $mid, $uid);
+            $content = parsePlaceHolders($content, $user);
+            $content = parsePlaceHolders($content, $attributeValues);
+            $content = parsePlaceHolders($content, $this->systemPlaceholders($uid, $user['email'], $message) + $message);
+            $content = $this->replaceUserTrack($content, $mid, $uid);
         }
-        $message = str_ireplace('[USERTRACK]', '', $message);
-        $message = $this->replacePlaceholder($message, $mid, $uid);
+        $content = str_ireplace('[VIEWBROWSER]', $this->viewLink($mid, $uid), $content);
 
         $styles = $template ? '' : trim(getConfig("html_email_style"));
-        $message = $this->transform($message, $subject, $styles, $userTrack);
+        $dom = new DOMDocument;
+        $dom->encoding = 'UTF-8';
+        $dom->loadHTML('<?xml encoding="utf-8" ?>' . $content);
+        $dom = $this->transform($dom, $message['subject'], $styles);
 
-        return $message;
+        if (CLICKTRACK && $uid && $user) {
+            $this->addLinkTrack($dom, $mid, $user);
+        }
+        return $this->toHtml($dom);
     }
 
     /*
@@ -256,7 +331,7 @@ END;
      */
     public function parseOutgoingHTMLMessage($messageid, $content, $destination, $userdata)
     {
-        return $this->replacePlaceholder($content, $messageid, $userdata['uniqid']);
+        return str_ireplace('[VIEWBROWSER]', $this->viewLink($messageid, $userdata['uniqid']), $content);
     }
 
     /*
@@ -265,6 +340,6 @@ END;
      */
     public function parseOutgoingTextMessage($messageid, $content, $destination, $userdata)
     {
-        return $this->replacePlaceholder($content, $messageid, $userdata['uniqid']);
+        return str_ireplace('[VIEWBROWSER]', $this->viewUrl($messageid, $userdata['uniqid']), $content);
     }
 }

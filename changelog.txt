@@ -1,3 +1,9 @@
+version 2014-04-14
+      Specify encoding
+      Added link tracking
+      Added footer and signature placeholders
+      Corrected replacement in text message
+
 version 2014-04-12
       Replace USERTRACK placeholder
       Support ALWAYS_ADD_USERTRACK
