@@ -202,6 +202,7 @@ class ViewBrowserPlugin extends phplistPlugin
 
     <!-- start output from html element -->
     <xsl:template match="/">
+    <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html>&#x0A;</xsl:text>
         <xsl:apply-templates select="html"/>
     </xsl:template>
 
