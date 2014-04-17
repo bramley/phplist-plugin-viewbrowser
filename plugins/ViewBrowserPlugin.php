@@ -112,7 +112,7 @@ class ViewBrowserPlugin extends phplistPlugin
 
     private function systemPlaceholders($uid, $email, $message)
     {
-        global $strUnsubscribe, $strThisLink, $strForward;
+        global $website, $domain, $strUnsubscribe, $strThisLink, $strForward;
 
         $messageid = $message['id'];
         $p = array();
@@ -158,8 +158,9 @@ class ViewBrowserPlugin extends phplistPlugin
         $p["confirmationurl"] = sprintf('%s%suid=%s', $url, htmlspecialchars($sep), $uid);
 
         $p["messageid"] = $messageid;
-        $p['website'] = $GLOBALS['website'];
-        $p['domain'] = $GLOBALS['domain'];
+        $p['website'] = $website;
+        $p['domain'] = $domain;
+        $p['subject'] = $message['subject'];
         return $p;
     }
 
@@ -309,7 +310,7 @@ END;
             $attributeValues = getUserAttributeValues($user['email']);
             $content = parsePlaceHolders($content, $user);
             $content = parsePlaceHolders($content, $attributeValues);
-            $content = parsePlaceHolders($content, $this->systemPlaceholders($uid, $user['email'], $message) + $message);
+            $content = parsePlaceHolders($content, $this->systemPlaceholders($uid, $user['email'], $message));
             $content = $this->replaceUserTrack($content, $mid, $uid);
         }
         $content = str_ireplace('[VIEWBROWSER]', $this->viewLink($mid, $uid), $content);
