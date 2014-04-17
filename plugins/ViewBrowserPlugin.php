@@ -315,6 +315,7 @@ END;
         $content = str_ireplace('[VIEWBROWSER]', $this->viewLink($mid, $uid), $content);
 
         $styles = $template ? '' : trim(getConfig("html_email_style"));
+        libxml_use_internal_errors(true);
         $dom = new DOMDocument;
         $dom->encoding = 'UTF-8';
         $dom->loadHTML('<?xml encoding="utf-8" ?>' . $content);
