@@ -1,3 +1,9 @@
+version 2014-04-17
+      Added doctype
+      Turn-off automatic error reporting
+      Correct message placeholders
+      Remove personalisation option, emails are now always personalised
+
 version 2014-04-14
       Specify encoding
       Added link tracking

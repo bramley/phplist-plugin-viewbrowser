@@ -21,8 +21,8 @@ The benefit of this is that plugins will not be affected when you upgrade phplis
 ### Install through phplist ###
 Install on the Plugins page (menu Config > Plugins) using the package URL `https://github.com/bramley/phplist-plugin-viewbrowser/archive/master.zip`.
 
-There is a bug that can cause a plugin to be incompletely installed on some configurations (<https://mantis.phplist.com/view.php?id=16865>). 
-Check that these files are in the plugin directory. If not then you will need to install manually.
+In phplist releases 3.0.5 and earlier there is a bug that can cause a plugin to be incompletely installed on some configurations (<https://mantis.phplist.com/view.php?id=16865>). 
+Check that these files are in the plugin directory. If not then you will need to install manually. The bug has been fixed in release 3.0.6.
 
 * the file ViewBrowserPlugin.php
 * the directory ViewBrowserPlugin
@@ -41,7 +41,7 @@ This should contain
 ### Install view.php ###
 Copy the file `view.php` from the ViewBrowserPlugin directory to the phplist directory - this is usually `/lists`.
 
-Amend .htaccess in the `/lists` directory to allow the file to be accessed. Change this line
+Amend .htaccess in the phplist directory to allow the file to be accessed. Change this line
 
     <FilesMatch "(index.php|dl.php|ut.php|lt.php|download.php|connector.php)$">
 to
@@ -50,12 +50,10 @@ to
 
 ## Configuration ##
 On the Settings page you can specify the link text, such as "View this email in your browser".
-You can also select whether the email should be personalised by replacing placeholders.
 
 ## Usage ##
 Include the placeholder [VIEWBROWSER] in a message or template. When phplist generates the emails for the campaign, the placeholder
-will be replaced by a link to the view page. The link URL includes the message id and, if the email is to be personalised,
-the subscriber's uid.
+will be replaced by a link (an HTML `<a>` element) to the view page. The link URL includes the message id and the subscriber's uid.
 
 When a subscriber clicks the link the plugin generates the email as a web page using the message, the template (if used),
 and by replacing placeholders.
@@ -69,6 +67,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2014-04-17  An email is now always personalised
     2014-04-14  Support for click tracking and further placeholders
     2014-04-12  Support for user tracking
     2014-04-09  Added to GitHub
