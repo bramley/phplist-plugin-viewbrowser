@@ -32,7 +32,6 @@ class ViewBrowserPlugin extends phplistPlugin
     /*
      *  Private variables
      */
-    private $personalise;
     private $linkText;
     private $url;
     private $dao;
@@ -57,12 +56,10 @@ class ViewBrowserPlugin extends phplistPlugin
      */
     private function viewUrl($messageid, $uid)
     {
-        $params = array('m' => $messageid);
-
-        if ($this->personalise && $uid) {
-            $params['uid'] = $uid;
-        }
-
+        $params = array(
+            'm' => $messageid,
+            'uid' => $uid
+        );
         return $this->rootUrl . '/view.php?' . http_build_query($params);
     }
 
@@ -188,6 +185,7 @@ class ViewBrowserPlugin extends phplistPlugin
             }
         }
     }
+
     private function toHtml(DOMDocument $doc)
     {
         $xsl = new DOMDocument;
@@ -279,7 +277,6 @@ END;
             : '';
         parent::__construct();
 
-        $this->personalise = true;
         $this->linkText = htmlspecialchars(getConfig('viewbrowser_link'));
         $this->rootUrl = sprintf('%s://%s%s', $public_scheme, getConfig('website'), $pageroot);
     }
@@ -294,6 +291,12 @@ END;
         if (!$row) {
             return "Message with id $mid does not exist";
         }
+        $user = $this->dao->userByUniqid($uid);
+
+        if (!$user) {
+            return "User with uid $uid does not exist";
+        }
+
         $message = loadMessageData($mid);
         $content = $message['message'];
         $template = $row['template'];
@@ -302,17 +305,14 @@ END;
             $template = str_replace('\"', '"', $template);
             $content = str_ireplace('[CONTENT]', $content, $template);
         }
-        
         $content = $this->replaceFooter($content, $message['footer']);
         $content = $this->replaceSignature($content, EMAILTEXTCREDITS ? $PoweredByText : $PoweredByImage);
 
-        if ($uid && ($user = $this->dao->userByUniqid($uid))) {
-            $attributeValues = getUserAttributeValues($user['email']);
-            $content = parsePlaceHolders($content, $user);
-            $content = parsePlaceHolders($content, $attributeValues);
-            $content = parsePlaceHolders($content, $this->systemPlaceholders($uid, $user['email'], $message));
-            $content = $this->replaceUserTrack($content, $mid, $uid);
-        }
+        $attributeValues = getUserAttributeValues($user['email']);
+        $content = parsePlaceHolders($content, $user);
+        $content = parsePlaceHolders($content, $attributeValues);
+        $content = parsePlaceHolders($content, $this->systemPlaceholders($uid, $user['email'], $message));
+        $content = $this->replaceUserTrack($content, $mid, $uid);
         $content = str_ireplace('[VIEWBROWSER]', $this->viewLink($mid, $uid), $content);
 
         $styles = $template ? '' : trim(getConfig("html_email_style"));
@@ -322,7 +322,7 @@ END;
         $dom->loadHTML('<?xml encoding="utf-8" ?>' . $content);
         $dom = $this->transform($dom, $message['subject'], $styles);
 
-        if (CLICKTRACK && $uid && $user) {
+        if (CLICKTRACK) {
             $this->addLinkTrack($dom, $mid, $user);
         }
         return $this->toHtml($dom);
