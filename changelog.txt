@@ -1,3 +1,6 @@
+version 2014-05-05
+      Added fromemail placeholder
+
 version 2014-04-17
       Added doctype
       Turn-off automatic error reporting

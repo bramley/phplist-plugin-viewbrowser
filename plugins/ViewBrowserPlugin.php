@@ -158,6 +158,7 @@ class ViewBrowserPlugin extends phplistPlugin
         $p['website'] = $website;
         $p['domain'] = $domain;
         $p['subject'] = $message['subject'];
+        $p['fromemail'] = $message['fromemail'];
         return $p;
     }
 
