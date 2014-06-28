@@ -333,7 +333,7 @@ END;
      *  Replace placeholder in html message
      *
      */
-    public function parseOutgoingHTMLMessage($messageid, $content, $destination, $userdata)
+    public function parseOutgoingHTMLMessage($messageid, $content, $destination, $userdata = null)
     {
         return str_ireplace('[VIEWBROWSER]', $this->viewLink($messageid, $userdata['uniqid']), $content);
     }
@@ -342,7 +342,7 @@ END;
      *  Replace placeholder in text message
      *
      */
-    public function parseOutgoingTextMessage($messageid, $content, $destination, $userdata)
+    public function parseOutgoingTextMessage($messageid, $content, $destination, $userdata = null)
     {
         return str_ireplace('[VIEWBROWSER]', $this->viewUrl($messageid, $userdata['uniqid']), $content);
     }
