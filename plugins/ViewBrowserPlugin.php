@@ -27,7 +27,10 @@
 class ViewBrowserPlugin extends phplistPlugin
 {
     const VERSION_FILE = 'version.txt';
-    const CODE_DIR = '/ViewBrowserPlugin/';
+    const PLUGIN = 'ViewBrowserPlugin';
+    const VIEW_PAGE = 'view';
+    const VIEW_FILE = 'view.php';
+    const PHPLIST_VERSION = '3.0.7';
 
     /*
      *  Private variables
@@ -51,6 +54,7 @@ class ViewBrowserPlugin extends phplistPlugin
           'category'=> 'View in Browser',
         )
     );
+    public $publicPages = array(self::VIEW_PAGE);
     /*
      * Private functions
      */
@@ -60,7 +64,15 @@ class ViewBrowserPlugin extends phplistPlugin
             'm' => $messageid,
             'uid' => $uid
         );
-        return $this->rootUrl . '/view.php?' . http_build_query($params);
+        $url = $this->rootUrl . '/';
+
+        if (version_compare(getConfig('version'), self::PHPLIST_VERSION) < 0) {
+            $url .= self::VIEW_FILE;
+        } else {
+            $params['p'] = self::VIEW_PAGE;
+            $params['pi'] = self::PLUGIN;
+        }
+        return $url . '?' . http_build_query($params);
     }
 
     private function viewLink($messageid, $uid)
@@ -272,7 +284,7 @@ END;
     {
         global $public_scheme, $pageroot;
 
-        $this->coderoot = dirname(__FILE__) . '/ViewBrowserPlugin/';
+        $this->coderoot = dirname(__FILE__) . '/' . self::PLUGIN . '/';
         $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
             ? file_get_contents($f)
             : '';
