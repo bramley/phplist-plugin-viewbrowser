@@ -39,6 +39,11 @@ require_once dirname(__FILE__).'/admin/connect.php';
 include_once dirname(__FILE__)."/admin/lib.php";
 include_once dirname(__FILE__)."/admin/sendemaillib.php";
 
+if (!extension_loaded('xsl')) {
+    echo 'The xsl extension must be installed';
+    exit;
+}
+    
 if (!(isset($_GET["m"]) && ctype_digit($_GET["m"]))) {
     echo 'A numeric message id must be specified';
     exit;

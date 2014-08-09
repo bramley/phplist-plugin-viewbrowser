@@ -67,6 +67,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2014-08-09  Test for xsl extension being installed
     2014-05-05  Added fromemail placeholder
     2014-04-17  An email is now always personalised
     2014-04-14  Support for click tracking and further placeholders

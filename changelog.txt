@@ -1,3 +1,6 @@
+version 2014-08-09
+      Test for xsl extension being installed
+
 version 2014-05-05
       Added fromemail placeholder
 
