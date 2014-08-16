@@ -38,8 +38,14 @@ This should contain
 * the file ViewBrowserPlugin.php
 * the directory ViewBrowserPlugin
 
-### Install view.php ###
-Copy the file `view.php` from the ViewBrowserPlugin directory to the phplist directory - this is usually `/lists`.
+Then click the small orange icon to enable the plugin.
+
+### Install view.php (phplist 3.0.6 and earlier) ###
+
+This step is necessary only for phplist releases 3.0.6 and earlier.
+
+Copy the file `view_3.0.6.php` from the ViewBrowserPlugin directory to the phplist directory - this is usually `/lists`,
+and rename to `view.php`.
 
 Amend .htaccess in the phplist directory to allow the file to be accessed. Change this line
 
@@ -67,6 +73,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2014-08-16  The view page is now a plugin public page for phplist 3.0.7
     2014-08-09  Test for xsl extension being installed
     2014-05-05  Added fromemail placeholder
     2014-04-17  An email is now always personalised
