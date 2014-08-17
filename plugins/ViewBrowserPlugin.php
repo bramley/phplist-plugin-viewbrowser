@@ -36,7 +36,7 @@ class ViewBrowserPlugin extends phplistPlugin
      *  Private variables
      */
     private $linkText;
-    private $url;
+    private $rootUrl;
     private $dao;
 
     /*
