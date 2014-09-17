@@ -29,6 +29,7 @@ class ViewBrowserPlugin extends phplistPlugin
     const VERSION_FILE = 'version.txt';
     const PLUGIN = 'ViewBrowserPlugin';
     const VIEW_PAGE = 'view';
+    const IMAGE_PAGE = 'image';
     const VIEW_FILE = 'view.php';
     const PHPLIST_VERSION = '3.0.7';
 
@@ -54,7 +55,8 @@ class ViewBrowserPlugin extends phplistPlugin
           'category'=> 'View in Browser',
         )
     );
-    public $publicPages = array(self::VIEW_PAGE);
+    public $publicPages = array(self::VIEW_PAGE, self::IMAGE_PAGE);
+
     /*
      * Private functions
      */
@@ -199,6 +201,28 @@ class ViewBrowserPlugin extends phplistPlugin
         }
     }
 
+    private function addEmbeddedImages(DOMDocument $dom, $messageId, $templateId)
+    {
+        foreach ($dom->getElementsByTagName('img') as $element) {
+            $src = $element->getAttribute('src');
+
+            if ($row = $this->dao->templateImage($templateId, $src)) {
+                if (version_compare(getConfig('version'), self::PHPLIST_VERSION) < 0) {
+                    $data = "data:{$row['mimetype']};base64," . $row['data'];
+                } else {
+                    $data = $this->rootUrl . '/?' . http_build_query(
+                        array(
+                            'pi' => self::PLUGIN,
+                            'p' => self::IMAGE_PAGE,
+                            'id' => $row['id']
+                        )
+                    );
+                }
+                $element->setAttribute('src', $data);
+            }
+        }
+    }
+
     private function toHtml(DOMDocument $doc)
     {
         $xsl = new DOMDocument;
@@ -296,7 +320,7 @@ END;
 
     public function createEmail($mid, $uid)
     {
-        global $PoweredByText, $PoweredByImage;
+        global $PoweredByText, $PoweredByImage, $plugins;
 
         $this->dao = new ViewBrowserPlugin_DAO(new CommonPlugin_DB());
         $row = $this->dao->message($mid);
@@ -326,18 +350,28 @@ END;
         $content = parsePlaceHolders($content, $attributeValues);
         $content = parsePlaceHolders($content, $this->systemPlaceholders($uid, $user['email'], $message));
         $content = $this->replaceUserTrack($content, $mid, $uid);
-        $content = str_ireplace('[VIEWBROWSER]', $this->viewLink($mid, $uid), $content);
 
-        $styles = $template ? '' : trim(getConfig("html_email_style"));
+        $destinationEmail = $user['email'];
+
+        foreach ($plugins as $plugin) {
+            $destinationEmail = $plugin->setFinalDestinationEmail($mid, $attributeValues, $destinationEmail);
+        }
+
+        foreach ($plugins as $plugin) {
+            $content = $plugin->parseOutgoingHTMLMessage($mid, $content, $destinationEmail, $user);
+        }
+
         libxml_use_internal_errors(true);
         $dom = new DOMDocument;
         $dom->encoding = 'UTF-8';
         $dom->loadHTML('<?xml encoding="utf-8" ?>' . $content);
-        $dom = $this->transform($dom, $message['subject'], $styles);
+        $this->addEmbeddedImages($dom, $mid, $message['template']);
 
         if (CLICKTRACK) {
             $this->addLinkTrack($dom, $mid, $user);
         }
+        $styles = $template ? '' : trim(getConfig("html_email_style"));
+        $dom = $this->transform($dom, $message['subject'], $styles);
         return $this->toHtml($dom);
     }
 
