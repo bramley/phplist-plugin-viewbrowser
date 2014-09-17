@@ -49,4 +49,25 @@ class ViewBrowserPlugin_DAO extends CommonPlugin_DAO_User
 
         return $this->dbCommand->queryRow($sql);
     }
+
+    public function templateImage($templateId, $filename)
+    {
+        $filename = sql_escape($filename);
+        $sql =
+            "SELECT id, data, mimetype, width, height
+            FROM {$this->tables['templateimage']}
+            WHERE template = $templateId AND filename = '$filename'";
+
+        return $this->dbCommand->queryRow($sql);
+    }
+
+    public function templateImageById($imageId)
+    {
+        $sql =
+            "SELECT data, mimetype, width, height
+            FROM {$this->tables['templateimage']}
+            WHERE id = $imageId";
+
+        return $this->dbCommand->queryRow($sql);
+    }
 }
