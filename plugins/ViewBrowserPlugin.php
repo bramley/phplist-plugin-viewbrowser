@@ -201,7 +201,7 @@ class ViewBrowserPlugin extends phplistPlugin
         }
     }
 
-    private function addEmbeddedImages(DOMDocument $dom, $messageId, $templateId)
+    private function addTemplateImages(DOMDocument $dom, $messageId, $templateId)
     {
         foreach ($dom->getElementsByTagName('img') as $element) {
             $src = $element->getAttribute('src');
@@ -365,7 +365,7 @@ END;
         $dom = new DOMDocument;
         $dom->encoding = 'UTF-8';
         $dom->loadHTML('<?xml encoding="utf-8" ?>' . $content);
-        $this->addEmbeddedImages($dom, $mid, $message['template']);
+        $this->addTemplateImages($dom, $mid, $message['template']);
 
         if (CLICKTRACK) {
             $this->addLinkTrack($dom, $mid, $user);
