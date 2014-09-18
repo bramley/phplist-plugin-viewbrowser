@@ -73,6 +73,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2014-09-18  Handle embedded template images, allow other plugins to transform the email
     2014-08-16  The view page is now a plugin public page for phplist 3.0.7
     2014-08-09  Test for xsl extension being installed
     2014-05-05  Added fromemail placeholder

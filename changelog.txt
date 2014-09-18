@@ -1,3 +1,7 @@
+version 2014-09-18
+      Handle template embedded images
+      Allow plugins to transform the generated email
+
 version 2014-08-16
       Public plugin page
 
