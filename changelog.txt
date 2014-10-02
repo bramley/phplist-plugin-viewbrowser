@@ -1,3 +1,6 @@
+version 2014-10-02
+      Document type on result html is copied from the original
+
 version 2014-09-18
       Handle template embedded images
       Allow plugins to transform the generated email

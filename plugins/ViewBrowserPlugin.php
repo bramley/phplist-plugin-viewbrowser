@@ -223,12 +223,19 @@ class ViewBrowserPlugin extends phplistPlugin
         }
     }
 
-    private function toHtml(DOMDocument $doc)
+    private function toHtml(DOMDocument $doc, DOMDocumentType $docType)
     {
-        $xsl = new DOMDocument;
+        if ($docType && $docType->publicId && $docType->systemId) {
+            $public = "doctype-public=\"$docType->publicId\"";
+            $system = "doctype-system=\"$docType->systemId\"";
+            $documentType = '';
+        } else {
+            $public = $system = '';
+            $documentType = '&lt;!DOCTYPE html>&#x0A;';
+        }
         $ss = <<<END
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-    <xsl:output method="html" indent="yes" encoding="UTF-8"/>
+    <xsl:output method="html" indent="yes" encoding="UTF-8" $public $system />
     <!-- identity transformation -->
     <xsl:template match="@*|node()">
         <xsl:copy>
@@ -238,18 +245,18 @@ class ViewBrowserPlugin extends phplistPlugin
 
     <!-- start output from html element -->
     <xsl:template match="/">
-    <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html>&#x0A;</xsl:text>
+        <xsl:text disable-output-escaping="yes">$documentType</xsl:text>
         <xsl:apply-templates select="html"/>
     </xsl:template>
 
 </xsl:stylesheet>
 END;
+        $xsl = new DOMDocument;
         $xsl->loadXML($ss);
         $proc = new XSLTProcessor;
         $proc->importStylesheet($xsl);
         return $proc->transformToXML($doc);
     }
-
 
     private function transform(DOMDocument $doc, $title, $styles)
     {
@@ -370,9 +377,10 @@ END;
         if (CLICKTRACK) {
             $this->addLinkTrack($dom, $mid, $user);
         }
+        $docType = $dom->doctype;
         $styles = $template ? '' : trim(getConfig("html_email_style"));
         $dom = $this->transform($dom, $message['subject'], $styles);
-        return $this->toHtml($dom);
+        return $this->toHtml($dom, $docType);
     }
 
     /*
