@@ -342,12 +342,21 @@ END;
         }
 
         $message = loadMessageData($mid);
-        $content = $message['message'];
-        $template = $row['template'];
 
-        if ($template) {
-            $template = str_replace('\"', '"', $template);
-            $content = str_ireplace('[CONTENT]', $content, $template);
+        if ($message['sendmethod'] == 'remoteurl') {
+            $content = fetchUrl($message['sendurl'], $user);
+
+            if (!$content) {
+                return "Unable to retrieve URL {$message['sendurl']}";
+            }
+        } else {
+            $content = $message['message'];
+            $template = $row['template'];
+
+            if ($template) {
+                $template = str_replace('\"', '"', $template);
+                $content = str_ireplace('[CONTENT]', $content, $template);
+            }
         }
         $content = $this->replaceFooter($content, $message['footer']);
         $content = $this->replaceSignature($content, EMAILTEXTCREDITS ? $PoweredByText : $PoweredByImage);
