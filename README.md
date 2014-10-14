@@ -2,7 +2,12 @@
 
 ## Description ##
 
-The plugin provides a placeholder, [VIEWBROWSER], that allows subscribers to view an email in their browser.
+The plugin generates a page that displays a campaign email customised with subscriber and phplist placeholders, and 
+link tracking.
+A placeholder, [VIEWBROWSER], is included in a campaign and is replaced by a link to the page when the email is created by phplist.
+Alternatively the placeholder [VIEWBROWSERURL] can be used for the URL of the page.
+
+The plugin can also generate an anonymous page, where subscriber placeholders are removed.
 
 ## Installation ##
 
@@ -15,11 +20,12 @@ Requires the Common Plugin to be installed. See <https://github.com/bramley/phpl
 Requires the XSL extension to be included in php. You can verify this through phpinfo.
 
 ### Set the plugin directory ###
-You can use a directory outside of the web root by changing the definition of `PLUGIN_ROOTDIR` in config.php.
+The default plugin directory is `plugins` within the phplist `admin` directory but you can use a directory outside of the web root by
+changing the definition of `PLUGIN_ROOTDIR` in config.php.
 The benefit of this is that plugins will not be affected when you upgrade phplist.
 
 ### Install through phplist ###
-Install on the Plugins page (menu Config > Plugins) using the package URL `https://github.com/bramley/phplist-plugin-viewbrowser/archive/master.zip`.
+Install on the Plugins page (menu Config > Manage Plugins) using the package URL `https://github.com/bramley/phplist-plugin-viewbrowser/archive/master.zip`.
 
 In phplist releases 3.0.5 and earlier there is a bug that can cause a plugin to be incompletely installed on some configurations (<https://mantis.phplist.com/view.php?id=16865>). 
 Check that these files are in the plugin directory. If not then you will need to install manually. The bug has been fixed in release 3.0.6.
@@ -56,13 +62,26 @@ to
 
 ## Configuration ##
 On the Settings page you can specify the link text, such as "View this email in your browser".
+You can also specify whether the plugin should generate anonymous pages. The default value for this is no.
 
 ## Usage ##
+### Placeholders ###
 Include the placeholder [VIEWBROWSER] in a message or template. When phplist generates the emails for the campaign, the placeholder
 will be replaced by a link (an HTML `<a>` element) to the view page. The link URL includes the message id and the subscriber's uid.
 
 When a subscriber clicks the link the plugin generates the email as a web page using the message, the template (if used),
 and by replacing placeholders.
+
+Alternatively you can use the [VIEWBROWSERURL] placeholder. This is replaced by the same URL that is used for the [VIEWBROWSER] link.
+
+### Anonymous pages ###
+
+You can use a link to an anonymous page, which has the subscriber placeholders removed, by using a URL of this format but customised
+for the actual location of phplist and the campaign id
+
+    http://www.mysite.com/lists/?m=36&p=view&pi=ViewBrowserPlugin
+
+This URL can be used outside of phplist and will allow anyone to view the campaign email.
 
 ## Donation ##
 
@@ -73,6 +92,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2014-10-14  Provide anonymous page, support sending campaign from a webpage
     2014-10-02  Keep the original document type
     2014-09-18  Handle embedded template images, allow other plugins to transform the email
     2014-08-16  The view page is now a plugin public page for phplist 3.0.7

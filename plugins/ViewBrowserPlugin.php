@@ -53,6 +53,13 @@ class ViewBrowserPlugin extends phplistPlugin
           'type' => 'text',
           'allowempty' => false,
           'category'=> 'View in Browser',
+        ),
+        'viewbrowser_anonymous' => array (
+          'value' => false,
+          'description' => 'Whether the plugin should provide an anonymous page',
+          'type' => 'boolean',
+          'allowempty' => false,
+          'category'=> 'View in Browser',
         )
     );
     public $publicPages = array(self::VIEW_PAGE, self::IMAGE_PAGE);
@@ -62,10 +69,12 @@ class ViewBrowserPlugin extends phplistPlugin
      */
     private function viewUrl($messageid, $uid)
     {
-        $params = array(
-            'm' => $messageid,
-            'uid' => $uid
-        );
+        $params = array('m' => $messageid);
+
+        if ($uid) {
+            $params['uid'] = $uid;
+        }
+
         $url = $this->rootUrl . '/';
 
         if (version_compare(getConfig('version'), self::PHPLIST_VERSION) < 0) {
@@ -77,9 +86,9 @@ class ViewBrowserPlugin extends phplistPlugin
         return $url . '?' . http_build_query($params);
     }
 
-    private function viewLink($messageid, $uid)
+    private function link($linkText, $url)
     {
-        return sprintf('<a href="%s">%s</a>', $this->viewUrl($messageid, $uid), $this->linkText);
+        return sprintf('<a href="%s">%s</a>', htmlspecialchars($url), htmlspecialchars($linkText));
     }
 
     private function replaceSignature($content, $signature)
@@ -321,7 +330,7 @@ END;
             : '';
         parent::__construct();
 
-        $this->linkText = htmlspecialchars(getConfig('viewbrowser_link'));
+        $this->linkText = getConfig('viewbrowser_link');
         $this->rootUrl = sprintf('%s://%s%s', $public_scheme, getConfig('website'), $pageroot);
     }
 
@@ -335,11 +344,24 @@ END;
         if (!$row) {
             return "Message with id $mid does not exist";
         }
-        $user = $this->dao->userByUniqid($uid);
+        $personalise = ($uid !== '');
 
-        if (!$user) {
-            return "User with uid $uid does not exist";
-        }
+        if ($personalise) {
+            $user = $this->dao->userByUniqid($uid);
+
+            if (!$user) {
+                return "User with uid $uid does not exist";
+            }
+            $attributeValues = getUserAttributeValues($user['email']);
+        } else {
+            $user = array('email' => '', 'uniqid' => '');
+            $daoAttr = new CommonPlugin_DAO_Attribute(new CommonPlugin_DB());
+            $attributeValues = array();
+
+            foreach ($daoAttr->attributes() as $k => $v) {
+                $attributeValues[$v['name']] = '';
+            }
+       }
 
         $message = loadMessageData($mid);
 
@@ -361,7 +383,6 @@ END;
         $content = $this->replaceFooter($content, $message['footer']);
         $content = $this->replaceSignature($content, EMAILTEXTCREDITS ? $PoweredByText : $PoweredByImage);
 
-        $attributeValues = getUserAttributeValues($user['email']);
         $content = parsePlaceHolders($content, $user);
         $content = parsePlaceHolders($content, $attributeValues);
         $content = parsePlaceHolders($content, $this->systemPlaceholders($uid, $user['email'], $message));
@@ -383,7 +404,7 @@ END;
         $dom->loadHTML('<?xml encoding="utf-8" ?>' . $content);
         $this->addTemplateImages($dom, $mid, $message['template']);
 
-        if (CLICKTRACK) {
+        if (CLICKTRACK && $personalise) {
             $this->addLinkTrack($dom, $mid, $user);
         }
         $docType = $dom->doctype;
@@ -393,20 +414,32 @@ END;
     }
 
     /*
-     *  Replace placeholder in html message
+     *  Replace placeholders in html message
      *
      */
     public function parseOutgoingHTMLMessage($messageid, $content, $destination, $userdata = null)
     {
-        return str_ireplace('[VIEWBROWSER]', $this->viewLink($messageid, $userdata['uniqid']), $content);
+        $url = $this->viewUrl($messageid, $userdata['uniqid']);
+
+        return str_ireplace(
+            array('[VIEWBROWSER]', '[VIEWBROWSERURL]'),
+            array($this->link($this->linkText, $url), htmlspecialchars($url)),
+            $content
+        );
     }
 
     /*
-     *  Replace placeholder in text message
+     *  Replace placeholders in text message
      *
      */
     public function parseOutgoingTextMessage($messageid, $content, $destination, $userdata = null)
     {
-        return str_ireplace('[VIEWBROWSER]', $this->viewUrl($messageid, $userdata['uniqid']), $content);
+        $url = $this->viewUrl($messageid, $userdata['uniqid']);
+
+        return str_ireplace(
+            array('[VIEWBROWSER]', '[VIEWBROWSERURL]'),
+            array("$this->linkText $url", $url),
+            $content
+        );
     }
 }

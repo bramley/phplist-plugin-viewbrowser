@@ -1,3 +1,7 @@
+version 2014-10-14
+      GitHub issue #2 retrieve remote URL
+      Provide anonymous page
+
 version 2014-10-02
       Document type on result html is copied from the original
 
