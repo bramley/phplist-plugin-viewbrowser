@@ -371,6 +371,7 @@ END;
             if (!$content) {
                 return "Unable to retrieve URL {$message['sendurl']}";
             }
+            $template = 0;
         } else {
             $content = $message['message'];
             $template = $row['template'];
