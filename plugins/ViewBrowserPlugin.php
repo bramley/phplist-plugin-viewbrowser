@@ -46,22 +46,7 @@ class ViewBrowserPlugin extends phplistPlugin
     public $name = 'View in Browser plugin';
     public $authors = 'Duncan Cameron';
     public $enabled = 1;
-    public $settings = array(
-        'viewbrowser_link' => array (
-          'value' => 'View in browser',
-          'description' => 'The text of the link',
-          'type' => 'text',
-          'allowempty' => false,
-          'category'=> 'View in Browser',
-        ),
-        'viewbrowser_anonymous' => array (
-          'value' => false,
-          'description' => 'Whether the plugin should provide an anonymous page',
-          'type' => 'boolean',
-          'allowempty' => false,
-          'category'=> 'View in Browser',
-        )
-    );
+    public $settings;
     public $publicPages = array(self::VIEW_PAGE, self::IMAGE_PAGE);
 
     /*
@@ -328,6 +313,22 @@ END;
         $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
             ? file_get_contents($f)
             : '';
+        $this->settings = array(
+            'viewbrowser_link' => array (
+              'value' => s('View in browser'),
+              'description' => s('The text of the link'),
+              'type' => 'text',
+              'allowempty' => false,
+              'category'=> 'View in Browser',
+            ),
+            'viewbrowser_anonymous' => array (
+              'value' => false,
+              'description' => s('Whether the plugin should provide an anonymous page'),
+              'type' => 'boolean',
+              'allowempty' => false,
+              'category'=> 'View in Browser',
+            )
+        );
         parent::__construct();
 
         $this->linkText = getConfig('viewbrowser_link');
@@ -342,7 +343,7 @@ END;
         $row = $this->dao->message($mid);
 
         if (!$row) {
-            return "Message with id $mid does not exist";
+            return s('Message with id %d does not exist', $mid);
         }
         $personalise = ($uid !== '');
 
@@ -350,7 +351,7 @@ END;
             $user = $this->dao->userByUniqid($uid);
 
             if (!$user) {
-                return "User with uid $uid does not exist";
+                return s('User with uid %s does not exist', $uid);
             }
             $attributeValues = getUserAttributeValues($user['email']);
         } else {
@@ -369,7 +370,7 @@ END;
             $content = fetchUrl($message['sendurl'], $user);
 
             if (!$content) {
-                return "Unable to retrieve URL {$message['sendurl']}";
+                return s('Unable to retrieve URL %s', $message['sendurl']);
             }
             $template = 0;
         } else {

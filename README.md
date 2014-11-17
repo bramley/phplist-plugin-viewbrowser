@@ -92,6 +92,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2014-11-18  Allow text to be translated
     2014-10-14  Provide anonymous page, support sending campaign from a webpage
     2014-10-02  Keep the original document type
     2014-09-18  Handle embedded template images, allow other plugins to transform the email

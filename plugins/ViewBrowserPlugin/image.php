@@ -1,7 +1,7 @@
 <?php
 
 if (!(isset($_GET['id']) && ctype_digit($_GET['id']))) {
-    echo 'A numeric template image id must be specified';
+    echo s('A numeric template image id must be specified');
     exit;
 }
 error_reporting(-1);
