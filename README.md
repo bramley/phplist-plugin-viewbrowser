@@ -92,6 +92,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2015-02-06  Use & as arg separator for http_build_query()
     2014-11-18  Allow text to be translated
     2014-10-14  Provide anonymous page, support sending campaign from a webpage
     2014-10-02  Keep the original document type

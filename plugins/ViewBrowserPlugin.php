@@ -68,7 +68,7 @@ class ViewBrowserPlugin extends phplistPlugin
             $params['p'] = self::VIEW_PAGE;
             $params['pi'] = self::PLUGIN;
         }
-        return $url . '?' . http_build_query($params);
+        return $url . '?' . http_build_query($params, '', '&');
     }
 
     private function link($linkText, $url)
@@ -205,11 +205,7 @@ class ViewBrowserPlugin extends phplistPlugin
                     $data = "data:{$row['mimetype']};base64," . $row['data'];
                 } else {
                     $data = $this->rootUrl . '/?' . http_build_query(
-                        array(
-                            'pi' => self::PLUGIN,
-                            'p' => self::IMAGE_PAGE,
-                            'id' => $row['id']
-                        )
+                        array('pi' => self::PLUGIN, 'p' => self::IMAGE_PAGE, 'id' => $row['id']), '', '&'
                     );
                 }
                 $element->setAttribute('src', $data);
