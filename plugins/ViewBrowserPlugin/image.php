@@ -5,7 +5,6 @@ if (!(isset($_GET['id']) && ctype_digit($_GET['id']))) {
     exit;
 }
 error_reporting(-1);
-require_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
 
 $dao = new ViewBrowserPlugin_DAO(new CommonPlugin_DB());
 $row = $dao->templateImageById($_GET['id']);

@@ -15,7 +15,9 @@ The plugin can also generate an anonymous page, where subscriber placeholders ar
 
 Requires php version 5.3 or later.
 
-Requires the Common Plugin to be installed. See <https://github.com/bramley/phplist-plugin-common>
+Requires the Common Plugin version 2015-03-23 or later to be installed. You should install or upgrade to the latest version.
+
+See <https://github.com/bramley/phplist-plugin-common>
 
 Requires the XSL extension to be included in php. You can verify this through phpinfo.
 
@@ -92,6 +94,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2015-03-23  Change to autoload approach
     2015-02-06  Use & as arg separator for http_build_query()
     2014-11-18  Allow text to be translated
     2014-10-14  Provide anonymous page, support sending campaign from a webpage

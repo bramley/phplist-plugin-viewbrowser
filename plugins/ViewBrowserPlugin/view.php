@@ -25,7 +25,6 @@ if (!(isset($plugins['CommonPlugin']))) {
 }
 error_reporting(-1);
 require 'admin/sendemaillib.php';
-require_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
 $email = $plugins['ViewBrowserPlugin']->createEmail($_GET["m"], $uid);
 
 ob_end_clean();
