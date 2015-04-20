@@ -48,8 +48,10 @@ class ViewBrowserPlugin extends phplistPlugin
     public $enabled = 1;
     public $settings;
     public $dependencyCheck = array(
-        'phpList version newer than 3.0.10' => 'VERSION > "3.0.10"',
+        'phpList version newer than 3.0.12' => 'version_compare(VERSION,"3.0.12") > 0',
         'XSL extension available' => 'extension_loaded("xsl")',
+        'Duncans common plugin available' => 'phpListPlugin::isEnabled("CommonPlugin") ',
+        'PHP version newer than 5.3' => 'PHP_VERSION_ID > 50300;',
     );
     public $publicPages = array(self::VIEW_PAGE, self::IMAGE_PAGE);
 
