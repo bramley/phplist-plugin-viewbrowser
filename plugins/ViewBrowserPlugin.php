@@ -47,6 +47,10 @@ class ViewBrowserPlugin extends phplistPlugin
     public $authors = 'Duncan Cameron';
     public $enabled = 1;
     public $settings;
+    public $dependencyCheck = array(
+        'phpList version newer than 3.0.10' => 'VERSION > "3.0.10"',
+        'XSL extension available' => 'extension_loaded("xsl")',
+    );
     public $publicPages = array(self::VIEW_PAGE, self::IMAGE_PAGE);
 
     /*
