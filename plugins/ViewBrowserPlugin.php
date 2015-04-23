@@ -47,12 +47,6 @@ class ViewBrowserPlugin extends phplistPlugin
     public $authors = 'Duncan Cameron';
     public $enabled = 1;
     public $settings;
-    public $dependencyCheck = array(
-        'phpList version newer than 3.0.12' => 'version_compare(VERSION,"3.0.12") > 0',
-        'XSL extension available' => 'extension_loaded("xsl")',
-        'Duncans common plugin available' => 'phpListPlugin::isEnabled("CommonPlugin") ',
-        'PHP version newer than 5.3' => 'PHP_VERSION_ID > 50300;',
-    );
     public $publicPages = array(self::VIEW_PAGE, self::IMAGE_PAGE);
 
     /*
@@ -75,6 +69,16 @@ class ViewBrowserPlugin extends phplistPlugin
             $params['pi'] = self::PLUGIN;
         }
         return $url . '?' . http_build_query($params, '', '&');
+    }
+
+    public function dependencyCheck()
+    {
+      return array(
+        'phpList version' => version_compare(VERSION,"3.0.12") > 0,
+        'XSL extension available' => extension_loaded("xsl"),
+        'Common plugin available' => phpListPlugin::isEnabled("CommonPlugin") ,
+        'PHP version' => PHP_VERSION_ID > 50300,
+      );
     }
 
     private function link($linkText, $url)
