@@ -296,6 +296,20 @@ END;
     /*
      * Public functions
      */
+
+    public function dependencyCheck()
+    {
+        global $plugins;
+
+        return array(
+            'XSL extension installed' => extension_loaded('xsl'),
+            'Common plugin installed' =>
+                phpListPlugin::isEnabled('CommonPlugin') && 
+                (strpos($plugins['CommonPlugin']->version, 'Git') === 0 || $plugins['CommonPlugin']->version >= '2015-03-23'),
+            'PHP version 5.3.0 or greater' => version_compare(PHP_VERSION, '5.3') > 0,
+        );
+    }
+
     public function adminmenu()
     {
         return array();
