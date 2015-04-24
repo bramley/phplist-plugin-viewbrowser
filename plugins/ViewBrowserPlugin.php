@@ -71,6 +71,16 @@ class ViewBrowserPlugin extends phplistPlugin
         return $url . '?' . http_build_query($params, '', '&');
     }
 
+    public function dependencyCheck()
+    {
+      return array(
+        'phpList version' => version_compare(VERSION,"3.0.12") > 0,
+        'XSL extension available' => extension_loaded("xsl"),
+        'Common plugin available' => phpListPlugin::isEnabled("CommonPlugin") ,
+        'PHP version' => PHP_VERSION_ID > 50300,
+      );
+    }
+
     private function link($linkText, $url)
     {
         return sprintf('<a href="%s">%s</a>', htmlspecialchars($url), htmlspecialchars($linkText));
