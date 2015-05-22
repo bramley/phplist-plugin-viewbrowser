@@ -218,10 +218,12 @@ END;
      *
      * @access  public
      */
-    public function __construct()
+    public function __construct(DAO $dao = null, Common\DAO\Attribute $daoAttr = null)
     {
         global $public_scheme, $pageroot;
 
+        $this->dao = $dao ?: new DAO(new Common\DB);
+        $this->daoAttr = $daoAttr ?: new Common\DAO\Attribute(new Common\DB);
         $this->rootUrl = sprintf('%s://%s%s/', $public_scheme, getConfig('website'), $pageroot);
     }
 
@@ -238,8 +240,7 @@ END;
     {
         global $PoweredByText, $PoweredByImage, $plugins;
 
-        $dao = new DAO(new Common\DB());
-        $row = $dao->message($mid);
+        $row = $this->dao->message($mid);
 
         if (!$row) {
             return s('Message with id %d does not exist', $mid);
@@ -247,23 +248,22 @@ END;
         $personalise = ($uid !== '');
 
         if ($personalise) {
-            $user = $dao->userByUniqid($uid);
+            $user = $this->dao->userByUniqid($uid);
 
             if (!$user) {
                 return s('User with uid %s does not exist', $uid);
             }
-            $attributeValues = getUserAttributeValues($user['email']);
+            $attributeValues = $this->dao->getUserAttributeValues($user['email']);
         } else {
             $user = array('email' => '', 'uniqid' => '');
-            $daoAttr = new Common\DAO\Attribute(new Common\DB());
             $attributeValues = array();
 
-            foreach ($daoAttr->attributes() as $k => $v) {
+            foreach ($this->daoAttr->attributes() as $k => $v) {
                 $attributeValues[$v['name']] = '';
             }
         }
 
-        $message = loadMessageData($mid);
+        $message = $this->dao->loadMessageData($mid);
         $styles = '';
         $templateBody = $row['template'];
 
@@ -276,7 +276,7 @@ END;
             $content = str_ireplace('[CONTENT]', $message['message'], $content);
         } else {
             if ($message['sendmethod'] == 'remoteurl') {
-                $content = fetchUrl($message['sendurl'], $user);
+                $content = $this->dao->fetchUrl($message['sendurl'], $user);
 
                 if (!$content) {
                     return s('Unable to retrieve URL %s', $message['sendurl']);
@@ -299,7 +299,7 @@ END;
         $content = parsePlaceHolders($content, $this->systemPlaceholders($uid, $user['email'], $message));
         $content = $this->replaceUserTrack($content, $mid, $uid);
 
-        if (count($attachments = $dao->attachments($mid)) > 0) {
+        if (count($attachments = $this->dao->attachments($mid)) > 0) {
             $content = addHTMLFooter($content, $this->addAttachments($attachments));
         }
         $destinationEmail = $user['email'];
@@ -311,7 +311,7 @@ END;
         foreach ($plugins as $plugin) {
             $content = $plugin->parseOutgoingHTMLMessage($mid, $content, $destinationEmail, $user);
         }
-        $doc = new ContentDocument($content, $dao, $this->rootUrl);
+        $doc = new ContentDocument($content, $this->dao, $this->rootUrl);
         $doc->addTemplateImages($mid, $message['template']);
 
         if (CLICKTRACK && $personalise) {

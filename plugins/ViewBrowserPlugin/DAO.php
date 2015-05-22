@@ -86,4 +86,19 @@ class DAO extends \CommonPlugin_DAO_User
 
         return $this->dbCommand->queryAll($sql);
     }
+
+    public function getUserAttributeValues($email)
+    {
+        return getUserAttributeValues($email);
+    }
+
+    public function loadMessageData($mid)
+    {
+        return loadMessageData($mid);
+    }
+
+    public function fetchUrl($url, $user)
+    {
+        return fetchUrl($url, $user);
+    }
 }
