@@ -94,6 +94,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2015-06-25  Internal changes
     2015-03-23  Change to autoload approach
     2015-02-06  Use & as arg separator for http_build_query()
     2014-11-18  Allow text to be translated

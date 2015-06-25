@@ -26,14 +26,22 @@
  */
 class ViewBrowserPlugin_ContentCreator
 {
-    /*
-     *  Private variables
+    /**
+     * The phplist root url
+     *
+     * @access private
+     * @var string
      */
     private $rootUrl;
-    private $dao;
 
-    /*
-     * Private functions
+    /**
+     * Replace the signature placeholder within the content
+     * If there isn't a placeholder then the signature is added to the end of the content
+     *
+     * @access  private
+     * @param   string  $content the current content that might contain a placeholder
+     * @param   string  $signature  the replacement value
+     * @return  string  the new content 
      */
     private function replaceSignature($content, $signature)
     {
@@ -45,6 +53,15 @@ class ViewBrowserPlugin_ContentCreator
         return $content;
     }
 
+    /**
+     * Replace the footer placeholder within the content
+     * If there isn't a placeholder then the footer is added to the end of the content
+     *
+     * @access  private
+     * @param   string  $content the current content that might contain a placeholder
+     * @param   string  $footer  the replacement value
+     * @return  string  the new content 
+     */
     private function replaceFooter($content, $footer)
     {
         $content = str_ireplace('[FOOTER]', $footer, $content, $count);
@@ -55,6 +72,17 @@ class ViewBrowserPlugin_ContentCreator
         return $content;
     }
 
+    /**
+     * Replace the usertrack placeholder within the content by a tracking image
+     * If there isn't a placeholder and usertracking should always be added then the
+     * image is added to the end of the content
+     *
+     * @access  private
+     * @param   string  $content the current content that might contain a placeholder
+     * @param   integer $mid  the message id
+     * @param   integer $uid  the user unique id
+     * @return  string  the new content 
+     */
     private function replaceUserTrack($content, $mid, $uid)
     {
         $image = sprintf(
@@ -74,6 +102,16 @@ class ViewBrowserPlugin_ContentCreator
         return $content;
     }
 
+    /**
+     * Collect values for system placeholders that might need to be replaced
+     * Most of the placeholder values are copied from sendemaillib.php
+     *
+     * @access  private
+     * @param   integer $uid  the user unique id
+     * @param   string  $email the email address
+     * @param   array   $message  message fields
+     * @return  array   placeholders and values
+     */
     private function systemPlaceholders($uid, $email, $message)
     {
         global $website, $domain, $strUnsubscribe, $strThisLink, $strForward;
@@ -129,8 +167,10 @@ class ViewBrowserPlugin_ContentCreator
         return $p;
     }
 
-    /*
-     * Public functions
+    /**
+     * Constructor
+     *
+     * @access  public
      */
     public function __construct()
     {
@@ -139,12 +179,21 @@ class ViewBrowserPlugin_ContentCreator
         $this->rootUrl = sprintf('%s://%s%s/', $public_scheme, getConfig('website'), $pageroot);
     }
 
-    public function createContent($mid, $uid)
+    /**
+     * Generate the html content of the email customised for the user
+     *
+     * @access  public
+     * @param   integer $mid  the message id
+     * @param   integer $uid  the user unique id
+     * @param   Closure $contentProvider function to provide the message content
+     * @return  string  the generated html
+     */
+    public function createContent($mid, $uid, Closure $contentProvider = null)
     {
         global $PoweredByText, $PoweredByImage, $plugins;
 
-        $this->dao = new ViewBrowserPlugin_DAO(new CommonPlugin_DB());
-        $row = $this->dao->message($mid);
+        $dao = new ViewBrowserPlugin_DAO(new CommonPlugin_DB());
+        $row = $dao->message($mid);
 
         if (!$row) {
             return s('Message with id %d does not exist', $mid);
@@ -152,7 +201,7 @@ class ViewBrowserPlugin_ContentCreator
         $personalise = ($uid !== '');
 
         if ($personalise) {
-            $user = $this->dao->userByUniqid($uid);
+            $user = $dao->userByUniqid($uid);
 
             if (!$user) {
                 return s('User with uid %s does not exist', $uid);
@@ -169,21 +218,30 @@ class ViewBrowserPlugin_ContentCreator
         }
 
         $message = loadMessageData($mid);
+        $styles = '';
+        $templateBody = $row['template'];
 
-        if ($message['sendmethod'] == 'remoteurl') {
-            $content = fetchUrl($message['sendurl'], $user);
+        if ($templateBody) {
+            $templateBody = str_replace('\"', '"', $templateBody);
+        }
 
-            if (!$content) {
-                return s('Unable to retrieve URL %s', $message['sendurl']);
-            }
-            $template = 0;
+        if ($contentProvider) {
+            $content = $contentProvider($templateBody, $message);
         } else {
-            $content = $message['message'];
-            $template = $row['template'];
+            if ($message['sendmethod'] == 'remoteurl') {
+                $content = fetchUrl($message['sendurl'], $user);
 
-            if ($template) {
-                $template = str_replace('\"', '"', $template);
-                $content = str_ireplace('[CONTENT]', $content, $template);
+                if (!$content) {
+                    return s('Unable to retrieve URL %s', $message['sendurl']);
+                }
+            } else {
+                $content = $message['message'];
+
+                if ($templateBody) {
+                    $content = str_ireplace('[CONTENT]', $content, $templateBody);
+                } else {
+                    $styles = trim(getConfig("html_email_style"));
+                }
             }
         }
         $content = $this->replaceFooter($content, $message['footer']);
@@ -203,15 +261,13 @@ class ViewBrowserPlugin_ContentCreator
         foreach ($plugins as $plugin) {
             $content = $plugin->parseOutgoingHTMLMessage($mid, $content, $destinationEmail, $user);
         }
-        $doc = new ViewBrowserPlugin_ContentDocument($content, $this->dao, $this->rootUrl);
+        $doc = new ViewBrowserPlugin_ContentDocument($content, $dao, $this->rootUrl);
         $doc->addTemplateImages($mid, $message['template']);
 
         if (CLICKTRACK && $personalise) {
             $doc->addLinkTrack($mid, $user);
         }
-        $styles = $template ? '' : trim(getConfig("html_email_style"));
         $doc->addTitle($message['subject'], $styles);
         return $doc->toHtml();
     }
-
 }

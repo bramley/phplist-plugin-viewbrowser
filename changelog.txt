@@ -1,3 +1,9 @@
+version 2015-06-25
+      Dependency check, pull request 6
+      Refactoring
+      Added method documentation
+      Further refactoring
+
 version 2015-03-23
       Change to autoload approach
 
