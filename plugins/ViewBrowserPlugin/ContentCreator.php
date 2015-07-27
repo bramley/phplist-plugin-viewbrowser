@@ -1,4 +1,9 @@
 <?php
+
+namespace phpList\plugin\ViewBrowserPlugin;
+
+use phpList\plugin\Common;
+
 /**
  * ViewBrowserPlugin for phplist
  * 
@@ -24,7 +29,7 @@
  * Class to create the content of a campaign email
  * 
  */
-class ViewBrowserPlugin_ContentCreator
+class ContentCreator
 {
     /**
      * The phplist root url
@@ -229,11 +234,11 @@ END;
      * @param   Closure $contentProvider function to provide the message content
      * @return  string  the generated html
      */
-    public function createContent($mid, $uid, Closure $contentProvider = null)
+    public function createContent($mid, $uid, \Closure $contentProvider = null)
     {
         global $PoweredByText, $PoweredByImage, $plugins;
 
-        $dao = new ViewBrowserPlugin_DAO(new CommonPlugin_DB());
+        $dao = new DAO(new Common\DB());
         $row = $dao->message($mid);
 
         if (!$row) {
@@ -250,7 +255,7 @@ END;
             $attributeValues = getUserAttributeValues($user['email']);
         } else {
             $user = array('email' => '', 'uniqid' => '');
-            $daoAttr = new CommonPlugin_DAO_Attribute(new CommonPlugin_DB());
+            $daoAttr = new Common\DAO\Attribute(new Common\DB());
             $attributeValues = array();
 
             foreach ($daoAttr->attributes() as $k => $v) {
@@ -306,7 +311,7 @@ END;
         foreach ($plugins as $plugin) {
             $content = $plugin->parseOutgoingHTMLMessage($mid, $content, $destinationEmail, $user);
         }
-        $doc = new ViewBrowserPlugin_ContentDocument($content, $dao, $this->rootUrl);
+        $doc = new ContentDocument($content, $dao, $this->rootUrl);
         $doc->addTemplateImages($mid, $message['template']);
 
         if (CLICKTRACK && $personalise) {

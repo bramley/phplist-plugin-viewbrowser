@@ -1,4 +1,10 @@
 <?php
+
+namespace phpList\plugin\ViewBrowserPlugin;
+
+use DomDocument;
+use XSLTProcessor;
+
 /**
  * ViewBrowserPlugin for phplist
  * 
@@ -24,7 +30,7 @@
  * Class to manipulate the content as an HTML DOM document
  * 
  */
-class ViewBrowserPlugin_ContentDocument
+class ContentDocument
 {
     private $dom;
     private $docType;
@@ -48,11 +54,11 @@ class ViewBrowserPlugin_ContentDocument
             $src = $element->getAttribute('src');
 
             if ($row = $this->dao->templateImage($templateId, $src)) {
-                if (version_compare(getConfig('version'), ViewBrowserPlugin::PUBLIC_PAGE_VERSION) < 0) {
+                if (version_compare(getConfig('version'), \ViewBrowserPlugin::PUBLIC_PAGE_VERSION) < 0) {
                     $data = "data:{$row['mimetype']};base64," . $row['data'];
                 } else {
                     $data = $this->rootUrl . '?' . http_build_query(
-                        array('pi' => ViewBrowserPlugin::PLUGIN, 'p' => ViewBrowserPlugin::IMAGE_PAGE, 'id' => $row['id']), '', '&'
+                        array('pi' => \ViewBrowserPlugin::PLUGIN, 'p' => \ViewBrowserPlugin::IMAGE_PAGE, 'id' => $row['id']), '', '&'
                     );
                 }
                 $element->setAttribute('src', $data);

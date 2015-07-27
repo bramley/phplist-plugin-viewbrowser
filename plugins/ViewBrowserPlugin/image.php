@@ -1,12 +1,16 @@
 <?php
 
+namespace phpList\plugin\ViewBrowserPlugin;
+
+use phpList\plugin\Common;
+
 if (!(isset($_GET['id']) && ctype_digit($_GET['id']))) {
     echo s('A numeric template image id must be specified');
     exit;
 }
 error_reporting(-1);
 
-$dao = new ViewBrowserPlugin_DAO(new CommonPlugin_DB());
+$dao = new DAO(new Common\DB());
 $row = $dao->templateImageById($_GET['id']);
 
 ob_end_clean();

@@ -1,4 +1,7 @@
 <?php
+
+namespace phpList\plugin\ViewBrowserPlugin;
+
 if (!extension_loaded('xsl')) {
     echo s('The xsl extension must be installed');
     exit;
@@ -25,7 +28,7 @@ if (!(isset($plugins['CommonPlugin']))) {
 }
 error_reporting(-1);
 require 'admin/sendemaillib.php';
-$creator = new ViewBrowserPlugin_ContentCreator;
+$creator = new ContentCreator;
 
 ob_end_clean();
 header('Content-Type: text/html; charset=UTF-8');

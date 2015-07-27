@@ -66,7 +66,7 @@ if (!(isset($plugins['CommonPlugin']))) {
 
 error_reporting(-1);
 require_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
-$creator = new ViewBrowserPlugin_ContentCreator;
+$creator = new phpList\plugin\ViewBrowserPlugin\ContentCreator;
 
 ob_end_clean();
 header('Content-Type: text/html; charset=UTF-8');

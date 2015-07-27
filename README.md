@@ -35,7 +35,7 @@ Check that these files are in the plugin directory. If not then you will need to
 * the file ViewBrowserPlugin.php
 * the directory ViewBrowserPlugin
 
-Then click the small orange icon to enable the plugin.
+Then click the button to enable the plugin.
 
 ### Install manually ###
 Download the plugin zip file from <https://github.com/bramley/phplist-plugin-viewbrowser/archive/master.zip>
@@ -46,7 +46,7 @@ This should contain
 * the file ViewBrowserPlugin.php
 * the directory ViewBrowserPlugin
 
-Then click the small orange icon to enable the plugin.
+Then click the button to enable the plugin.
 
 ### Install view.php (phplist 3.0.6 and earlier) ###
 
@@ -103,6 +103,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.2.0+20151018  Internal changes to use namespaced classes
     2.1.3+20150916  Display [CONTENT] when used by Content Areas plugin
     2.1.2+20150907  Fix problem introduced with previous change
     2.1.1+20150906  Fix problem where default settings are not used

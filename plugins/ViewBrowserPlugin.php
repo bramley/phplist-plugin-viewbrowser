@@ -16,7 +16,7 @@
  * @category  phplist
  * @package   ViewBrowserPlugin
  * @author    Duncan Cameron
- * @copyright 2014 Duncan Cameron
+ * @copyright 2014-2015 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 

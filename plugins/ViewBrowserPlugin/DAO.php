@@ -1,4 +1,9 @@
 <?php
+
+namespace phpList\plugin\ViewBrowserPlugin;
+
+use phpList\plugin\Common;
+
 /**
  * ViewBrowserPlugin for phplist
  * 
@@ -24,7 +29,7 @@
  * DAO class providing access to the message table
  * 
  */
-class ViewBrowserPlugin_DAO extends CommonPlugin_DAO_User
+class DAO extends \CommonPlugin_DAO_User
 {
     public function forwardId($url)
     {
