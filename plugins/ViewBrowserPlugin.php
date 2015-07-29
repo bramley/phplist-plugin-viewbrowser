@@ -71,9 +71,9 @@ class ViewBrowserPlugin extends phplistPlugin
         return $url . '?' . http_build_query($params, '', '&');
     }
 
-    private function link($linkText, $url)
+    private function link($linkText, $url, $attributes)
     {
-        return sprintf('<a href="%s">%s</a>', htmlspecialchars($url), htmlspecialchars($linkText));
+        return sprintf('<a href="%s" %s>%s</a>', htmlspecialchars($url), $attributes, htmlspecialchars($linkText));
     }
 
     /*
@@ -114,6 +114,13 @@ class ViewBrowserPlugin extends phplistPlugin
               'allowempty' => false,
               'category'=> 'View in Browser',
             ),
+            'viewbrowser_attributes' => array (
+              'value' => s(''),
+              'description' => s('Additional attributes for the html &lt;a> element'),
+              'type' => 'text',
+              'allowempty' => true,
+              'category'=> 'View in Browser',
+            ),
             'viewbrowser_anonymous' => array (
               'value' => false,
               'description' => s('Whether the plugin should provide an anonymous page'),
@@ -135,10 +142,11 @@ class ViewBrowserPlugin extends phplistPlugin
     public function parseOutgoingHTMLMessage($messageid, $content, $destination, $userdata = null)
     {
         $url = $this->viewUrl($messageid, $userdata['uniqid']);
+        $attributes = stripslashes(getConfig('viewbrowser_attributes'));
 
         return str_ireplace(
             array('[VIEWBROWSER]', '[VIEWBROWSERURL]'),
-            array($this->link($this->linkText, $url), htmlspecialchars($url)),
+            array($this->link($this->linkText, $url, $attributes), htmlspecialchars($url)),
             $content
         );
     }

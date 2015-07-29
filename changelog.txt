@@ -1,3 +1,6 @@
+version 2015-07-29
+      Allow additional attributes on the <a> element
+
 version 2015-06-25
       Dependency check, pull request 6
       Refactoring

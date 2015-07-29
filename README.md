@@ -64,6 +64,15 @@ to
 
 ## Configuration ##
 On the Settings page you can specify the link text, such as "View this email in your browser".
+
+You can change the styling of the link by specifying additional attributes for the <a> element,
+such as a specific class or a custom style. For example
+
+    class="myclass"
+or
+
+    style="color: #ea5b0c;"
+
 You can also specify whether the plugin should generate anonymous pages. The default value for this is no.
 
 ## Usage ##
@@ -94,6 +103,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2015-07-29  Allow additional attributes on the link <a> element
     2015-06-25  Internal changes
     2015-03-23  Change to autoload approach
     2015-02-06  Use & as arg separator for http_build_query()
