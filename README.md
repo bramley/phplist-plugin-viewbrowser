@@ -65,7 +65,7 @@ to
 ## Configuration ##
 On the Settings page you can specify the link text, such as "View this email in your browser".
 
-You can change the styling of the link by specifying additional attributes for the <a> element,
+You can change the styling of the link by specifying additional attributes for the `<a>` element,
 such as a specific class or a custom style. For example
 
     class="myclass"
