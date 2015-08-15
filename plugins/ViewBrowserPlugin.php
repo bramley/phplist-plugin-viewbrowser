@@ -86,9 +86,10 @@ class ViewBrowserPlugin extends phplistPlugin
 
         return array(
             'XSL extension installed' => extension_loaded('xsl'),
-            'Common plugin installed' =>
-                phpListPlugin::isEnabled('CommonPlugin') && 
-                (strpos($plugins['CommonPlugin']->version, 'Git') === 0 || $plugins['CommonPlugin']->version >= '2015-03-23'),
+            'Common plugin v3 installed' =>
+                phpListPlugin::isEnabled('CommonPlugin')
+                    && preg_match('/\d+\.\d+\.\d+/', $plugins['CommonPlugin']->version, $matches)
+                    && version_compare($matches[0], '3') > 0,
             'PHP version 5.3.0 or greater' => version_compare(PHP_VERSION, '5.3') > 0,
         );
     }

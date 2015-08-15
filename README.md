@@ -103,18 +103,19 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
-    2015-07-29  Allow additional attributes on the link <a> element
-    2015-06-25  Internal changes
-    2015-03-23  Change to autoload approach
-    2015-02-06  Use & as arg separator for http_build_query()
-    2014-11-18  Allow text to be translated
-    2014-10-14  Provide anonymous page, support sending campaign from a webpage
-    2014-10-02  Keep the original document type
-    2014-09-18  Handle embedded template images, allow other plugins to transform the email
-    2014-08-16  The view page is now a plugin public page for phplist 3.0.7
-    2014-08-09  Test for xsl extension being installed
-    2014-05-05  Added fromemail placeholder
-    2014-04-17  An email is now always personalised
-    2014-04-14  Support for click tracking and further placeholders
-    2014-04-12  Support for user tracking
-    2014-04-09  Added to GitHub
+    2.0.0+20150815  Updated dependencies
+    2015-07-29      Allow additional attributes on the link <a> element
+    2015-06-25      Internal changes
+    2015-03-23      Change to autoload approach
+    2015-02-06      Use & as arg separator for http_build_query()
+    2014-11-18      Allow text to be translated
+    2014-10-14      Provide anonymous page, support sending campaign from a webpage
+    2014-10-02      Keep the original document type
+    2014-09-18      Handle embedded template images, allow other plugins to transform the email
+    2014-08-16      The view page is now a plugin public page for phplist 3.0.7
+    2014-08-09      Test for xsl extension being installed
+    2014-05-05      Added fromemail placeholder
+    2014-04-17      An email is now always personalised
+    2014-04-14      Support for click tracking and further placeholders
+    2014-04-12      Support for user tracking
+    2014-04-09      Added to GitHub
