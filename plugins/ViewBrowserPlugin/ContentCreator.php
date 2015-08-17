@@ -222,7 +222,7 @@ class ViewBrowserPlugin_ContentCreator
         $templateBody = $row['template'];
 
         if ($templateBody) {
-            $templateBody = str_replace('\"', '"', $templateBody);
+            $templateBody = stripslashes($templateBody);
         }
 
         if ($contentProvider) {

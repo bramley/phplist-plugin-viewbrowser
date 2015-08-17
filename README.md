@@ -103,6 +103,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.0.1+20150817  Fix backslashes being displayed
     2.0.0+20150815  Updated dependencies
     2015-07-29      Allow additional attributes on the link <a> element
     2015-06-25      Internal changes
