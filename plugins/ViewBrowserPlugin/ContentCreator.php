@@ -35,6 +35,47 @@ class ViewBrowserPlugin_ContentCreator
     private $rootUrl;
 
     /**
+     * Convert file size to appropriate unit
+     *
+     * @access  private
+     * @param   integer $bytes attachments
+     * @param   integer $decimals the number of decimal places to display
+     * @return  string  file size in appropriate units
+     */
+    private function human_filesize($bytes, $decimals = 1)
+    {
+        $size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
+        $factor = min(floor((strlen($bytes) - 1) / 3), count($size));
+        return sprintf("%.{$decimals}f", $bytes / pow(1000, $factor)) . $size[$factor];
+    }
+
+    /**
+     * Generate html to display each attachment with its download link
+     *
+     * @access  private
+     * @param   Iterator  $attachments attachments
+     * @return  string  the html
+     */
+    private function addAttachments(Iterator $attachments)
+    {
+        $html = "<p>Attachments:<br/>";
+
+        foreach ($attachments as $a) {
+            $description = htmlspecialchars($a['description']);
+            $remotefile = htmlspecialchars($a['remotefile']);
+            $size = $this->human_filesize($a['size']);
+            $html .= <<<END
+<img src="./?p=image&amp;pi=CommonPlugin&amp;image=attach.png" alt="" title="" />
+$description 
+<a href="./dl.php?id={$a['id']}">$remotefile</a>
+$size<br/>
+</p>
+END;
+        }
+        return $html;
+    }
+
+    /**
      * Replace the signature placeholder within the content
      * If there isn't a placeholder then the signature is added to the end of the content
      *
@@ -252,6 +293,9 @@ class ViewBrowserPlugin_ContentCreator
         $content = parsePlaceHolders($content, $this->systemPlaceholders($uid, $user['email'], $message));
         $content = $this->replaceUserTrack($content, $mid, $uid);
 
+        if (count($attachments = $dao->attachments($mid)) > 0) {
+            $content = addHTMLFooter($content, $this->addAttachments($attachments));
+        }
         $destinationEmail = $user['email'];
 
         foreach ($plugins as $plugin) {

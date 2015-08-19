@@ -70,4 +70,15 @@ class ViewBrowserPlugin_DAO extends CommonPlugin_DAO_User
 
         return $this->dbCommand->queryRow($sql);
     }
+
+    public function attachments($mid)
+    {
+        $sql =
+            "SELECT a.id, filename, remotefile, mimetype, description, size
+            FROM {$this->tables['attachment']} a
+            JOIN {$this->tables['message_attachment']} ma ON a.id = ma.attachmentid
+            WHERE ma.messageid = $mid";
+
+        return $this->dbCommand->queryAll($sql);
+    }
 }

@@ -15,9 +15,7 @@ The plugin can also generate an anonymous page, where subscriber placeholders ar
 
 Requires php version 5.3 or later.
 
-Requires the Common Plugin version 2015-03-23 or later to be installed. You should install or upgrade to the latest version.
-
-See <https://github.com/bramley/phplist-plugin-common>
+Requires the Common Plugin version 3.0.2 or later to be installed. You should install or upgrade to the latest version. See <https://github.com/bramley/phplist-plugin-common>
 
 Requires the XSL extension to be included in php. You can verify this through phpinfo.
 
@@ -103,6 +101,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.1.0+20150819  Display attachments with download links
     2.0.1+20150817  Fix backslashes being displayed
     2.0.0+20150815  Updated dependencies
     2015-07-29      Allow additional attributes on the link <a> element
