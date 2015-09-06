@@ -132,6 +132,11 @@ class ViewBrowserPlugin extends phplistPlugin
         );
         parent::__construct();
 
+    }
+
+    public function activate()
+    {
+        parent::activate();
         $this->linkText = getConfig('viewbrowser_link');
         $this->rootUrl = sprintf('%s://%s%s/', $public_scheme, getConfig('website'), $pageroot);
     }
