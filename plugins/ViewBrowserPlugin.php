@@ -101,8 +101,6 @@ class ViewBrowserPlugin extends phplistPlugin
  
     public function __construct()
     {
-        global $public_scheme, $pageroot;
-
         $this->coderoot = dirname(__FILE__) . '/' . self::PLUGIN . '/';
         $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
             ? file_get_contents($f)
@@ -136,6 +134,8 @@ class ViewBrowserPlugin extends phplistPlugin
 
     public function activate()
     {
+        global $public_scheme, $pageroot;
+
         parent::activate();
         $this->linkText = getConfig('viewbrowser_link');
         $this->rootUrl = sprintf('%s://%s%s/', $public_scheme, getConfig('website'), $pageroot);

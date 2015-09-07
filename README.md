@@ -101,6 +101,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.1.2+20150907  Fix problem introduced with previous change
     2.1.1+20150906  Fix problem where default settings are not used
     2.1.0+20150819  Display attachments with download links
     2.0.1+20150817  Fix backslashes being displayed

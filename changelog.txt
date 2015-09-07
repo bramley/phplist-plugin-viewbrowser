@@ -1,3 +1,6 @@
+version 2.1.2+20150907
+      Missing global statement
+
 version 2.1.1+20150906
       Fix problem where settings are not used
 
