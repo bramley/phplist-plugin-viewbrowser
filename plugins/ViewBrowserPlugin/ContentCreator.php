@@ -268,6 +268,7 @@ END;
 
         if ($contentProvider) {
             $content = $contentProvider($templateBody, $message);
+            $content = str_ireplace('[CONTENT]', $message['message'], $content);
         } else {
             if ($message['sendmethod'] == 'remoteurl') {
                 $content = fetchUrl($message['sendurl'], $user);
