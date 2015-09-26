@@ -15,7 +15,9 @@ The plugin can also generate an anonymous page, where subscriber placeholders ar
 
 Requires php version 5.3 or later.
 
-Requires the Common Plugin version 3.0.2 or later to be installed. You should install or upgrade to the latest version. See <https://github.com/bramley/phplist-plugin-common>
+This plugin requires the Common Plugin v3.0.2 or later to also be installed, and will not work without that.
+**You must install that plugin or upgrade to the latest version if it is already installed**.
+See <https://github.com/bramley/phplist-plugin-common>
 
 Requires the XSL extension to be included in php. You can verify this through phpinfo.
 
