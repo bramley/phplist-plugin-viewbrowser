@@ -75,9 +75,9 @@ class ContentCreator
 $description 
 <a href="./dl.php?id={$a['id']}">$remotefile</a>
 $size<br/>
-</p>
 END;
         }
+        $html .= '</p>';
         return $html;
     }
 
