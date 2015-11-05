@@ -2,10 +2,15 @@
 
 class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
 {
+    private $messages;
+    private $users;
+    private $usersattributes;
+    private $pi;
+
     protected function setUp()
     {
-        $this->v = new ViewBrowserPlugin;
-        $this->v->activate();
+        $this->pi = new ViewBrowserPlugin;
+        $this->pi->activate();
 
         $this->users = [
             '2f93856905d26f592c7cfefbff599a0e' => ['id' => 51, 'email' => 'aaa@bbb.com', 'uniqid' => '123456'],
@@ -17,6 +22,27 @@ class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
             '' => ['name' => 'no name',],
         ];
 
+        $this->attachments = [
+            28 => [
+                [
+                    'id' => 12,
+                    'description' => 'an attachment',
+                    'remotefile' => 'attachment.doc',
+                    'size' => 123456,
+                ],
+                [
+                    'id' => 13,
+                    'description' => 'another attachment',
+                    'remotefile' => 'attachment2.doc',
+                    'size' => 7654,
+                ]
+            ],
+        ];
+
+        $this->templates = [
+            0 => ['template' => ''],
+            1 => ['template' => '<html><head></head><body>template body[CONTENT]</body></html>']
+        ];
         $this->messages = [
             25 => [
                 'message' => 'here is the message content email address is [email] name is [name%%default name] uniqid is [uniqid] more',
@@ -36,7 +62,6 @@ class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
 <p>a link to phplist.com <a href="http://www.phplist.com">phplist</a></p>
 <p>here is a cat</p>
 </div>'
-
                 ,
                 'id' => 26,
                 'template' => 0,
@@ -46,19 +71,60 @@ class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
                 'sendmethod' => 'xxx',
                 'sendurl' => '',
             ],
+            27 => [
+                'message' => 
+'<div>
+<p>here is a link <a href="http://www.bbc.co.uk">to the bbc</a></p>
+<p>a link that contains http <a href="http://www.aaa.com">http://www.aaa.com</a></p>
+<p>a link to phplist.com <a href="http://www.phplist.com">phplist</a></p>
+<p>here is a cat</p>
+</div>'
+                ,
+                'id' => 27,
+                'template' => 1,
+                'subject' => 'a test message',
+                'footer' => '',
+                'fromemail' => 'from@email.com',
+                'sendmethod' => 'xxx',
+                'sendurl' => '',
+            ],
+            28 => [
+                'message' => 'here is the message content email address is [email] name is [name%%default name] uniqid is [uniqid] more',
+                'id' => 25,
+                'template' => 0,
+                'subject' => 'a test message',
+                'footer' => '',
+                'fromemail' => 'from@email.com',
+                'sendmethod' => 'xxx',
+                'sendurl' => '',
+            ],
+            999 => false,
         ];
+
+        $this->forwardIds = [
+            'http://www.bbc.co.uk' => 101,
+            './dl.php?id=12' => 102,
+            './dl.php?id=13' => 103,
+        ];
+
         $this->daoStub = $this->getMockBuilder('phpList\plugin\ViewBrowserPlugin\DAO')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->daoStub->method('message')
-             ->willReturn(['template' => 0]);
+            ->will($this->returnCallback(function ($messageId) {
+                return isset($this->templates[$this->messages[$messageId]['template']])
+                ? $this->templates[$this->messages[$messageId]['template']]
+                : false;
+            }));
         $this->daoStub->method('userByUniqid')
             ->will($this->returnCallback(function($uniqid) {
                 return $this->users[$uniqid];
             }));
         $this->daoStub->method('forwardId')
-            ->willReturn(1234);
+            ->will($this->returnCallback(function ($url) {
+                return $this->forwardIds[$url];
+            }));
         $this->daoStub->method('getUserAttributeValues')
             ->will($this->returnCallback(function ($email) {
                 return $this->usersattributes[$email];
@@ -69,6 +135,12 @@ class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
             }));
         $this->daoStub->method('fetchUrl')
              ->willReturn('here is the remote content');
+        $this->daoStub->method('attachments')
+            ->will($this->returnCallback(function ($messageId) {
+                return isset($this->attachments[$messageId])
+                ? new ArrayIterator($this->attachments[$messageId])
+                : [];
+            }));
 
         $this->daoAttrStub = $this->getMockBuilder('phpList\plugin\Common\DAO\Attribute')
             ->disableOriginalConstructor()
@@ -106,7 +178,7 @@ class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             $expected,
-            $this->v->parseOutgoingHTMLMessage($mid, $content, $email, $user)
+            $this->pi->parseOutgoingHTMLMessage($mid, $content, $email, $user)
         );
     }
 
@@ -135,13 +207,18 @@ class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             $expected,
-            $this->v->parseOutgoingTextMessage($mid, $content, $email, $user)
+            $this->pi->parseOutgoingTextMessage($mid, $content, $email, $user)
         );
     }
 
     public function createsEmailContentDataProvider()
     {
         return [
+            'title element contains message subject' => [
+                25,
+                '2f93856905d26f592c7cfefbff599a0e',
+                ['<title>a test message</title>']
+            ],
             'replaces email placeholder' => [
                 25,
                 '2f93856905d26f592c7cfefbff599a0e',
@@ -152,6 +229,16 @@ class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
                 '2f93856905d26f592c7cfefbff599a0e',
                 ['name is John Smith']
             ],
+            'adds styles when template not used' => [
+                25,
+                '2f93856905d26f592c7cfefbff599a0e',
+                ['<style></style>']
+            ],
+            'adds powered by text' => [
+                25,
+                '2f93856905d26f592c7cfefbff599a0e',
+                ['Powered by phplist']
+            ],
             'shows no personal fields for anonymous user' => [
                 25,
                 '',
@@ -160,7 +247,7 @@ class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
             'converts a link when link tracking is enabled' => [
                 26,
                 '2f93856905d26f592c7cfefbff599a0e',
-                ['http://mysite.com/lists/lt.php?id=MzczNTkyODU1OQ%3D%3D'],
+                ['http://mysite.com/lists/lt.php?id=fhoFAAgfBwBEBAU%3D'],
                 ['<a href="http://www.bbc.co.uk">'],
             ],
             'does not convert a link whose text contains http' => [
@@ -173,6 +260,16 @@ class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
                 '2f93856905d26f592c7cfefbff599a0e',
                 ['<a href="http://www.phplist.com">'],
             ],
+            'rejects unknown message' => [
+                999,
+                '2f93856905d26f592c7cfefbff599a0e',
+                ['Message with id 999 does not exist'],
+            ],
+            'inserts content into template' => [
+                27,
+                '2f93856905d26f592c7cfefbff599a0e',
+                ['<a href="http://www.phplist.com">', 'template body'],
+            ],
         ];
     }
 
@@ -182,11 +279,8 @@ class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
      */
     public function createsEmailContent($messageId, $uniqid, $expected, $unexpected = array())
     {
-        $message = $this->messages[$messageId];
-
         $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub);
         $result = $cc->createContent($messageId, $uniqid);
-        $this->assertContains("<title>{$message['subject']}</title>", $result);
 
         foreach ($expected as $e) {
             $this->assertContains($e, $result);
@@ -195,5 +289,22 @@ class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
         foreach ($unexpected as $e) {
             $this->assertNotContains($e, $result);
         }
+    }
+    /**
+     * @test
+     */
+    public function addsAttachment()
+    {
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub);
+        $result = $cc->createContent(28, '2f93856905d26f592c7cfefbff599a0e');
+        $expected =
+'<p>Attachments:<br><img src="./?p=image&amp;pi=CommonPlugin&amp;image=attach.png" alt="" title="">
+an attachment 
+<a href="http://mysite.com/lists/lt.php?id=fhoFAAsfBw5EBAU%3D">attachment.doc</a>
+123.5kB<br><img src="./?p=image&amp;pi=CommonPlugin&amp;image=attach.png" alt="" title="">
+another attachment 
+<a href="http://mysite.com/lists/lt.php?id=fhoFAAofBw5EBAU%3D">attachment2.doc</a>
+7.7kB<br></p>';
+        $this->assertContains($expected, $result);
     }
 }

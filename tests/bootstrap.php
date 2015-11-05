@@ -8,13 +8,20 @@ define("PLUGIN_ROOTDIRS",
 define('EMAILTEXTCREDITS', true);
 define('ALWAYS_ADD_USERTRACK', true);
 define('CLICKTRACK', true);
-define('XORmask', 0xdeadbeef);
+define('XORmask', '6f409c5681427eeaaaaa495797642e4b');
 
 $GLOBALS['systemroot'] = '/home/duncan/Development/GitHub/phplist3/public_html/lists';
 $GLOBALS['public_scheme'] = 'http';
 $GLOBALS['pageroot'] = '/lists';
 $GLOBALS['plugins'] = [];
-//~ include '/home/duncan/Development/PHP/phplist/config.php';
+$GLOBALS['website'] = 'mysite.com';
+$GLOBALS['domain'] = 'mysite.com';
+$GLOBALS['strUnsubscribe'] = 'unsubscribe';
+$GLOBALS['strThisLink'] = 'this link';
+$GLOBALS['strForward'] = 'Forward to a friend';
+$GLOBALS['PoweredByText'] = 'Powered by phplist';
+$GLOBALS['PoweredByImage'] = 'mysite.com';
+
 include '/home/duncan/Development/GitHub/phplist-plugin-common/plugins/CommonPlugin/Autoloader.php';
 
 class phplistPlugin
@@ -28,7 +35,15 @@ class phplistPlugin
     }
 }
 
-function s() {};
+function s($text)
+{
+    if (func_num_args() > 1) {
+        $args = func_get_args();
+        array_shift($args);
+        $text = vsprintf($text, $args);
+    }
+    return $text;
+}
 
 function cleanUrl($p)
 {
@@ -46,7 +61,32 @@ function getConfig($key) {
         case 'viewbrowser_link':
             return 'View in your browser';
             break;
+        case 'viewbrowser_attributes':
+            return '';
+            break;
+        case 'html_email_style':
+            return '<style></style>';
+            break;
+        case 'subscribeurl':
+            return '';
+            break;
+        case 'unsubscribeurl':
+            return '';
+            break;
+        case 'preferencesurl':
+            return '';
+            break;
+        case 'forwardurl':
+            return '';
+            break;
+        case 'confirmationurl':
+            return '';
+            break;
+        case 'blacklisturl':
+            return '';
+            break;
         default:
+            throw new Exception("config $key missing");
     }
 };
 function parsePlaceHolders($content, $array = array())
