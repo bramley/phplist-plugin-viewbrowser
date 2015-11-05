@@ -3,6 +3,7 @@
 namespace phpList\plugin\ViewBrowserPlugin;
 
 use phpList\plugin\Common;
+use Iterator;
 
 /**
  * ViewBrowserPlugin for phplist
