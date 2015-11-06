@@ -6,7 +6,7 @@ use phpList\plugin\Common;
 use Iterator;
 
 /**
- * ViewBrowserPlugin for phplist
+ * ViewBrowserPlugin for phplist.
  * 
  * This file is a part of ViewBrowserPlugin.
  *
@@ -20,51 +20,50 @@ use Iterator;
  * GNU General Public License for more details.
  * 
  * @category  phplist
- * @package   ViewBrowserPlugin
+ *
  * @author    Duncan Cameron
  * @copyright 2015 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
 /**
- * Class to create the content of a campaign email
- * 
+ * Class to create the content of a campaign email.
  */
 class ContentCreator
 {
     /**
-     * The phplist root url
+     * The phplist root url.
      *
-     * @access private
      * @var string
      */
     private $rootUrl;
 
     /**
-     * Convert file size to appropriate unit
+     * Convert file size to appropriate unit.
      *
-     * @access  private
-     * @param   integer $bytes attachments
-     * @param   integer $decimals the number of decimal places to display
-     * @return  string  file size in appropriate units
+     * @param int $bytes    attachments
+     * @param int $decimals the number of decimal places to display
+     *
+     * @return string file size in appropriate units
      */
     private function human_filesize($bytes, $decimals = 1)
     {
         $size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
         $factor = min(floor((strlen($bytes) - 1) / 3), count($size));
+
         return sprintf("%.{$decimals}f", $bytes / pow(1000, $factor)) . $size[$factor];
     }
 
     /**
-     * Generate html to display each attachment with its download link
+     * Generate html to display each attachment with its download link.
      *
-     * @access  private
-     * @param   Iterator  $attachments attachments
-     * @return  string  the html
+     * @param Iterator $attachments attachments
+     *
+     * @return string the html
      */
     private function addAttachments(Iterator $attachments)
     {
-        $html = "<p>Attachments:<br/>";
+        $html = '<p>Attachments:<br/>';
 
         foreach ($attachments as $a) {
             $description = htmlspecialchars($a['description']);
@@ -78,17 +77,18 @@ $size<br/>
 END;
         }
         $html .= '</p>';
+
         return $html;
     }
 
     /**
      * Replace the signature placeholder within the content
-     * If there isn't a placeholder then the signature is added to the end of the content
+     * If there isn't a placeholder then the signature is added to the end of the content.
      *
-     * @access  private
-     * @param   string  $content the current content that might contain a placeholder
-     * @param   string  $signature  the replacement value
-     * @return  string  the new content 
+     * @param string $content   the current content that might contain a placeholder
+     * @param string $signature the replacement value
+     *
+     * @return string the new content 
      */
     private function replaceSignature($content, $signature)
     {
@@ -97,17 +97,18 @@ END;
         if ($count == 0 && $signature) {
             $content = addHTMLFooter($content, $signature);
         }
+
         return $content;
     }
 
     /**
      * Replace the footer placeholder within the content
-     * If there isn't a placeholder then the footer is added to the end of the content
+     * If there isn't a placeholder then the footer is added to the end of the content.
      *
-     * @access  private
-     * @param   string  $content the current content that might contain a placeholder
-     * @param   string  $footer  the replacement value
-     * @return  string  the new content 
+     * @param string $content the current content that might contain a placeholder
+     * @param string $footer  the replacement value
+     *
+     * @return string the new content 
      */
     private function replaceFooter($content, $footer)
     {
@@ -116,19 +117,20 @@ END;
         if ($count == 0 && $footer) {
             $content = addHTMLFooter($content, '<br />' . $footer);
         }
+
         return $content;
     }
 
     /**
      * Replace the usertrack placeholder within the content by a tracking image
      * If there isn't a placeholder and usertracking should always be added then the
-     * image is added to the end of the content
+     * image is added to the end of the content.
      *
-     * @access  private
-     * @param   string  $content the current content that might contain a placeholder
-     * @param   integer $mid  the message id
-     * @param   integer $uid  the user unique id
-     * @return  string  the new content 
+     * @param string $content the current content that might contain a placeholder
+     * @param int    $mid     the message id
+     * @param int    $uid     the user unique id
+     *
+     * @return string the new content 
      */
     private function replaceUserTrack($content, $mid, $uid)
     {
@@ -146,18 +148,19 @@ END;
         } else {
             $content = str_ireplace('[USERTRACK]', '', $content);
         }
+
         return $content;
     }
 
     /**
      * Collect values for system placeholders that might need to be replaced
-     * Most of the placeholder values are copied from sendemaillib.php
+     * Most of the placeholder values are copied from sendemaillib.php.
      *
-     * @access  private
-     * @param   integer $uid  the user unique id
-     * @param   string  $email the email address
-     * @param   array   $message  message fields
-     * @return  array   placeholders and values
+     * @param int    $uid     the user unique id
+     * @param string $email   the email address
+     * @param array  $message message fields
+     *
+     * @return array placeholders and values
      */
     private function systemPlaceholders($uid, $email, $message)
     {
@@ -165,28 +168,28 @@ END;
 
         $messageid = $message['id'];
         $p = array();
-        $url = getConfig("unsubscribeurl");
-        $sep = strpos($url, '?') === false ? '?':'&';
+        $url = getConfig('unsubscribeurl');
+        $sep = strpos($url, '?') === false ? '?' : '&';
 
-        $p["unsubscribeurl"] = sprintf('%s%suid=%s',$url, htmlspecialchars($sep), $uid);
-        $p["unsubscribe"] = sprintf('<a href="%s">%s</a>' ,$p["unsubscribeurl"], $strUnsubscribe);
+        $p['unsubscribeurl'] = sprintf('%s%suid=%s', $url, htmlspecialchars($sep), $uid);
+        $p['unsubscribe'] = sprintf('<a href="%s">%s</a>', $p['unsubscribeurl'], $strUnsubscribe);
 
-        $url = getConfig("blacklisturl");
-        $sep = strpos($url, '?') === false ? '?':'&';
-        $p["blacklisturl"] = sprintf('%s%semail=%s',$url,htmlspecialchars($sep),$email);
-        $p["blacklist"] = sprintf('<a href="%s">%s</a>', $p["blacklisturl"], $strUnsubscribe);
+        $url = getConfig('blacklisturl');
+        $sep = strpos($url, '?') === false ? '?' : '&';
+        $p['blacklisturl'] = sprintf('%s%semail=%s', $url, htmlspecialchars($sep), $email);
+        $p['blacklist'] = sprintf('<a href="%s">%s</a>', $p['blacklisturl'], $strUnsubscribe);
 
-        $url = getConfig("subscribeurl");
-        $p["subscribeurl"] = $url;
-        $p["subscribe"] = sprintf('<a href="%s">%s</a>', $url, $strThisLink);
+        $url = getConfig('subscribeurl');
+        $p['subscribeurl'] = $url;
+        $p['subscribe'] = sprintf('<a href="%s">%s</a>', $url, $strThisLink);
 
-        $url = getConfig("forwardurl");
-        $sep = strpos($url, '?') === false ? '?':'&';
-        $p["forwardurl"] = sprintf('%s%suid=%s&amp;mid=%d', $url, htmlspecialchars($sep), $uid, $messageid);
-        $p["forward"] = sprintf('<a href="%s">%s</a>', $p["forwardurl"], $strThisLink);
+        $url = getConfig('forwardurl');
+        $sep = strpos($url, '?') === false ? '?' : '&';
+        $p['forwardurl'] = sprintf('%s%suid=%s&amp;mid=%d', $url, htmlspecialchars($sep), $uid, $messageid);
+        $p['forward'] = sprintf('<a href="%s">%s</a>', $p['forwardurl'], $strThisLink);
 
-        $url = getConfig("forwardurl");
-        $p["forwardform"] = sprintf(
+        $url = getConfig('forwardurl');
+        $p['forwardform'] = sprintf(
             '<form method="get" action="%s" name="forwardform" class="forwardform">
                 <input type="hidden" name="uid" value="%s" />
                 <input type="hidden" name="mid" value="%d" />
@@ -197,45 +200,44 @@ END;
             $url, $uid, $messageid, $strForward
         );
 
-        $url = getConfig("preferencesurl");
-        $sep = strpos($url,'?') === false ? '?':'&';
-        $p["preferencesurl"] = sprintf('%s%suid=%s',$url,htmlspecialchars($sep),$uid);
-        $p["preferences"] = sprintf('<a href="%s">%s</a>', $p["preferencesurl"], $strThisLink);
+        $url = getConfig('preferencesurl');
+        $sep = strpos($url, '?') === false ? '?' : '&';
+        $p['preferencesurl'] = sprintf('%s%suid=%s', $url, htmlspecialchars($sep), $uid);
+        $p['preferences'] = sprintf('<a href="%s">%s</a>', $p['preferencesurl'], $strThisLink);
 
-        $url = getConfig("confirmationurl");
-        $sep = strpos($url,'?') === false ? '?':'&';
-        $p["confirmationurl"] = sprintf('%s%suid=%s', $url, htmlspecialchars($sep), $uid);
+        $url = getConfig('confirmationurl');
+        $sep = strpos($url, '?') === false ? '?' : '&';
+        $p['confirmationurl'] = sprintf('%s%suid=%s', $url, htmlspecialchars($sep), $uid);
 
-        $p["messageid"] = $messageid;
+        $p['messageid'] = $messageid;
         $p['website'] = $website;
         $p['domain'] = $domain;
         $p['subject'] = $message['subject'];
         $p['fromemail'] = $message['fromemail'];
+
         return $p;
     }
 
     /**
-     * Constructor
-     *
-     * @access  public
+     * Constructor.
      */
     public function __construct(DAO $dao = null, Common\DAO\Attribute $daoAttr = null)
     {
         global $public_scheme, $pageroot;
 
-        $this->dao = $dao ?: new DAO(new Common\DB);
-        $this->daoAttr = $daoAttr ?: new Common\DAO\Attribute(new Common\DB);
+        $this->dao = $dao ?: new DAO(new Common\DB());
+        $this->daoAttr = $daoAttr ?: new Common\DAO\Attribute(new Common\DB());
         $this->rootUrl = sprintf('%s://%s%s/', $public_scheme, getConfig('website'), $pageroot);
     }
 
     /**
-     * Generate the html content of the email customised for the user
+     * Generate the html content of the email customised for the user.
      *
-     * @access  public
-     * @param   integer $mid  the message id
-     * @param   integer $uid  the user unique id
-     * @param   Closure $contentProvider function to provide the message content
-     * @return  string  the generated html
+     * @param int     $mid             the message id
+     * @param int     $uid             the user unique id
+     * @param Closure $contentProvider function to provide the message content
+     *
+     * @return string the generated html
      */
     public function createContent($mid, $uid, \Closure $contentProvider = null)
     {
@@ -288,7 +290,7 @@ END;
                 if ($templateBody) {
                     $content = str_ireplace('[CONTENT]', $content, $templateBody);
                 } else {
-                    $styles = trim(getConfig("html_email_style"));
+                    $styles = trim(getConfig('html_email_style'));
                 }
             }
         }
@@ -319,6 +321,7 @@ END;
             $doc->addLinkTrack($mid, $user);
         }
         $doc->addTitle($message['subject'], $styles);
+
         return $doc->toHtml();
     }
 }

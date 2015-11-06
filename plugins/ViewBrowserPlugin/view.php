@@ -28,7 +28,7 @@ if (!(isset($plugins['CommonPlugin']))) {
 }
 error_reporting(-1);
 require 'admin/sendemaillib.php';
-$creator = new ContentCreator;
+$creator = new ContentCreator();
 
 ob_end_clean();
 header('Content-Type: text/html; charset=UTF-8');

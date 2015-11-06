@@ -6,7 +6,7 @@ use DomDocument;
 use XSLTProcessor;
 
 /**
- * ViewBrowserPlugin for phplist
+ * ViewBrowserPlugin for phplist.
  * 
  * This file is a part of ViewBrowserPlugin.
  *
@@ -20,15 +20,14 @@ use XSLTProcessor;
  * GNU General Public License for more details.
  * 
  * @category  phplist
- * @package   ViewBrowserPlugin
+ *
  * @author    Duncan Cameron
  * @copyright 2015 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
 /**
- * Class to manipulate the content as an HTML DOM document
- * 
+ * Class to manipulate the content as an HTML DOM document.
  */
 class ContentDocument
 {
@@ -42,12 +41,12 @@ class ContentDocument
         $this->dao = $dao;
         $this->rootUrl = $rootUrl;
         libxml_use_internal_errors(true);
-        $this->dom = new DOMDocument;
+        $this->dom = new DOMDocument();
         $this->dom->encoding = 'UTF-8';
         $this->dom->loadHTML('<?xml encoding="utf-8" ?>' . $content);
         $this->docType = $this->dom->doctype;
     }
-    
+
     public function addTemplateImages($messageId, $templateId)
     {
         foreach ($this->dom->getElementsByTagName('img') as $element) {
@@ -76,7 +75,7 @@ class ContentDocument
             $href = $node->getAttribute('href');
 
             if (stripos($text, 'http') === 0 || stripos($href, 'www.phplist.com') !== false
-                || stripos($href, $linkTrackUrl) !== false ) {
+                || stripos($href, $linkTrackUrl) !== false) {
                 continue;
             }
 
@@ -119,17 +118,18 @@ class ContentDocument
 
 </xsl:stylesheet>
 END;
-        $xsl = new DOMDocument;
+        $xsl = new DOMDocument();
         $xsl->loadXML($ss);
-        $proc = new XSLTProcessor;
+        $proc = new XSLTProcessor();
         $proc->importStylesheet($xsl);
+
         return $proc->transformToXML($this->dom);
     }
 
     public function addTitle($title, $styles)
     {
         $title = htmlspecialchars($title);
-        $xsl = new DOMDocument;
+        $xsl = new DOMDocument();
         $ss = <<<END
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="html" indent="yes" encoding="UTF-8"/>
@@ -167,7 +167,7 @@ END;
 </xsl:stylesheet>
 END;
         $xsl->loadXML($ss);
-        $proc = new XSLTProcessor;
+        $proc = new XSLTProcessor();
         $proc->importStylesheet($xsl);
         $this->dom = $proc->transformToDoc($this->dom);
     }

@@ -1,6 +1,7 @@
 <?php
+
 ob_start();
-$er = error_reporting(-1); 
+$er = error_reporting(-1);
 require_once dirname(__FILE__) .'/admin/commonlib/lib/unregister_globals.php';
 require_once dirname(__FILE__) .'/admin/commonlib/lib/magic_quotes.php';
 
@@ -10,34 +11,34 @@ $_POST = removeXss($_POST);
 $_REQUEST = removeXss($_REQUEST);
 $_COOKIE = removeXss($_COOKIE);
 
-if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
-  include $_SERVER["ConfigFile"];
-} elseif (is_file("config/config.php")) {
-  include 'config/config.php';
+if (isset($_SERVER['ConfigFile']) && is_file($_SERVER['ConfigFile'])) {
+    include $_SERVER['ConfigFile'];
+} elseif (is_file('config/config.php')) {
+    include 'config/config.php';
 } else {
-  print "Error, cannot find config file\n";
-  exit;
+    print "Error, cannot find config file\n";
+    exit;
 }
 
 require_once dirname(__FILE__).'/admin/init.php';
 
-$GLOBALS["database_module"] = basename($GLOBALS["database_module"]);
-$GLOBALS["language_module"] = basename($GLOBALS["language_module"]);
+$GLOBALS['database_module'] = basename($GLOBALS['database_module']);
+$GLOBALS['language_module'] = basename($GLOBALS['language_module']);
 
-require_once dirname(__FILE__).'/admin/'.$GLOBALS["database_module"];
+require_once dirname(__FILE__).'/admin/'.$GLOBALS['database_module'];
 
 # load default english and language
-include_once dirname(__FILE__)."/texts/english.inc";
+include_once dirname(__FILE__).'/texts/english.inc';
 # Allow customisation per installation
-if (is_file($_SERVER['DOCUMENT_ROOT'].'/'.$GLOBALS["language_module"])) {
-  include_once $_SERVER['DOCUMENT_ROOT'].'/'.$GLOBALS["language_module"];
+if (is_file($_SERVER['DOCUMENT_ROOT'].'/'.$GLOBALS['language_module'])) {
+    include_once $_SERVER['DOCUMENT_ROOT'].'/'.$GLOBALS['language_module'];
 }
 
-include_once dirname(__FILE__)."/admin/languages.php";
-require_once dirname(__FILE__)."/admin/defaultconfig.php";
+include_once dirname(__FILE__).'/admin/languages.php';
+require_once dirname(__FILE__).'/admin/defaultconfig.php';
 require_once dirname(__FILE__).'/admin/connect.php';
-include_once dirname(__FILE__)."/admin/lib.php";
-include_once dirname(__FILE__)."/admin/sendemaillib.php";
+include_once dirname(__FILE__).'/admin/lib.php';
+include_once dirname(__FILE__).'/admin/sendemaillib.php';
 
 if (!extension_loaded('xsl')) {
     echo s('The xsl extension must be installed');
@@ -66,7 +67,7 @@ if (!(isset($plugins['CommonPlugin']))) {
 
 error_reporting(-1);
 require_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
-$creator = new phpList\plugin\ViewBrowserPlugin\ContentCreator;
+$creator = new phpList\plugin\ViewBrowserPlugin\ContentCreator();
 
 ob_end_clean();
 header('Content-Type: text/html; charset=UTF-8');

@@ -5,7 +5,7 @@ namespace phpList\plugin\ViewBrowserPlugin;
 use phpList\plugin\Common;
 
 /**
- * ViewBrowserPlugin for phplist
+ * ViewBrowserPlugin for phplist.
  * 
  * This file is a part of ViewBrowserPlugin.
  *
@@ -19,22 +19,21 @@ use phpList\plugin\Common;
  * GNU General Public License for more details.
  * 
  * @category  phplist
- * @package   ViewBrowserPlugin
+ *
  * @author    Duncan Cameron
  * @copyright 2014 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
 /**
- * DAO class providing access to the message table
- * 
+ * DAO class providing access to the message table.
  */
 class DAO extends Common\DAO\User
 {
     public function forwardId($url)
     {
         $url = sql_escape($url);
-        $sql = 
+        $sql =
             "SELECT id
             FROM {$this->tables['linktrack_forward']} AS ltf
             WHERE ltf.url = '$url'";
