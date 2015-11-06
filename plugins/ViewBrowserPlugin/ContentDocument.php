@@ -164,6 +164,10 @@ END;
     <xsl:template match="head/title">
         <title>$title</title>
     </xsl:template>
+
+    <!-- match elements to be removed  -->
+    <xsl:template match="*[@class='viewbrowser']">
+    </xsl:template>
 </xsl:stylesheet>
 END;
         $xsl->loadXML($ss);
