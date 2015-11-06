@@ -13,7 +13,6 @@ define('XORmask', '6f409c5681427eeaaaaa495797642e4b');
 $GLOBALS['systemroot'] = '/home/duncan/Development/GitHub/phplist3/public_html/lists';
 $GLOBALS['public_scheme'] = 'http';
 $GLOBALS['pageroot'] = '/lists';
-$GLOBALS['plugins'] = [];
 $GLOBALS['website'] = 'mysite.com';
 $GLOBALS['domain'] = 'mysite.com';
 $GLOBALS['strUnsubscribe'] = 'unsubscribe';
@@ -22,6 +21,13 @@ $GLOBALS['strForward'] = 'Forward to a friend';
 $GLOBALS['PoweredByText'] = 'Powered by phplist';
 $GLOBALS['PoweredByImage'] = 'mysite.com';
 
+include '/home/duncan/Development/GitHub/phplist-plugin-viewbrowser/plugins/ViewBrowserPlugin.php';
+$pi = new ViewBrowserPlugin();
+$pi->activate();
+
+$GLOBALS['plugins'] = [
+    'ViewBrowserPlugin' => $pi,
+];
 include '/home/duncan/Development/GitHub/phplist-plugin-common/plugins/CommonPlugin/Autoloader.php';
 
 class phplistPlugin
@@ -31,6 +37,10 @@ class phplistPlugin
     }
 
     public function activate()
+    {
+    }
+
+    public function setFinalDestinationEmail()
     {
     }
 }

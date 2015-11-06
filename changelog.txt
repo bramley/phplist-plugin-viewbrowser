@@ -1,3 +1,14 @@
+version 2.3.0+20151106
+      Initial unit tests and refactoring
+      Use correct class
+      Correct html for attachments
+      Add further tests
+      Correct namespaced class name
+      changes by Coding Standards Fixer
+      Added class map
+      Remove elements in specific class, fixes #10
+      Restructured tests
+
 version 2.2.0+20151018
       Use namespaced classes
 
