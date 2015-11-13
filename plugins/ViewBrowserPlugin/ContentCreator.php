@@ -219,6 +219,21 @@ END;
     }
 
     /**
+     * Determines the plugins whose methods should be called when creating the email.
+     * Selects those plugins that are named in the config entry.
+     *
+     * @return array
+     */
+    private function pluginsToCall()
+    {
+        global $plugins;
+
+        $selectedPlugins = array_flip(preg_split("/[\r\n]+/", getConfig('viewbrowser_plugins')));
+
+        return array_intersect_key($plugins, $selectedPlugins);
+    }
+
+    /**
      * Constructor.
      */
     public function __construct(DAO $dao = null, Common\DAO\Attribute $daoAttr = null)
@@ -241,7 +256,7 @@ END;
      */
     public function createContent($mid, $uid, \Closure $contentProvider = null)
     {
-        global $PoweredByText, $PoweredByImage, $plugins;
+        global $PoweredByText, $PoweredByImage, $MD;
 
         $row = $this->dao->message($mid);
 
@@ -266,6 +281,7 @@ END;
             }
         }
 
+        $callPlugins = $this->pluginsToCall();
         $message = $this->dao->loadMessageData($mid);
         $styles = '';
         $templateBody = $row['template'];
@@ -274,26 +290,27 @@ END;
             $templateBody = stripslashes($templateBody);
         }
 
-        if ($contentProvider) {
-            $content = $contentProvider($templateBody, $message);
-            $content = str_ireplace('[CONTENT]', $message['message'], $content);
+        if ($message['sendmethod'] == 'remoteurl') {
+            $content = $this->dao->fetchUrl($message['sendurl'], $user);
+
+            if (!$content) {
+                return s('Unable to retrieve URL %s', $message['sendurl']);
+            }
         } else {
-            if ($message['sendmethod'] == 'remoteurl') {
-                $content = $this->dao->fetchUrl($message['sendurl'], $user);
-
-                if (!$content) {
-                    return s('Unable to retrieve URL %s', $message['sendurl']);
-                }
-            } else {
-                $content = $message['message'];
-
-                if ($templateBody) {
-                    $content = str_ireplace('[CONTENT]', $content, $templateBody);
-                } else {
-                    $styles = trim(getConfig('html_email_style'));
+            foreach ($callPlugins as $plugin) {
+                if (method_exists($plugin, 'viewBrowserHook')) {
+                    $plugin->viewBrowserHook($templateBody, $message);
                 }
             }
+            $content = $message['message'];
+
+            if ($templateBody) {
+                $content = str_ireplace('[CONTENT]', $content, $templateBody);
+            } else {
+                $styles = trim(getConfig('html_email_style'));
+            }
         }
+
         $content = $this->replaceFooter($content, $message['footer']);
         $content = $this->replaceSignature($content, EMAILTEXTCREDITS ? $PoweredByText : $PoweredByImage);
 
@@ -307,15 +324,18 @@ END;
         }
         $destinationEmail = $user['email'];
 
-        foreach ($plugins as $plugin) {
+        foreach ($callPlugins as $plugin) {
             $destinationEmail = $plugin->setFinalDestinationEmail($mid, $attributeValues, $destinationEmail);
         }
 
-        foreach ($plugins as $plugin) {
+        foreach ($callPlugins as $plugin) {
             $content = $plugin->parseOutgoingHTMLMessage($mid, $content, $destinationEmail, $user);
         }
         $doc = new ContentDocument($content, $this->dao, $this->rootUrl);
-        $doc->addTemplateImages($mid, $message['template']);
+
+        if ($message['template'] != 0) {
+            $doc->addTemplateImages($mid, $message['template']);
+        }
 
         if (CLICKTRACK && $personalise) {
             $doc->addLinkTrack($mid, $user);

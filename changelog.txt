@@ -1,3 +1,7 @@
+version 2.4.0+20151119
+      Add config item of plugins to be called
+      Allow plugins to modify template and message using hook method
+
 version 2.3.0+20151106
       Initial unit tests and refactoring
       Use correct class

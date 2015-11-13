@@ -74,6 +74,9 @@ function getConfig($key) {
         case 'viewbrowser_attributes':
             return '';
             break;
+        case 'viewbrowser_plugins':
+            return "ContentAreas\nconditionalPlaceholderPlugin\nRssFeedPlugin\nViewBrowserPlugin";
+            break;
         case 'html_email_style':
             return '<style></style>';
             break;

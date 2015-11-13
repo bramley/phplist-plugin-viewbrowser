@@ -101,9 +101,6 @@ class ViewBrowserPlugin extends phplistPlugin
     public function __construct()
     {
         $this->coderoot = dirname(__FILE__) . '/' . self::PLUGIN . '/';
-        $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
-            ? file_get_contents($f)
-            : '';
         $this->settings = array(
             'viewbrowser_link' => array(
               'value' => s('View in browser'),
@@ -126,8 +123,18 @@ class ViewBrowserPlugin extends phplistPlugin
               'allowempty' => false,
               'category' => 'View in Browser',
             ),
+            'viewbrowser_plugins' => array(
+              'description' => s('Plugins to be used when creating the email. Usually leave this unchanged.'),
+              'type' => 'textarea',
+              'value' => "ContentAreas\nconditionalPlaceholderPlugin\nRssFeedPlugin\nViewBrowserPlugin",
+              'allowempty' => true,
+              'category' => 'View in Browser',
+            ),
         );
         parent::__construct();
+        $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
+            ? file_get_contents($f)
+            : '';
     }
 
     public function activate()
