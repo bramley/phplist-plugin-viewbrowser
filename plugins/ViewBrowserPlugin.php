@@ -89,6 +89,16 @@ class ViewBrowserPlugin extends phplistPlugin
             'Common Plugin v3.0.2 or later installed' => phpListPlugin::isEnabled('CommonPlugin')
                     && preg_match('/\d+\.\d+\.\d+/', $plugins['CommonPlugin']->version, $matches)
                     && version_compare($matches[0], '3.0.2') >= 0,
+            'RSS Feed plugin v2.2.0 or later installed' => (
+                phpListPlugin::isEnabled('RssFeedPlugin')
+                && version_compare($plugins['RssFeedPlugin']->version, '2.2.0') >= 0
+                || !phpListPlugin::isEnabled('RssFeedPlugin')
+            ),
+            'Content Areas plugin v1.4.0 or later installed' => (
+                phpListPlugin::isEnabled('ContentAreas')
+                && version_compare($plugins['ContentAreas']->version, '1.4.0') >= 0
+                || !phpListPlugin::isEnabled('ContentAreas')
+            ),
             'PHP version 5.3.0 or greater' => version_compare(PHP_VERSION, '5.3') > 0,
         );
     }
