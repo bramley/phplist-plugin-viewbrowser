@@ -1,3 +1,6 @@
+version 2.4.2+20151214
+      Support LOGO placeholder
+
 version 2.4.1+20151121
       Update dependencies
 

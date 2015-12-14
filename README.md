@@ -146,6 +146,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.4.2+20151214  Support LOGO placeholder
     2.4.1+20151121  Update dependencies
     2.4.0+20151119  Integration with other plugins
     2.3.0+20151106  Suppress VIEWBROWSER link

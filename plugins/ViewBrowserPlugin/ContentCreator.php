@@ -317,6 +317,7 @@ END;
         $content = parsePlaceHolders($content, $user);
         $content = parsePlaceHolders($content, $attributeValues);
         $content = parsePlaceHolders($content, $this->systemPlaceholders($uid, $user['email'], $message));
+        $content = parseLogoPlaceholders($content);
         $content = $this->replaceUserTrack($content, $mid, $uid);
 
         if (count($attachments = $this->dao->attachments($mid)) > 0) {
@@ -332,10 +333,7 @@ END;
             $content = $plugin->parseOutgoingHTMLMessage($mid, $content, $destinationEmail, $user);
         }
         $doc = new ContentDocument($content, $this->dao, $this->rootUrl);
-
-        if ($message['template'] != 0) {
-            $doc->addTemplateImages($mid, $message['template']);
-        }
+        $doc->addTemplateImages($mid, $message['template']);
 
         if (CLICKTRACK && $personalise) {
             $doc->addLinkTrack($mid, $user);
