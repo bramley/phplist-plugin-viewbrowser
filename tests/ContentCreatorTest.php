@@ -35,6 +35,17 @@ class ContentCreatorTest extends PHPUnit_Framework_TestCase
             0 => ['template' => ''],
             1 => ['template' => '<html><head></head><body>template body[CONTENT]</body></html>']
         ];
+
+        $this->templateImages = [
+            [
+                'id' => 99,
+                'template' => 0,
+                'templatefilename' => '0ORGANISATIONLOGO500.png',
+                'filename' => 'ORGANISATIONLOGO500.png',
+                'data' => 'xxxx'
+            ]
+        ];
+
         $this->messages = [
             25 => [
                 'message' => 'here is the message content email address is [email] name is [name%%default name] uniqid is [uniqid] more',
@@ -110,6 +121,26 @@ class ContentCreatorTest extends PHPUnit_Framework_TestCase
                 'sendmethod' => 'xxx',
                 'sendurl' => '',
             ],
+            31 => [
+                'message' => '<p>Here is the logo <img src="[LOGO]" /></p>here is the message content.',
+                'id' => 31,
+                'template' => 0,
+                'subject' => 'a message with logo but no template',
+                'footer' => '',
+                'fromemail' => 'from@email.com',
+                'sendmethod' => 'xxx',
+                'sendurl' => '',
+            ],
+            32 => [
+                'message' => '<p>Here is the logo <img src="[LOGO]" /></p>here is the message content.',
+                'id' => 32,
+                'template' => 1,
+                'subject' => 'a message with logo and a template',
+                'footer' => '',
+                'fromemail' => 'from@email.com',
+                'sendmethod' => 'xxx',
+                'sendurl' => '',
+            ],
             999 => false,
         ];
 
@@ -126,35 +157,74 @@ class ContentCreatorTest extends PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->daoStub->method('message')
-            ->will($this->returnCallback(function ($messageId) {
-                return isset($this->templates[$this->messages[$messageId]['template']])
-                ? $this->templates[$this->messages[$messageId]['template']]
-                : false;
-            }));
+            ->will(
+                $this->returnCallback(
+                    function ($messageId) {
+                        return isset($this->templates[$this->messages[$messageId]['template']])
+                            ? $this->templates[$this->messages[$messageId]['template']]
+                            : false;
+                    }
+                )
+            );
         $this->daoStub->method('userByUniqid')
-            ->will($this->returnCallback(function($uniqid) {
-                return $this->users[$uniqid];
-            }));
+            ->will(
+                $this->returnCallback(
+                    function($uniqid) {
+                        return $this->users[$uniqid];
+                    }
+                )
+            );
         $this->daoStub->method('forwardId')
-            ->will($this->returnCallback(function ($url) {
-                return $this->forwardIds[$url];
-            }));
+            ->will(
+                $this->returnCallback(
+                    function ($url) {
+                        return $this->forwardIds[$url];
+                    }
+                )
+            );
         $this->daoStub->method('getUserAttributeValues')
-            ->will($this->returnCallback(function ($email) {
-                return $this->usersattributes[$email];
-            }));
+            ->will(
+                $this->returnCallback(
+                    function ($email) {
+                        return $this->usersattributes[$email];
+                    }
+                )
+            );
         $this->daoStub->method('loadMessageData')
-            ->will($this->returnCallback(function ($messageId) {
-                return $this->messages[$messageId];
-            }));
+            ->will(
+                $this->returnCallback(
+                    function ($messageId) {
+                        return $this->messages[$messageId];
+                    }
+                )
+            );
         $this->daoStub->method('fetchUrl')
              ->willReturn('here is the remote content');
         $this->daoStub->method('attachments')
-            ->will($this->returnCallback(function ($messageId) {
-                return isset($this->attachments[$messageId])
-                ? new ArrayIterator($this->attachments[$messageId])
-                : [];
-            }));
+            ->will(
+                $this->returnCallback(
+                    function ($messageId) {
+                        return isset($this->attachments[$messageId])
+                            ? new ArrayIterator($this->attachments[$messageId])
+                            : [];
+                    }
+                )
+            );
+
+        $this->daoStub->method('templateImage')
+            ->will(
+                $this->returnCallback(
+                    function ($templateId, $filename) {
+                        $i = array_search("$templateId$filename", array_column($this->templateImages, 'templatefilename'));
+
+                        if ($i === false) {
+                            $i = array_search("0$filename", array_column($this->templateImages, 'templatefilename'));
+                        }
+
+                        return ($i !== false) ? $this->templateImages[$i] : false;
+                    }
+                )
+            );
 
         $this->daoAttrStub = $this->getMockBuilder('phpList\plugin\Common\DAO\Attribute')
             ->disableOriginalConstructor()
@@ -236,6 +306,18 @@ class ContentCreatorTest extends PHPUnit_Framework_TestCase
                 '2f93856905d26f592c7cfefbff599a0e',
                 ['More'],
                 ['View in your browser'],
+            ],
+            'replaces LOGO placeholder when there is no template' => [
+                31,
+                '2f93856905d26f592c7cfefbff599a0e',
+                ['pi=ViewBrowserPlugin&amp;p=image&amp;id=99'],
+                ['LOGO'],
+            ],
+            'replaces LOGO placeholder when there is a template' => [
+                32,
+                '2f93856905d26f592c7cfefbff599a0e',
+                ['pi=ViewBrowserPlugin&amp;p=image&amp;id=99'],
+                ['LOGO'],
             ],
         ];
     }

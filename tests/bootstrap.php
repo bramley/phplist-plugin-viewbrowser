@@ -136,3 +136,20 @@ function addHTMLFooter($message,$footer) {
   return $message;
 }
 
+function parseLogoPlaceholders($content) {
+    ## replace Logo placeholders
+    preg_match_all('/\[LOGO\:?(\d+)?\]/', $content, $logoInstances);
+    foreach ($logoInstances[0] as $index => $logoInstance) {
+        $size = sprintf('%d', $logoInstances[1][$index]);
+        if (!empty($size)) {
+            $logoSize = $size;
+        } else {
+            $logoSize = '500';
+        }
+        //~ createCachedLogoImage($logoSize);
+        $content = str_replace($logoInstance, 'ORGANISATIONLOGO'.$logoSize.'.png', $content);
+    }
+    return $content;
+}
+
+

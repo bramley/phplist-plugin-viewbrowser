@@ -54,13 +54,22 @@ class DAO extends Common\DAO\User
         return $this->dbCommand->queryRow($sql);
     }
 
+    /**
+     * Look up a template image by file name
+     * Include template 0 as it is used for logo images etc.
+     *
+     * @param int    $templateId the template id
+     * @param string $filename   the file name to look-up
+     *
+     * @return array|false
+     */
     public function templateImage($templateId, $filename)
     {
         $filename = sql_escape($filename);
         $sql =
             "SELECT id, data, mimetype, width, height
             FROM {$this->tables['templateimage']}
-            WHERE template = $templateId AND filename = '$filename'";
+            WHERE (template = $templateId OR template = 0) AND filename = '$filename'";
 
         return $this->dbCommand->queryRow($sql);
     }

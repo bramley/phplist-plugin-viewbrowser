@@ -1,3 +1,6 @@
+version 2.4.3+20151215
+      Correct template image query and add unit tests for logo image
+
 version 2.4.2+20151214
       Support LOGO placeholder
 
