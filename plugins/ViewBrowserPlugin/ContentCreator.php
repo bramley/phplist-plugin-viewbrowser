@@ -317,7 +317,10 @@ END;
         $content = parsePlaceHolders($content, $user);
         $content = parsePlaceHolders($content, $attributeValues);
         $content = parsePlaceHolders($content, $this->systemPlaceholders($uid, $user['email'], $message));
-        $content = parseLogoPlaceholders($content);
+
+        if (version_compare(getConfig('version'), \ViewBrowserPlugin::LOGO_VERSION) >= 0) {
+            $content = parseLogoPlaceholders($content);
+        }
         $content = $this->replaceUserTrack($content, $mid, $uid);
 
         if (count($attachments = $this->dao->attachments($mid)) > 0) {

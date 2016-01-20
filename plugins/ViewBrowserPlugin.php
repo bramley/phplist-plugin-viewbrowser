@@ -31,6 +31,7 @@ class ViewBrowserPlugin extends phplistPlugin
     const IMAGE_PAGE = 'image';
     const VIEW_FILE = 'view.php';
     const PUBLIC_PAGE_VERSION = '3.0.7';
+    const LOGO_VERSION = '3.2.2';
 
     /*
      *  Private variables

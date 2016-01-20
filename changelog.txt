@@ -1,3 +1,6 @@
+version 2.4.4+20160120
+      Only replace logo for compatible phplist versions
+
 version 2.4.3+20151215
       Correct template image query and add unit tests for logo image
 

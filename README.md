@@ -146,6 +146,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.4.4+20160120  Replace LOGO only for compatible versions of phplist
     2.4.3+20151215  Correction for LOGO placeholder
     2.4.2+20151214  Support LOGO placeholder
     2.4.1+20151121  Update dependencies
