@@ -48,6 +48,7 @@ class ViewBrowserPlugin extends phplistPlugin
     public $enabled = 1;
     public $settings;
     public $publicPages = array(self::VIEW_PAGE, self::IMAGE_PAGE);
+    public $documentationUrl = 'https://resources.phplist.com/plugin/viewinbrowser';
 
     /*
      * Private functions
