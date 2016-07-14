@@ -1,3 +1,8 @@
+version 2.4.5+20160714
+      Add link to documentation
+      Convert text footer to html
+      Add test cases to test html/plain text footer
+
 version 2.4.4+20160120
       Only replace logo for compatible phplist versions
 

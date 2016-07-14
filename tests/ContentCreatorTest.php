@@ -141,6 +141,40 @@ class ContentCreatorTest extends PHPUnit_Framework_TestCase
                 'sendmethod' => 'xxx',
                 'sendurl' => '',
             ],
+            33 => [
+                'message' => 'here is the message content email address is [email] name is [name%%default name] uniqid is [uniqid] more',
+                'id' => 33,
+                'template' => 0,
+                'subject' => 'a test message',
+                'footer' =>
+'--
+If you do not want to receive any more newsletters,  [UNSUBSCRIBE]
+To update your preferences and to unsubscribe visit [PREFERENCES]
+Forward a Message to Someone [FORWARD]',
+                'fromemail' => 'from@email.com',
+                'sendmethod' => 'xxx',
+                'sendurl' => '',
+            ],
+            34 => [
+                'message' => 'here is the message content email address is [email] name is [name%%default name] uniqid is [uniqid] more',
+                'id' => 34,
+                'template' => 0,
+                'subject' => 'a test message',
+                'footer' =>
+'--
+  
+    <div class="footer" style="text-align:left; font-size: 75%;">
+      <p>This message was sent to [EMAIL] by [FROMEMAIL]</p>
+      <p>To forward this message, please do not use the forward button of your email application, because this message was made specifically for you only. Instead use the <a href="[FORWARDURL]">forward page</a> in our newsletter system.<br/>
+      To change your details and to choose which lists to be subscribed to, visit your personal <a href="[PREFERENCESURL]">preferences page</a><br/>
+      Or you can <a href="[UNSUBSCRIBEURL]">opt-out completely</a> from all future mailings.</p>
+    </div>
+
+  ',
+                'fromemail' => 'from@email.com',
+                'sendmethod' => 'xxx',
+                'sendurl' => '',
+            ],
             999 => false,
         ];
 
@@ -150,6 +184,10 @@ class ContentCreatorTest extends PHPUnit_Framework_TestCase
             './dl.php?id=13' => 103,
             'http://mysite.com/lists/?m=29&uid=2f93856905d26f592c7cfefbff599a0e&p=view&pi=ViewBrowserPlugin' => 104,
             'http://mysite.com/lists/?m=30&uid=2f93856905d26f592c7cfefbff599a0e&p=view&pi=ViewBrowserPlugin' => 105,
+            'http://mysite.com/lists/?p=unsubscribe&uid=2f93856905d26f592c7cfefbff599a0e' => 106,
+            'http://mysite.com/lists/?p=preferences&uid=2f93856905d26f592c7cfefbff599a0e' => 107,
+            'http://mysite.com/lists/?p=forward&uid=2f93856905d26f592c7cfefbff599a0e&mid=33' => 108,
+            'http://mysite.com/lists/?p=forward&uid=2f93856905d26f592c7cfefbff599a0e&mid=34' => 109,
         ];
 
         $this->daoStub = $this->getMockBuilder('phpList\plugin\ViewBrowserPlugin\DAO')
@@ -318,6 +356,19 @@ class ContentCreatorTest extends PHPUnit_Framework_TestCase
                 '2f93856905d26f592c7cfefbff599a0e',
                 ['pi=ViewBrowserPlugin&amp;p=image&amp;id=99'],
                 ['LOGO'],
+            ],
+            'converts text footer to html' => [
+                33,
+                '2f93856905d26f592c7cfefbff599a0e',
+                ["<br>\nIf you do not want to receive any more newsletters,"],
+            ],
+            'footer is html format' => [
+                34,
+                '2f93856905d26f592c7cfefbff599a0e',
+                [
+                    '<div class="footer" style="text-align:left; font-size: 75%;">',
+                    '<a href="http://mysite.com/lists/lt.php?id=fhoFAA4fBgJEBAU%3D">preferences page</a>',
+                ],
             ],
         ];
     }
