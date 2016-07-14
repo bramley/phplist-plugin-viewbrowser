@@ -102,7 +102,8 @@ END;
     }
 
     /**
-     * Replace the footer placeholder within the content
+     * Replace the footer placeholder within the content.
+     * Convert the footer to html if it is plain text.
      * If there isn't a placeholder then the footer is added to the end of the content.
      *
      * @param string $content the current content that might contain a placeholder
@@ -112,6 +113,9 @@ END;
      */
     private function replaceFooter($content, $footer)
     {
+        if ($footer === strip_tags($footer)) {
+            $footer = parseText($footer);
+        }
         $content = str_ireplace('[FOOTER]', $footer, $content, $count);
 
         if ($count == 0 && $footer) {
