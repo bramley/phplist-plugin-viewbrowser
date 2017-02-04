@@ -5,7 +5,7 @@ $er = error_reporting(-1);
 require_once dirname(__FILE__) .'/admin/commonlib/lib/unregister_globals.php';
 require_once dirname(__FILE__) .'/admin/commonlib/lib/magic_quotes.php';
 
-## none of our parameters can contain html for now
+//# none of our parameters can contain html for now
 $_GET = removeXss($_GET);
 $_POST = removeXss($_POST);
 $_REQUEST = removeXss($_REQUEST);
@@ -16,7 +16,7 @@ if (isset($_SERVER['ConfigFile']) && is_file($_SERVER['ConfigFile'])) {
 } elseif (is_file('config/config.php')) {
     include 'config/config.php';
 } else {
-    print "Error, cannot find config file\n";
+    echo "Error, cannot find config file\n";
     exit;
 }
 
@@ -27,9 +27,9 @@ $GLOBALS['language_module'] = basename($GLOBALS['language_module']);
 
 require_once dirname(__FILE__).'/admin/'.$GLOBALS['database_module'];
 
-# load default english and language
+// load default english and language
 include_once dirname(__FILE__).'/texts/english.inc';
-# Allow customisation per installation
+// Allow customisation per installation
 if (is_file($_SERVER['DOCUMENT_ROOT'].'/'.$GLOBALS['language_module'])) {
     include_once $_SERVER['DOCUMENT_ROOT'].'/'.$GLOBALS['language_module'];
 }

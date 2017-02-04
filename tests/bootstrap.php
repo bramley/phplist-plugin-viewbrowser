@@ -9,6 +9,9 @@ define('EMAILTEXTCREDITS', true);
 define('ALWAYS_ADD_USERTRACK', true);
 define('CLICKTRACK', true);
 define('XORmask', '6f409c5681427eeaaaaa495797642e4b');
+define('SIGN_WITH_HMAC', true);
+define('HMACKEY', '1234567890123456');
+define('HASH_ALGO', 'sha256');
 
 $GLOBALS['systemroot'] = '/home/duncan/Development/GitHub/phplist3/public_html/lists';
 $GLOBALS['public_scheme'] = 'http';
@@ -66,7 +69,7 @@ function cleanUrl($p)
 function getConfig($key) {
     switch ($key) {
         case 'version':
-            return '3.5.2';
+            return '3.3.0';
             break;
         case 'website':
             return 'mysite.com';

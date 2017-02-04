@@ -5,8 +5,13 @@ class ContentCreatorTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->users = [
-            '2f93856905d26f592c7cfefbff599a0e' => ['id' => 51, 'email' => 'aaa@bbb.com', 'uniqid' => '2f93856905d26f592c7cfefbff599a0e'],
-            '' => ['id' => '', 'email' => 'no email', 'uniqid' => ''],
+            '2f93856905d26f592c7cfefbff599a0e' => [
+                'id' => 51,
+                'email' => 'aaa@bbb.com',
+                'uniqid' => '2f93856905d26f592c7cfefbff599a0e',
+                'uuid' => 'e446db8d-7bb0-4811-a054-d2951bf4176d'
+            ],
+            '' => ['id' => '', 'email' => 'no email', 'uniqid' => '', 'uuid' => ''],
         ];
 
         $this->usersattributes = [
@@ -56,6 +61,7 @@ class ContentCreatorTest extends PHPUnit_Framework_TestCase
                 'fromemail' => 'from@email.com',
                 'sendmethod' => 'xxx',
                 'sendurl' => '',
+                'uuid' => '5a4d86ce-986d-4c00-a44f-3c8fa717759e',
             ],
             26 => [
                 'message' => 
@@ -73,6 +79,7 @@ class ContentCreatorTest extends PHPUnit_Framework_TestCase
                 'fromemail' => 'from@email.com',
                 'sendmethod' => 'xxx',
                 'sendurl' => '',
+                'uuid' => '2f404bcc-e060-4675-8d50-96b329962f92',
             ],
             27 => [
                 'message' => 
@@ -90,6 +97,7 @@ class ContentCreatorTest extends PHPUnit_Framework_TestCase
                 'fromemail' => 'from@email.com',
                 'sendmethod' => 'xxx',
                 'sendurl' => '',
+                'uuid' => '1f813f71-56fc-4d9a-a1c4-74845523547b',
             ],
             28 => [
                 'message' => 'here is the message content email address is [email] name is [name%%default name] uniqid is [uniqid] more',
@@ -100,6 +108,7 @@ class ContentCreatorTest extends PHPUnit_Framework_TestCase
                 'fromemail' => 'from@email.com',
                 'sendmethod' => 'xxx',
                 'sendurl' => '',
+                'uuid' => '12a78839-e6af-4f44-8a6b-6a02a51796b2',
             ],
             29 => [
                 'message' => '<div>not displaying properly? Then [VIEWBROWSER].</div>',
@@ -110,6 +119,7 @@ class ContentCreatorTest extends PHPUnit_Framework_TestCase
                 'fromemail' => 'from@email.com',
                 'sendmethod' => 'xxx',
                 'sendurl' => '',
+                'uuid' => '81b6adf0-1b00-4b55-8db1-ad0c1d41430c',
             ],
             30 => [
                 'message' => '<div class="viewbrowser">not displaying properly? Then [VIEWBROWSER].</div>More',
@@ -120,6 +130,7 @@ class ContentCreatorTest extends PHPUnit_Framework_TestCase
                 'fromemail' => 'from@email.com',
                 'sendmethod' => 'xxx',
                 'sendurl' => '',
+                'uuid' => 'fe1cf2e3-18a8-42bf-a840-957274bb6421',
             ],
             31 => [
                 'message' => '<p>Here is the logo <img src="[LOGO]" /></p>here is the message content.',
@@ -130,6 +141,7 @@ class ContentCreatorTest extends PHPUnit_Framework_TestCase
                 'fromemail' => 'from@email.com',
                 'sendmethod' => 'xxx',
                 'sendurl' => '',
+                'uuid' => '4fb7dc30-959b-427d-beaf-1040d09fda8a',
             ],
             32 => [
                 'message' => '<p>Here is the logo <img src="[LOGO]" /></p>here is the message content.',
@@ -140,6 +152,7 @@ class ContentCreatorTest extends PHPUnit_Framework_TestCase
                 'fromemail' => 'from@email.com',
                 'sendmethod' => 'xxx',
                 'sendurl' => '',
+                'uuid' => '1bfde45d-3b12-4a7b-849a-35a47276d902',
             ],
             33 => [
                 'message' => 'here is the message content email address is [email] name is [name%%default name] uniqid is [uniqid] more',
@@ -154,6 +167,7 @@ Forward a Message to Someone [FORWARD]',
                 'fromemail' => 'from@email.com',
                 'sendmethod' => 'xxx',
                 'sendurl' => '',
+                'uuid' => 'bee49a0b-853c-4332-a252-553b3a6ef5ae',
             ],
             34 => [
                 'message' => 'here is the message content email address is [email] name is [name%%default name] uniqid is [uniqid] more',
@@ -174,6 +188,7 @@ Forward a Message to Someone [FORWARD]',
                 'fromemail' => 'from@email.com',
                 'sendmethod' => 'xxx',
                 'sendurl' => '',
+                'uuid' => 'ad51c93a-f6e6-4a68-aae0-d962e7c0fcb2',
             ],
             999 => false,
         ];
@@ -188,6 +203,18 @@ Forward a Message to Someone [FORWARD]',
             'http://mysite.com/lists/?p=preferences&uid=2f93856905d26f592c7cfefbff599a0e' => 107,
             'http://mysite.com/lists/?p=forward&uid=2f93856905d26f592c7cfefbff599a0e&mid=33' => 108,
             'http://mysite.com/lists/?p=forward&uid=2f93856905d26f592c7cfefbff599a0e&mid=34' => 109,
+        ];
+
+        $this->forwardUuids = [
+            'http://www.bbc.co.uk' => 'a207d056-4982-4ecc-becf-b92220d6dd9f',
+            './dl.php?id=12' => '1444708a-62f0-44af-8ca6-7adbe9cd02bf',
+            './dl.php?id=13' => 'b5624bfd-f972-4cbe-8c52-d74cb12ea953',
+            'http://mysite.com/lists/?m=29&uid=2f93856905d26f592c7cfefbff599a0e&p=view&pi=ViewBrowserPlugin' => '2df41324-aa19-4619-aa8a-1db5a5c02c7f',
+            'http://mysite.com/lists/?m=30&uid=2f93856905d26f592c7cfefbff599a0e&p=view&pi=ViewBrowserPlugin' => '010287e5-c201-4d74-93d8-0e5ec6eaa68d',
+            'http://mysite.com/lists/?p=unsubscribe&uid=2f93856905d26f592c7cfefbff599a0e' => '717c417c-934d-40c1-8739-33fe34c62fb9',
+            'http://mysite.com/lists/?p=preferences&uid=2f93856905d26f592c7cfefbff599a0e' => '9d7c0c8c-1dc1-4597-899b-215c3951e756',
+            'http://mysite.com/lists/?p=forward&uid=2f93856905d26f592c7cfefbff599a0e&mid=33' => 'b10084da-1d0c-4286-8838-52fb0f9ff620',
+            'http://mysite.com/lists/?p=forward&uid=2f93856905d26f592c7cfefbff599a0e&mid=34' => '1636661d-059f-4009-a8b6-e1c36223ac07',
         ];
 
         $this->daoStub = $this->getMockBuilder('phpList\plugin\ViewBrowserPlugin\DAO')
@@ -217,6 +244,14 @@ Forward a Message to Someone [FORWARD]',
                 $this->returnCallback(
                     function ($url) {
                         return $this->forwardIds[$url];
+                    }
+                )
+            );
+        $this->daoStub->method('forwardUuid')
+            ->will(
+                $this->returnCallback(
+                    function ($url) {
+                        return $this->forwardUuids[$url];
                     }
                 )
             );
@@ -277,7 +312,7 @@ Forward a Message to Someone [FORWARD]',
 
     public function createsEmailContentDataProvider()
     {
-        return [
+        $data = [
             'title element contains message subject' => [
                 25,
                 '2f93856905d26f592c7cfefbff599a0e',
@@ -307,12 +342,6 @@ Forward a Message to Someone [FORWARD]',
                 25,
                 '',
                 ['email address is  name is default name uniqid is  more']
-            ],
-            'converts a link when link tracking is enabled' => [
-                26,
-                '2f93856905d26f592c7cfefbff599a0e',
-                ['http://mysite.com/lists/lt.php?id=fhoFAAgfBwBEBAU%3D'],
-                ['<a href="http://www.bbc.co.uk">'],
             ],
             'does not convert a link whose text contains http' => [
                 26,
@@ -362,15 +391,9 @@ Forward a Message to Someone [FORWARD]',
                 '2f93856905d26f592c7cfefbff599a0e',
                 ["<br>\nIf you do not want to receive any more newsletters,"],
             ],
-            'footer is html format' => [
-                34,
-                '2f93856905d26f592c7cfefbff599a0e',
-                [
-                    '<div class="footer" style="text-align:left; font-size: 75%;">',
-                    '<a href="http://mysite.com/lists/lt.php?id=fhoFAA4fBgJEBAU%3D">preferences page</a>',
-                ],
-            ],
         ];
+
+        return $data;
     }
 
     /**
@@ -379,7 +402,99 @@ Forward a Message to Someone [FORWARD]',
      */
     public function createsEmailContent($messageId, $uniqid, $expected, $unexpected = array())
     {
-        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub);
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, true, '3.2.0');
+        $result = $cc->createContent($messageId, $uniqid);
+
+        foreach ($expected as $e) {
+            $this->assertContains($e, $result);
+        }
+
+        foreach ($unexpected as $e) {
+            $this->assertNotContains($e, $result);
+        }
+    }
+
+    public function encodesLinksCurrentDataProvider()
+    {
+        $data = [
+            'converts a link when link tracking is enabled' => [
+                26,
+                '2f93856905d26f592c7cfefbff599a0e',
+                ['http://mysite.com/lists/lt.php?tid=fhpVAglUUQYNBxkGDl1XTFUEAgIZW1BUXxpUDQBXBlI'],
+                ['<a href="http://www.bbc.co.uk">'],
+            ],
+        ];
+
+        return $data;
+    }
+    /**
+     * @test
+     * @dataProvider encodesLinksCurrentDataProvider
+     */
+    public function encodesLinksCurrent($messageId, $uniqid, $expected, $unexpected = array())
+    {
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, true, '3.3.0');
+        $result = $cc->createContent($messageId, $uniqid);
+
+        foreach ($expected as $e) {
+            $this->assertContains($e, $result);
+        }
+
+        foreach ($unexpected as $e) {
+            $this->assertNotContains($e, $result);
+        }
+    }
+
+    public function encodesLinksPreviousDataProvider()
+    {
+        $data = [
+            'converts a link when link tracking is enabled' => [
+                26,
+                '2f93856905d26f592c7cfefbff599a0e',
+                ['http://mysite.com/lists/lt.php?id=fhoFAAgfBwBEBAU'],
+                ['<a href="http://www.bbc.co.uk">'],
+            ],
+        ];
+
+        return $data;
+    }
+    /**
+     * @test
+     * @dataProvider encodesLinksPreviousDataProvider
+     */
+    public function encodesLinksPrevious($messageId, $uniqid, $expected, $unexpected = array())
+    {
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, true, '3.2.0');
+        $result = $cc->createContent($messageId, $uniqid);
+
+        foreach ($expected as $e) {
+            $this->assertContains($e, $result);
+        }
+
+        foreach ($unexpected as $e) {
+            $this->assertNotContains($e, $result);
+        }
+    }
+
+    public function doesNotEncodeLinksDataProvider()
+    {
+        $data = [
+            'does not convert a link when link tracking is disabled' => [
+                26,
+                '2f93856905d26f592c7cfefbff599a0e',
+                ['<a href="http://www.bbc.co.uk">'],
+            ],
+        ];
+
+        return $data;
+    }
+    /**
+     * @test
+     * @dataProvider doesNotEncodeLinksDataProvider
+     */
+    public function doesNotEncodeLinks($messageId, $uniqid, $expected, $unexpected = array())
+    {
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false, '3.2.0');
         $result = $cc->createContent($messageId, $uniqid);
 
         foreach ($expected as $e) {
@@ -393,17 +508,29 @@ Forward a Message to Someone [FORWARD]',
     /**
      * @test
      */
+    public function createsHtmlFormatFooter()
+    {
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false);
+        $result = $cc->createContent(34, '2f93856905d26f592c7cfefbff599a0e');
+        $expected = '<div class="footer" style="text-align:left; font-size: 75%;">';
+        $this->assertContains($expected, $result);
+        $expected2 = '<a href="http://mysite.com/lists/?p=preferences&amp;uid=2f93856905d26f592c7cfefbff599a0e">preferences page</a>';
+        $this->assertContains($expected2, $result);
+    }
+    /**
+     * @test
+     */
     public function addsAttachment()
     {
-        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub);
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false);
         $result = $cc->createContent(28, '2f93856905d26f592c7cfefbff599a0e');
         $expected =
 '<p>Attachments:<br><img src="./?p=image&amp;pi=CommonPlugin&amp;image=attach.png" alt="" title="">
 an attachment 
-<a href="http://mysite.com/lists/lt.php?id=fhoFAAsfBw5EBAU%3D">attachment.doc</a>
+<a href="./dl.php?id=12">attachment.doc</a>
 123.5kB<br><img src="./?p=image&amp;pi=CommonPlugin&amp;image=attach.png" alt="" title="">
 another attachment 
-<a href="http://mysite.com/lists/lt.php?id=fhoFAAofBw5EBAU%3D">attachment2.doc</a>
+<a href="./dl.php?id=13">attachment2.doc</a>
 7.7kB<br></p>';
         $this->assertContains($expected, $result);
     }

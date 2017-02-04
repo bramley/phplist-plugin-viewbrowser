@@ -7,7 +7,7 @@ use XSLTProcessor;
 
 /**
  * ViewBrowserPlugin for phplist.
- * 
+ *
  * This file is a part of ViewBrowserPlugin.
  *
  * This plugin is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@ use XSLTProcessor;
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * @category  phplist
  *
  * @author    Duncan Cameron
@@ -65,9 +65,9 @@ class ContentDocument
         }
     }
 
-    public function addLinkTrack($mid, array $user)
+    public function addLinkTrack(array $message, array $user, $version)
     {
-        $linkTrackUrl = $this->rootUrl . 'lt.php?id=';
+        $linkTrackUrl = $this->rootUrl . 'lt.php';
         $nodes = $this->dom->getElementsByTagName('a');
 
         foreach ($nodes as $node) {
@@ -80,12 +80,29 @@ class ContentDocument
             }
 
             $url = cleanUrl($href, array('PHPSESSID', 'uid'));
-            $linkid = $this->dao->forwardId($url);
 
-            if ($linkid) {
-                $masked = "H|$linkid|$mid|" . $user['id'] ^ XORmask;
-                $masked = urlencode(base64_encode($masked));
-                $node->setAttribute('href', $linkTrackUrl . $masked);
+            if (version_compare($version, \ViewBrowserPlugin::TRACKID_VERSION) >= 0) {
+                $linkUuid = $this->dao->forwardUuid($url);
+
+                if ($linkUuid) {
+                    $tid = sprintf('H|%s|%s|%s', $linkUuid, $message['uuid'], $user['uuid']) ^ XORmask;
+                    $tidEncoded = urlencode(rtrim(base64_encode($tid), '='));
+                    $url = $linkTrackUrl . '?tid=' . $tidEncoded;
+
+                    if (SIGN_WITH_HMAC) {
+                        $url .= '&hm=' . hash_hmac(HASH_ALGO, $url, HMACKEY);
+                    }
+                    $node->setAttribute('href', $url);
+                }
+            } else {
+                $linkid = $this->dao->forwardId($url);
+
+                if ($linkid) {
+                    $id = sprintf('H|%s|%s|%s', $linkid, $message['id'], $user['id']) ^ XORmask;
+                    $idEncoded = urlencode(rtrim(base64_encode($id), '='));
+                    $url = $linkTrackUrl . '?id=' . $idEncoded;
+                    $node->setAttribute('href', $url);
+                }
             }
         }
     }

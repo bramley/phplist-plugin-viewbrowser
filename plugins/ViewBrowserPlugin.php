@@ -1,7 +1,7 @@
 <?php
 /**
  * ViewBrowserPlugin for phplist.
- * 
+ *
  * This file is a part of ViewBrowserPlugin.
  *
  * This plugin is free software: you can redistribute it and/or modify
@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * @category  phplist
  *
  * @author    Duncan Cameron
@@ -32,6 +32,7 @@ class ViewBrowserPlugin extends phplistPlugin
     const VIEW_FILE = 'view.php';
     const PUBLIC_PAGE_VERSION = '3.0.7';
     const LOGO_VERSION = '3.2.2';
+    const TRACKID_VERSION = '3.3';
 
     /*
      *  Private variables
@@ -88,9 +89,9 @@ class ViewBrowserPlugin extends phplistPlugin
 
         return array(
             'XSL extension installed' => extension_loaded('xsl'),
-            'Common Plugin v3.0.2 or later installed' => phpListPlugin::isEnabled('CommonPlugin')
+            'Common Plugin v3.5.5 or later installed' => phpListPlugin::isEnabled('CommonPlugin')
                     && preg_match('/\d+\.\d+\.\d+/', $plugins['CommonPlugin']->version, $matches)
-                    && version_compare($matches[0], '3.0.2') >= 0,
+                    && version_compare($matches[0], '3.5.5') >= 0,
             'RSS Feed plugin v2.2.0 or later installed' => (
                 phpListPlugin::isEnabled('RssFeedPlugin')
                 && version_compare($plugins['RssFeedPlugin']->version, '2.2.0') >= 0

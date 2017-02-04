@@ -15,7 +15,7 @@ The plugin can also generate an anonymous page, where subscriber placeholders ar
 
 Requires php version 5.3 or later.
 
-This plugin requires the Common Plugin v3.0.2 or later to also be installed, and will not work without that.
+This plugin requires the Common Plugin v3.5.5 or later to also be installed, and will not work without that.
 **You must install that plugin or upgrade to the latest version if it is already installed**.
 See <https://github.com/bramley/phplist-plugin-common>
 
@@ -146,6 +146,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.5.0+20170204  Changes to link tracking for phplist 3.3.0
     2.4.5+20160714  Convert text footer to html
     2.4.4+20160120  Replace LOGO only for compatible versions of phplist
     2.4.3+20151215  Correction for LOGO placeholder

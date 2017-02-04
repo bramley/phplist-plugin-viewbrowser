@@ -7,7 +7,7 @@ use Iterator;
 
 /**
  * ViewBrowserPlugin for phplist.
- * 
+ *
  * This file is a part of ViewBrowserPlugin.
  *
  * This plugin is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@ use Iterator;
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * @category  phplist
  *
  * @author    Duncan Cameron
@@ -31,11 +31,13 @@ use Iterator;
  */
 class ContentCreator
 {
-    /**
-     * The phplist root url.
-     *
-     * @var string
-     */
+    /** @var phpList\plugin\ViewBrowserPlugin\DAO DAO */
+    private $dao;
+    /** @var Common\DAO\Attribute Attribute DAO */
+    private $daoAttr;
+    /** @var bool Whether click tracking is enabled */
+    private $clickTrack;
+    /** @var string The phplist root url */
     private $rootUrl;
 
     /**
@@ -48,7 +50,7 @@ class ContentCreator
      */
     private function human_filesize($bytes, $decimals = 1)
     {
-        $size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
+        $size = array('B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
         $factor = min(floor((strlen($bytes) - 1) / 3), count($size));
 
         return sprintf("%.{$decimals}f", $bytes / pow(1000, $factor)) . $size[$factor];
@@ -88,7 +90,7 @@ END;
      * @param string $content   the current content that might contain a placeholder
      * @param string $signature the replacement value
      *
-     * @return string the new content 
+     * @return string the new content
      */
     private function replaceSignature($content, $signature)
     {
@@ -109,7 +111,7 @@ END;
      * @param string $content the current content that might contain a placeholder
      * @param string $footer  the replacement value
      *
-     * @return string the new content 
+     * @return string the new content
      */
     private function replaceFooter($content, $footer)
     {
@@ -134,7 +136,7 @@ END;
      * @param int    $mid     the message id
      * @param int    $uid     the user unique id
      *
-     * @return string the new content 
+     * @return string the new content
      */
     private function replaceUserTrack($content, $mid, $uid)
     {
@@ -240,12 +242,14 @@ END;
     /**
      * Constructor.
      */
-    public function __construct(DAO $dao = null, Common\DAO\Attribute $daoAttr = null)
+    public function __construct(DAO $dao = null, Common\DAO\Attribute $daoAttr = null, $clickTrack = CLICKTRACK, $version = null)
     {
         global $public_scheme, $pageroot;
 
         $this->dao = $dao ?: new DAO(new Common\DB());
         $this->daoAttr = $daoAttr ?: new Common\DAO\Attribute(new Common\DB());
+        $this->clickTrack = $clickTrack;
+        $this->version = $version ?: getConfig('version');
         $this->rootUrl = sprintf('%s://%s%s/', $public_scheme, getConfig('website'), $pageroot);
     }
 
@@ -342,8 +346,8 @@ END;
         $doc = new ContentDocument($content, $this->dao, $this->rootUrl);
         $doc->addTemplateImages($mid, $message['template']);
 
-        if (CLICKTRACK && $personalise) {
-            $doc->addLinkTrack($mid, $user);
+        if ($this->clickTrack && $personalise) {
+            $doc->addLinkTrack($message, $user, $this->version);
         }
         $doc->addTitle($message['subject'], $styles);
 

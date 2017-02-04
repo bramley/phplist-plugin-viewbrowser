@@ -6,7 +6,7 @@ use phpList\plugin\Common;
 
 /**
  * ViewBrowserPlugin for phplist.
- * 
+ *
  * This file is a part of ViewBrowserPlugin.
  *
  * This plugin is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@ use phpList\plugin\Common;
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * @category  phplist
  *
  * @author    Duncan Cameron
@@ -38,7 +38,18 @@ class DAO extends Common\DAO\User
             FROM {$this->tables['linktrack_forward']} AS ltf
             WHERE ltf.url = '$url'";
 
-        return $this->dbCommand->queryOne($sql, 'id');
+        return $this->dbCommand->queryOne($sql);
+    }
+
+    public function forwardUuid($url)
+    {
+        $url = sql_escape($url);
+        $sql =
+            "SELECT uuid
+            FROM {$this->tables['linktrack_forward']} AS ltf
+            WHERE ltf.url = '$url'";
+
+        return $this->dbCommand->queryOne($sql);
     }
 
     public function message($id)
