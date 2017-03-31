@@ -1,3 +1,7 @@
+version 2.5.1+20170331
+      Remove viewbrowser placeholders when message is being forwarded and anonymous page not enabled
+      Revise unit tests
+
 version 2.5.0+20170204
       Revise and rename cs config file
       Changes to link tracking for phplist 3.3.0.

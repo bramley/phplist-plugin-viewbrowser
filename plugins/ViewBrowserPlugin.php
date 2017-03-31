@@ -79,6 +79,15 @@ class ViewBrowserPlugin extends phplistPlugin
         return sprintf('<a href="%s" %s>%s</a>', htmlspecialchars($url), $attributes, htmlspecialchars($linkText));
     }
 
+    private function removePlaceholders($content)
+    {
+        return str_ireplace(
+            array('[VIEWBROWSER]', '[VIEWBROWSERURL]'),
+            array('', ''),
+            $content
+        );
+    }
+
     /*
      * Public functions
      */
@@ -139,7 +148,7 @@ class ViewBrowserPlugin extends phplistPlugin
             'viewbrowser_plugins' => array(
               'description' => s('Plugins to be used when creating the email. Usually leave this unchanged.'),
               'type' => 'textarea',
-              'value' => "ContentAreas\nconditionalPlaceholderPlugin\nRssFeedPlugin\nViewBrowserPlugin",
+              'value' => "ContentAreas\nconditionalPlaceholderPlugin\nRssFeedPlugin\nViewBrowserPlugin\nSubscribersPlugin",
               'allowempty' => true,
               'category' => 'View in Browser',
             ),
@@ -159,13 +168,24 @@ class ViewBrowserPlugin extends phplistPlugin
         $this->rootUrl = sprintf('%s://%s%s/', $public_scheme, getConfig('website'), $pageroot);
     }
 
-    /*
-     *  Replace placeholders in html message
+    /**
+     * Replace placeholders in HTML format message.
+     * When a message is being forwarded and anonymous page is not enabled then remove the placeholders.
      *
+     * @param int    $messageid   the message id
+     * @param string $content     the message content
+     * @param string $destination the destination email address
+     * @param array  $userdata    the user data values
+     *
+     * @return string content with placeholders replaced
      */
     public function parseOutgoingHTMLMessage($messageid, $content, $destination, $userdata = null)
     {
-        $url = $this->viewUrl($messageid, $userdata['uniqid']);
+        if (empty($userdata['uniqid']) && !getConfig('viewbrowser_anonymous')) {
+            return $this->removePlaceholders($content);
+        }
+        $uniqid = isset($userdata['uniqid']) ? $userdata['uniqid'] : '';
+        $url = $this->viewUrl($messageid, $uniqid);
         $attributes = stripslashes(getConfig('viewbrowser_attributes'));
 
         return str_ireplace(
@@ -175,13 +195,24 @@ class ViewBrowserPlugin extends phplistPlugin
         );
     }
 
-    /*
-     *  Replace placeholders in text message
+    /**
+     * Replace placeholders in text format message.
+     * When a message is being forwarded and anonymous page is not enabled then remove the placeholders.
      *
+     * @param int    $messageid   the message id
+     * @param string $content     the message content
+     * @param string $destination the destination email address
+     * @param array  $userdata    the user data values
+     *
+     * @return string content with placeholders replaced
      */
     public function parseOutgoingTextMessage($messageid, $content, $destination, $userdata = null)
     {
-        $url = $this->viewUrl($messageid, $userdata['uniqid']);
+        if (empty($userdata['uniqid']) && !getConfig('viewbrowser_anonymous')) {
+            return $this->removePlaceholders($content);
+        }
+        $uniqid = isset($userdata['uniqid']) ? $userdata['uniqid'] : '';
+        $url = $this->viewUrl($messageid, $uniqid);
 
         return str_ireplace(
             array('[VIEWBROWSER]', '[VIEWBROWSERURL]'),
