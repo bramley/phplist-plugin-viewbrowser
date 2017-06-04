@@ -1,3 +1,8 @@
+version 2.6.0+20170604
+      Use dependency injection container.
+      Update the required versions of php and Common Plugin.
+      Update copyright year.
+
 version 2.5.1+20170331
       Remove viewbrowser placeholders when message is being forwarded and anonymous page not enabled
       Revise unit tests
