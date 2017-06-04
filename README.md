@@ -13,9 +13,9 @@ The plugin can also generate an anonymous page, where subscriber placeholders ar
 
 ### Dependencies ###
 
-Requires php version 5.3 or later.
+Requires php version 5.4 or later.
 
-This plugin requires the Common Plugin v3.5.5 or later to also be installed, and will not work without that.
+This plugin requires the Common Plugin v3.6.3 or later to also be installed, and will not work without that.
 **You must install that plugin or upgrade to the latest version if it is already installed**.
 See <https://github.com/bramley/phplist-plugin-common>
 
