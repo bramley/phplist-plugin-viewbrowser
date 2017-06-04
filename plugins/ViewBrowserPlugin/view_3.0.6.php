@@ -67,7 +67,9 @@ if (!(isset($plugins['CommonPlugin']))) {
 
 error_reporting(-1);
 require_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
-$creator = new phpList\plugin\ViewBrowserPlugin\ContentCreator();
+
+$container = include __DIR__ . '/dic.php';
+$creator = $container->get('ContentCreator');
 
 ob_end_clean();
 header('Content-Type: text/html; charset=UTF-8');

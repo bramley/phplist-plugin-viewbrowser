@@ -510,7 +510,7 @@ Forward a Message to Someone [FORWARD]',
      */
     public function createsHtmlFormatFooter()
     {
-        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false);
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false, getConfig('version'));
         $result = $cc->createContent(34, '2f93856905d26f592c7cfefbff599a0e');
         $expected = '<div class="footer" style="text-align:left; font-size: 75%;">';
         $this->assertContains($expected, $result);
@@ -522,7 +522,7 @@ Forward a Message to Someone [FORWARD]',
      */
     public function addsAttachment()
     {
-        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false);
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false, getConfig('version'));
         $result = $cc->createContent(28, '2f93856905d26f592c7cfefbff599a0e');
         $expected =
 '<p>Attachments:<br><img src="./?p=image&amp;pi=CommonPlugin&amp;image=attach.png" alt="" title="">

@@ -242,14 +242,18 @@ END;
     /**
      * Constructor.
      */
-    public function __construct(DAO $dao = null, Common\DAO\Attribute $daoAttr = null, $clickTrack = CLICKTRACK, $version = null)
-    {
+    public function __construct(
+        DAO $dao,
+        Common\DAO\Attribute $daoAttr,
+        $clickTrack,
+        $version
+    ) {
         global $public_scheme, $pageroot;
 
-        $this->dao = $dao ?: new DAO(new Common\DB());
-        $this->daoAttr = $daoAttr ?: new Common\DAO\Attribute(new Common\DB());
+        $this->dao = $dao;
+        $this->daoAttr = $daoAttr;
         $this->clickTrack = $clickTrack;
-        $this->version = $version ?: getConfig('version');
+        $this->version = $version;
         $this->rootUrl = sprintf('%s://%s%s/', $public_scheme, getConfig('website'), $pageroot);
     }
 
