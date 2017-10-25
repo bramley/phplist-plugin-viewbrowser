@@ -29,6 +29,8 @@ class ViewBrowserPlugin extends phplistPlugin
     const PLUGIN = 'ViewBrowserPlugin';
     const VIEW_PAGE = 'view';
     const IMAGE_PAGE = 'image';
+    const ARCHIVE_PAGE = 'archive';
+    const ADMIN_ARCHIVE_PAGE = 'adminarchive';
     const VIEW_FILE = 'view.php';
     const PUBLIC_PAGE_VERSION = '3.0.7';
     const LOGO_VERSION = '3.2.2';
@@ -48,12 +50,26 @@ class ViewBrowserPlugin extends phplistPlugin
     public $authors = 'Duncan Cameron';
     public $enabled = 1;
     public $settings;
-    public $publicPages = array(self::VIEW_PAGE, self::IMAGE_PAGE);
+    public $topMenuLinks = array(
+        self::ADMIN_ARCHIVE_PAGE => array('category' => 'campaigns'),
+    );
+    public $publicPages = array(self::VIEW_PAGE, self::IMAGE_PAGE, self::ARCHIVE_PAGE);
     public $documentationUrl = 'https://resources.phplist.com/plugin/viewinbrowser';
 
     /*
      * Private functions
      */
+    private function archiveUrl($uid)
+    {
+        $params = array(
+            'p' => self::ARCHIVE_PAGE,
+            'pi' => self::PLUGIN,
+            'uid' => $uid,
+        );
+
+        return $this->rootUrl . '?' . http_build_query($params, '', '&');
+    }
+
     private function viewUrl($messageid, $uid)
     {
         $params = array('m' => $messageid);
@@ -79,13 +95,59 @@ class ViewBrowserPlugin extends phplistPlugin
         return sprintf('<a href="%s" %s>%s</a>', htmlspecialchars($url), $attributes, htmlspecialchars($linkText));
     }
 
+    /**
+     * Remove placeholders.
+     *
+     * @param string $content the message content
+     *
+     * @return string content with placeholders removed
+     */
     private function removePlaceholders($content)
     {
-        return str_ireplace(
-            array('[VIEWBROWSER]', '[VIEWBROWSERURL]'),
-            array('', ''),
+        $content = preg_replace(
+            ['/\[VIEWBROWSER(?::(\d+))?]/i', '/\[VIEWBROWSERURL(?::(\d+))?]/i'],
+            '',
             $content
         );
+        $content = str_ireplace(
+            ['[ARCHIVE]', '[ARCHIVEURL]'],
+            '',
+            $content
+        );
+
+        return $content;
+    }
+
+    /**
+     * Replace placeholders.
+     *
+     * @param string   $content          the message content
+     * @param callable $viewLinkCallback replacement callback for the view link
+     * @param callable $viewUrlCallback  replacement callback for the view url
+     * @param string   $archiveLink      replacement text for the archive link
+     * @param string   $archiveUrl       replacement text for the archive url
+     *
+     * @return string content with placeholders replaced
+     */
+    private function replacePlaceholders($content, $viewLinkCallback, $viewUrlCallback, $archiveLink, $archiveUrl)
+    {
+        $content = preg_replace_callback(
+            '/\[VIEWBROWSER(?::(\d+))?]/i',
+            $viewLinkCallback,
+            $content
+        );
+        $content = preg_replace_callback(
+            '/\[VIEWBROWSERURL(?::(\d+))?]/i',
+            $viewUrlCallback,
+            $content
+        );
+        $content = str_ireplace(
+            ['[ARCHIVE]', '[ARCHIVEURL]'],
+            [$archiveLink, $archiveUrl],
+            $content
+        );
+
+        return $content;
     }
 
     /*
@@ -124,35 +186,82 @@ class ViewBrowserPlugin extends phplistPlugin
     public function __construct()
     {
         $this->coderoot = dirname(__FILE__) . '/' . self::PLUGIN . '/';
+        $styles = <<<'END'
+#archive .table {
+    display: table;
+    width: 60%;
+}
+#archive .innertable {
+    display: table;
+    width: 100%;
+    height:100%;
+}
+#archive .cell-1 {
+    display: table-cell;
+    width: 15%;
+}
+#archive .cell-2 {
+    display: table-cell;
+    width: 65%;
+}
+#archive .cell {
+    display: table-cell;
+    width: 20%;
+}
+#archive .line {
+    display: table-row;
+}
+#archive .heading {
+    font-weight: bold;
+    text-align: center;
+}
+END;
         $this->settings = array(
             'viewbrowser_link' => array(
-              'value' => s('View in browser'),
-              'description' => s('The text of the link'),
-              'type' => 'text',
-              'allowempty' => false,
-              'category' => 'View in Browser',
+                'value' => s('View in browser'),
+                'description' => s('The text of the link'),
+                'type' => 'text',
+                'allowempty' => false,
+                'category' => 'View in Browser',
+            ),
+            'viewbrowser_archive_link' => array(
+                'value' => s('email archive'),
+                'description' => s('The text of the archive link'),
+                'type' => 'text',
+                'allowempty' => false,
+                'category' => 'View in Browser',
             ),
             'viewbrowser_attributes' => array(
-              'value' => s(''),
-              'description' => s('Additional attributes for the html &lt;a> element'),
-              'type' => 'text',
-              'allowempty' => true,
-              'category' => 'View in Browser',
+                'value' => s(''),
+                'description' => s('Additional attributes for the html &lt;a> element'),
+                'type' => 'text',
+                'allowempty' => true,
+                'category' => 'View in Browser',
             ),
             'viewbrowser_anonymous' => array(
-              'value' => false,
-              'description' => s('Whether the plugin should provide an anonymous page'),
-              'type' => 'boolean',
-              'allowempty' => false,
-              'category' => 'View in Browser',
+                'value' => false,
+                'description' => s('Whether the plugin should provide an anonymous page'),
+                'type' => 'boolean',
+                'allowempty' => false,
+                'category' => 'View in Browser',
             ),
             'viewbrowser_plugins' => array(
-              'description' => s('Plugins to be used when creating the email. Usually leave this unchanged.'),
-              'type' => 'textarea',
-              'value' => "ContentAreas\nconditionalPlaceholderPlugin\nRssFeedPlugin\nViewBrowserPlugin\nSubscribersPlugin",
-              'allowempty' => true,
-              'category' => 'View in Browser',
+                'description' => s('Plugins to be used when creating the email. Usually leave this unchanged.'),
+                'type' => 'textarea',
+                'value' => "ContentAreas\nconditionalPlaceholderPlugin\nRssFeedPlugin\nViewBrowserPlugin\nSubscribersPlugin",
+                'allowempty' => true,
+                'category' => 'View in Browser',
             ),
+            'viewbrowser_archive_styles' => array(
+                'value' => $styles,
+                'description' => s('CSS to be applied to the campaign archive page'),
+                'type' => 'textarea',
+                'allowempty' => false,
+                'category' => 'View in Browser',
+            ),
+        );
+        $this->pageTitles = array(
+            self::ADMIN_ARCHIVE_PAGE => s('Campaign archive'),
         );
         parent::__construct();
         $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
@@ -166,6 +275,7 @@ class ViewBrowserPlugin extends phplistPlugin
 
         parent::activate();
         $this->linkText = getConfig('viewbrowser_link');
+        $this->archiveLinkText = getConfig('viewbrowser_archive_link');
         $this->rootUrl = sprintf('%s://%s%s/', $public_scheme, getConfig('website'), $pageroot);
     }
 
@@ -186,13 +296,29 @@ class ViewBrowserPlugin extends phplistPlugin
             return $this->removePlaceholders($content);
         }
         $uniqid = isset($userdata['uniqid']) ? $userdata['uniqid'] : '';
-        $url = $this->viewUrl($messageid, $uniqid);
+        $archiveUrl = $this->archiveUrl($uniqid);
         $attributes = stripslashes(getConfig('viewbrowser_attributes'));
 
-        return str_ireplace(
-            array('[VIEWBROWSER]', '[VIEWBROWSERURL]'),
-            array($this->link($this->linkText, $url, $attributes), htmlspecialchars($url)),
-            $content
+        $viewLinkCallback = function (array $matches) use ($messageid, $uniqid, $attributes) {
+            $mid = count($matches) > 1 ? $matches[1] : $messageid;
+            $url = $this->viewUrl($mid, $uniqid);
+
+            return $this->link($this->linkText, $url, $attributes);
+        };
+
+        $viewUrlCallback = function (array $matches) use ($messageid, $uniqid) {
+            $mid = count($matches) > 1 ? $matches[1] : $messageid;
+            $url = $this->viewUrl($mid, $uniqid);
+
+            return htmlspecialchars($url);
+        };
+
+        return $this->replacePlaceholders(
+            $content,
+            $viewLinkCallback,
+            $viewUrlCallback,
+            $this->link($this->archiveLinkText, $archiveUrl, $attributes),
+            htmlspecialchars($archiveUrl)
         );
     }
 
@@ -214,11 +340,28 @@ class ViewBrowserPlugin extends phplistPlugin
         }
         $uniqid = isset($userdata['uniqid']) ? $userdata['uniqid'] : '';
         $url = $this->viewUrl($messageid, $uniqid);
+        $archiveUrl = $this->archiveUrl($uniqid);
 
-        return str_ireplace(
-            array('[VIEWBROWSER]', '[VIEWBROWSERURL]'),
-            array("$this->linkText $url", $url),
-            $content
+        $viewLinkCallback = function (array $matches) use ($messageid, $uniqid) {
+            $mid = count($matches) > 1 ? $matches[1] : $messageid;
+            $url = $this->viewUrl($mid, $uniqid);
+
+            return "$this->linkText $url";
+        };
+
+        $viewUrlCallback = function (array $matches) use ($messageid, $uniqid) {
+            $mid = count($matches) > 1 ? $matches[1] : $messageid;
+            $url = $this->viewUrl($mid, $uniqid);
+
+            return $url;
+        };
+
+        return $this->replacePlaceholders(
+            $content,
+            $viewLinkCallback,
+            $viewUrlCallback,
+            "$this->archiveLinkText $archiveUrl",
+            $archiveUrl
         );
     }
 }

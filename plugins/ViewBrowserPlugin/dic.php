@@ -51,4 +51,9 @@ return new Picotainer([
     'DB' => function (ContainerInterface $container) {
         return new \phpList\plugin\Common\DB();
     },
+    'ArchiveCreator' => function (ContainerInterface $container) {
+        return new ArchiveCreator(
+            $container->get('DAO')
+        );
+    },
 ]);
