@@ -27,6 +27,8 @@ $GLOBALS['strForwardTitle'] = 'Forward a Message to Someone';
 $GLOBALS['strToUnsubscribe'] = 'If you do not want to receive any more newsletters, ';
 $GLOBALS['strToUpdate'] = 'To update your preferences and to unsubscribe visit';
 
+$_GET['pi'] = 'ViewBrowserPlugin';
+
 include '/home/duncan/Development/GitHub/phplist-plugin-viewbrowser/plugins/ViewBrowserPlugin.php';
 $pi = new ViewBrowserPlugin();
 $pi->activate();
@@ -85,6 +87,12 @@ function getConfig($key) {
             break;
         case 'viewbrowser_anonymous':
             return false;
+            break;
+        case 'viewbrowser_archive_link':
+            return 'archive';
+            break;
+        case 'viewbrowser_archive_styles':
+            return '';
             break;
         case 'html_email_style':
             return '<style></style>';

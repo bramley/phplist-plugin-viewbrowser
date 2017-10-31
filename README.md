@@ -80,6 +80,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.7.0+20171102  Add archive page and placeholders
     2.6.0+20170604  Use dependency injection container
     2.5.1+20170331  Remove placeholders when message is forwarded
     2.5.0+20170204  Changes to link tracking for phplist 3.3.0
