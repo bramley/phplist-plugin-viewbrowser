@@ -80,6 +80,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.7.1+20171120  Added Dutch translations
     2.7.0+20171102  Add archive page and placeholders
     2.6.0+20170604  Use dependency injection container
     2.5.1+20170331  Remove placeholders when message is forwarded

@@ -187,6 +187,10 @@ class ViewBrowserPlugin extends phplistPlugin
     {
         $this->coderoot = dirname(__FILE__) . '/' . self::PLUGIN . '/';
         $styles = <<<'END'
+/* Hide the first column for subscribers, but keep it visible for admins */
+.content #archive .cell-1 {
+  display: none;
+}
 #archive .table {
     display: table;
     width: 60%;
@@ -198,15 +202,15 @@ class ViewBrowserPlugin extends phplistPlugin
 }
 #archive .cell-1 {
     display: table-cell;
-    width: 15%;
+    width: 5%;
 }
 #archive .cell-2 {
     display: table-cell;
-    width: 65%;
+    width: 75%;
 }
-#archive .cell {
+#archive .cell-3 {
     display: table-cell;
-    width: 20%;
+    width: 15%;
 }
 #archive .line {
     display: table-row;
