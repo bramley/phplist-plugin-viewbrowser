@@ -187,37 +187,31 @@ class ViewBrowserPlugin extends phplistPlugin
     {
         $this->coderoot = dirname(__FILE__) . '/' . self::PLUGIN . '/';
         $styles = <<<'END'
-/* Hide the first column for subscribers, but keep it visible for admins */
-.content #archive .cell-1 {
-  display: none;
+#archive {
+    line-height: 150%;
+    font-family: Helvetica;
+    font-size: 14px;
+    color: #333333;
 }
-#archive .table {
-    display: table;
-    width: 60%;
+#archive-list {
+    display: block;
+    margin: 15px 0;
+    padding: 0;
+    border-top: 1px solid #eee;
 }
-#archive .innertable {
-    display: table;
-    width: 100%;
-    height:100%;
+#archive-list li {
+    display: block;
+    list-style: none;
+    margin: 0;
+    padding: 6px 10px;
+    border-bottom: 1px solid #aaa;
+    line-height: 150%;
+    font-family: Helvetica;
+    font-size: 14px;
+    color: #333333;
 }
-#archive .cell-1 {
-    display: table-cell;
-    width: 5%;
-}
-#archive .cell-2 {
-    display: table-cell;
-    width: 75%;
-}
-#archive .cell-3 {
-    display: table-cell;
-    width: 15%;
-}
-#archive .line {
-    display: table-row;
-}
-#archive .heading {
-    font-weight: bold;
-    text-align: center;
+.content #archive .campaign-id {
+    display: none;
 }
 END;
         $this->settings = array(

@@ -130,7 +130,7 @@ class DAO extends Common\DAO\User
             JOIN {$this->tables['user']} u ON u.id = um.userid
             WHERE u.uniqid = '$uid'
             AND um.status = 'sent'
-            ORDER BY entered DESC
+            ORDER BY um.entered DESC
 END;
 
         return $this->dbCommand->queryAll($sql);

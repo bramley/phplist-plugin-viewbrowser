@@ -49,13 +49,14 @@ class ArchiveCreator
         $items = [];
 
         foreach ($campaigns as $c) {
-            $url = "$pageroot/?" . http_build_query(
+            $query = http_build_query(
                 ['pi' => $_GET['pi'], 'p' => 'view', 'm' => $c['messageid'], 'uid' => $uid],
                 '',
                 '&'
             );
+            $url = sprintf('%s/?%s', $pageroot, $query);
             $link = new PageLink($url, $c['subject'], ['target' => '_blank']);
-            $items[] = ['id' => $c['messageid'], 'link' => $link, 'entered' => $c['entered']];
+            $items[] = ['id' => $c['messageid'], 'link' => $link, 'entered' => date_format(date_create($c['entered']), 'd/m/y')];
         }
 
         return $items;
@@ -76,8 +77,9 @@ class ArchiveCreator
     public function createArchive($uid)
     {
         $items = $this->archiveItems($uid);
+        $user = $this->dao->userByUniqid($uid);
 
-        return $this->render(__DIR__ . '/archive.tpl.php', ['items' => $items]);
+        return $this->render(__DIR__ . '/archive.tpl.php', ['items' => $items, 'email' => $user['email']]);
     }
 
     /**

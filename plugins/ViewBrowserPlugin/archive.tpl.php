@@ -22,25 +22,17 @@
 ?>
 
 <style>
-<?php echo getConfig('viewbrowser_archive_styles'); ?>
+<?= getConfig('viewbrowser_archive_styles'); ?>
 </style>
 <div id="archive">
-    <div class="table">
-        <div class="line">
-            <div class="innertable">
-                <div class="cell-1 heading"><?= s('Campaign ID') ?></div>
-                <div class="cell-2 heading"><?= s('Campaign subject') ?></div>
-                <div class="cell-3 heading"><?= s('Date sent') ?></div>
-            </div>
-        </div>
+    <div>
+        <h4><?= s('Campaigns sent to %s', $email); ?></h4>
+        <ul id="archive-list">
 <?php foreach ($items as $item): ?>
-        <div class="line">
-            <div class="innertable">
-                <div class="cell-1"><?php echo $item['id']; ?></div>
-                <div class="cell-2"><?php echo $item['link']; ?></div>
-                <div class="cell-3"><?php echo $item['entered']; ?></div>
-            </div>
-        </div>
+            <li>
+                <?= $item['entered']; ?> - <?= $item['link']; ?> <span class="campaign-id"><?= '[' . $item['id'] . ']'; ?></span>
+            </li>
 <?php endforeach; ?>
+        </ul>
     </div>
 </div>

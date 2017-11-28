@@ -40,7 +40,7 @@ class ArchiveCreatorTest extends PHPUnit_Framework_TestCase
             ],
             'contains date' => [
                 '2f93856905d26f592c7cfefbff599a0e',
-                ['2017-10-02']
+                ['02/10/17']
             ],
             'contains view in browser url' => [
                 '2f93856905d26f592c7cfefbff599a0e',

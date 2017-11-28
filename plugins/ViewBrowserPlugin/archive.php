@@ -24,7 +24,4 @@ if (!isset($_GET['uid'])) {
 $uid = $_GET['uid'];
 $container = include __DIR__ . '/dic.php';
 $archive = $container->get('ArchiveCreator');
-
-ob_end_clean();
-header('Content-Type: text/html; charset=UTF-8');
 echo displayPublicPage($archive->createArchive($uid));
