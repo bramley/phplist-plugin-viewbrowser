@@ -115,6 +115,12 @@ function getConfig($key) {
         case 'blacklisturl':
             return '';
             break;
+        case 'viewbrowser_archive_items_per_page':
+            return 5;
+            break;
+        case 'viewbrowser_archive_custom_css_url':
+            return '';
+            break;
         default:
             throw new Exception("config $key missing");
     }

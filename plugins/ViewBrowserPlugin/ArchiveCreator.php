@@ -22,7 +22,11 @@
 
 namespace phpList\plugin\ViewBrowserPlugin;
 
+use phpList\plugin\Common\Controller as CommonController;
+use phpList\plugin\Common\Listing;
 use phpList\plugin\Common\PageLink;
+use phpList\plugin\Common\Paginator;
+use phpList\plugin\Common\Populator;
 
 /**
  * Class to create an archive page.
@@ -41,11 +45,18 @@ class ArchiveCreator
         return ob_get_clean();
     }
 
-    private function archiveItems($uid)
+    private function urlPattern()
+    {
+        $params = $_GET;
+        unset($params['start']);
+
+        return sprintf('./?%s&start=%s', http_build_query($params), Paginator::NUM_PLACEHOLDER);
+    }
+
+    private function archiveItems($uid, $campaigns)
     {
         global $pageroot;
 
-        $campaigns = $this->dao->messagesForUser($uid);
         $items = [];
 
         foreach ($campaigns as $c) {
@@ -56,7 +67,13 @@ class ArchiveCreator
             );
             $url = sprintf('%s/?%s', $pageroot, $query);
             $link = new PageLink($url, $c['subject'], ['target' => '_blank']);
-            $items[] = ['id' => $c['messageid'], 'link' => $link, 'entered' => date_format(date_create($c['entered']), 'd/m/y')];
+            $items[] = [
+                'id' => $c['messageid'],
+                'subject' => $c['subject'],
+                'url' => $url,
+                'link' => $link,
+                'entered' => date_format(date_create($c['entered']), 'd/m/y'),
+            ];
         }
 
         return $items;
@@ -68,7 +85,7 @@ class ArchiveCreator
     }
 
     /**
-     * Generate the listing of campaigns sent to the user.
+     * Generate the listing of campaigns sent to a subscriber.
      *
      * @param int $uid the user unique id
      *
@@ -76,10 +93,20 @@ class ArchiveCreator
      */
     public function createArchive($uid)
     {
-        $items = $this->archiveItems($uid);
         $user = $this->dao->userByUniqid($uid);
 
-        return $this->render(__DIR__ . '/archive.tpl.php', ['items' => $items, 'email' => $user['email']]);
+        $itemsPerPage = getConfig('viewbrowser_archive_items_per_page');
+        $startPage = isset($_GET['start']) ? $_GET['start'] : 1;
+        $paginator = new Paginator($this->dao->totalMessagesForUser($uid), $itemsPerPage, $startPage, $this->urlPattern());
+        $campaigns = $this->dao->messagesForUser($uid, ($startPage - 1) * $itemsPerPage, $itemsPerPage);
+
+        $customCssUrl = getConfig('viewbrowser_archive_custom_css_url');
+        $cssUrl = $customCssUrl ?: \ViewBrowserPlugin::CSS_URL;
+
+        return $this->render(
+            __DIR__ . '/archive.tpl.php',
+            ['items' => $this->archiveItems($uid, $campaigns), 'email' => $user['email'], 'paginator' => $paginator, 'css' => $cssUrl]
+        );
     }
 
     /**
@@ -91,8 +118,37 @@ class ArchiveCreator
      */
     public function createArchiveForAdmin($adminId)
     {
-        $uid = $this->dao->subscriberForAdmin($adminId);
+        $user = $this->dao->subscriberForAdmin($adminId);
 
-        return $uid === false ? s('No campaigns found') : $this->createArchive($uid);
+        if ($user === false) {
+            return s('No campaigns found');
+        }
+        $uid = $user['uniqid'];
+        $title = s('Campaigns sent to %s', $user['email']);
+        $populateCallback = function (\WebblerListing $w, $start, $limit) use ($uid, $title) {
+            $campaigns = $this->dao->messagesForUser($uid, $start, $limit);
+            $w->title = $title;
+            $w->elementHeading = s('ID');
+
+            foreach ($this->archiveItems($uid, $campaigns) as $row) {
+                $key = $row['id'];
+                $w->addElement($key);
+                $w->addColumn($key, s('Sent'), $row['entered']);
+                $w->addColumn($key, s('Campaign'), $row['subject'], $row['url'], '', ['target' => '_blank']);
+            }
+        };
+        $totalCallback = function () use ($uid) {
+            return $this->dao->totalMessagesForUser($uid);
+        };
+        $populator = new Populator($populateCallback, $totalCallback);
+        $listing = new Listing(new Controller(), $populator);
+        $itemsPerPage = getConfig('viewbrowser_archive_items_per_page');
+        $listing->pager->setItemsPerPage([$itemsPerPage], $itemsPerPage);
+
+        return $listing->display();
     }
+}
+
+class Controller extends CommonController
+{
 }

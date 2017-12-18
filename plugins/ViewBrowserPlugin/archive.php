@@ -6,7 +6,7 @@ function displayPublicPage($page)
 {
     global $pagedata, $PoweredBy;
 
-    $title = htmlspecialchars(s('Archive of campaigns'));
+    $title = htmlspecialchars(s('Campaign archive'));
 
     echo <<<END
 <title>$title</title>

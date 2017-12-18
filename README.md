@@ -80,6 +80,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.9.0+20171218  Use paging on the archive pages
     2.8.0+20171206  Rework layout of campaign archive
     2.7.1+20171120  Added Dutch translations
     2.7.0+20171102  Add archive page and placeholders

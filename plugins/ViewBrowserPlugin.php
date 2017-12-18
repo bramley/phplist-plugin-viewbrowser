@@ -30,6 +30,8 @@ class ViewBrowserPlugin extends phplistPlugin
     const VIEW_PAGE = 'view';
     const IMAGE_PAGE = 'image';
     const ARCHIVE_PAGE = 'archive';
+    const CSS_PAGE = 'archivecss';
+    const CSS_URL = './?pi=ViewBrowserPlugin&p=archivecss';
     const ADMIN_ARCHIVE_PAGE = 'adminarchive';
     const VIEW_FILE = 'view.php';
     const PUBLIC_PAGE_VERSION = '3.0.7';
@@ -53,7 +55,7 @@ class ViewBrowserPlugin extends phplistPlugin
     public $topMenuLinks = array(
         self::ADMIN_ARCHIVE_PAGE => array('category' => 'campaigns'),
     );
-    public $publicPages = array(self::VIEW_PAGE, self::IMAGE_PAGE, self::ARCHIVE_PAGE);
+    public $publicPages = array(self::VIEW_PAGE, self::IMAGE_PAGE, self::ARCHIVE_PAGE, self::CSS_PAGE);
     public $documentationUrl = 'https://resources.phplist.com/plugin/viewinbrowser';
 
     /*
@@ -160,9 +162,9 @@ class ViewBrowserPlugin extends phplistPlugin
 
         return array(
             'XSL extension installed' => extension_loaded('xsl'),
-            'Common Plugin v3.6.3 or later installed' => (
+            'Common Plugin v3.7.7 or later installed' => (
                 phpListPlugin::isEnabled('CommonPlugin')
-                && version_compare($plugins['CommonPlugin']->version, '3.6.3') >= 0
+                && version_compare($plugins['CommonPlugin']->version, '3.7.7') >= 0
             ),
             'RSS Feed plugin v2.2.0 or later installed' => (
                 phpListPlugin::isEnabled('RssFeedPlugin')
@@ -186,34 +188,6 @@ class ViewBrowserPlugin extends phplistPlugin
     public function __construct()
     {
         $this->coderoot = dirname(__FILE__) . '/' . self::PLUGIN . '/';
-        $styles = <<<'END'
-#archive {
-    line-height: 150%;
-    font-family: Helvetica;
-    font-size: 14px;
-    color: #333333;
-}
-#archive-list {
-    display: block;
-    margin: 15px 0;
-    padding: 0;
-    border-top: 1px solid #eee;
-}
-#archive-list li {
-    display: block;
-    list-style: none;
-    margin: 0;
-    padding: 6px 10px;
-    border-bottom: 1px solid #aaa;
-    line-height: 150%;
-    font-family: Helvetica;
-    font-size: 14px;
-    color: #333333;
-}
-.content #archive .campaign-id {
-    display: none;
-}
-END;
         $this->settings = array(
             'viewbrowser_link' => array(
                 'value' => s('View in browser'),
@@ -230,7 +204,7 @@ END;
                 'category' => 'View in Browser',
             ),
             'viewbrowser_attributes' => array(
-                'value' => s(''),
+                'value' => '',
                 'description' => s('Additional attributes for the html &lt;a> element'),
                 'type' => 'text',
                 'allowempty' => true,
@@ -250,11 +224,20 @@ END;
                 'allowempty' => true,
                 'category' => 'View in Browser',
             ),
-            'viewbrowser_archive_styles' => array(
-                'value' => $styles,
-                'description' => s('CSS to be applied to the campaign archive page'),
-                'type' => 'textarea',
+            'viewbrowser_archive_items_per_page' => array(
+                'value' => 10,
+                'description' => s('The number of campaigns to display on each archive page (between %d and %d)', 5, 50),
+                'type' => 'integer',
                 'allowempty' => false,
+                'min' => 5,
+                'max' => 50,
+                'category' => 'View in Browser',
+            ),
+            'viewbrowser_archive_custom_css_url' => array(
+                'value' => '',
+                'description' => s('URL of custom CSS file'),
+                'type' => 'text',
+                'allowempty' => true,
                 'category' => 'View in Browser',
             ),
         );

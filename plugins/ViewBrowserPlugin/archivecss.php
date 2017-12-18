@@ -20,21 +20,15 @@
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
+namespace phpList\plugin\ViewBrowserPlugin;
+
+use phpList\plugin\Common\FileServer;
+
 /**
- * Template for the public archive page.
+ * Page to send the archive css file to the browser.
  */
-?>
-<link href="<?= $css; ?>" rel="stylesheet">
-<div id="archive">
-    <div>
-        <h4><?= s('Campaigns sent to %s', $email); ?></h4>
-        <ul id="archive-list">
-<?php foreach ($items as $item): ?>
-            <li>
-                <?= $item['entered']; ?> - <?= $item['link']; ?> <span class="campaign-id"><?= '[' . $item['id'] . ']'; ?></span>
-            </li>
-<?php endforeach; ?>
-        </ul>
-        <?= $paginator; ?>
-    </div>
-</div>
+$server = new FileServer();
+ob_end_clean();
+$server->serveFile($plugins['ViewBrowserPlugin']->coderoot . 'archive.css', 'text/css');
+
+exit;

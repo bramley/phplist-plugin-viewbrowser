@@ -121,8 +121,9 @@ class DAO extends Common\DAO\User
         return fetchUrl($url, $user);
     }
 
-    public function messagesForUser($uid)
+    public function messagesForUser($uid, $start = null, $limit = null)
     {
+        $range = $start === null ? '' : "LIMIT $start, $limit";
         $sql = <<<END
             SELECT m.subject, um.messageid, DATE(um.entered) AS entered
             FROM {$this->tables['message']} m
@@ -131,20 +132,35 @@ class DAO extends Common\DAO\User
             WHERE u.uniqid = '$uid'
             AND um.status = 'sent'
             ORDER BY um.entered DESC
+            $range
 END;
 
         return $this->dbCommand->queryAll($sql);
     }
 
+    public function totalMessagesForUser($uid)
+    {
+        $sql = <<<END
+            SELECT COUNT(*)
+            FROM {$this->tables['message']} m
+            JOIN {$this->tables['usermessage']} um ON um.messageid = m.id
+            JOIN {$this->tables['user']} u ON u.id = um.userid
+            WHERE u.uniqid = '$uid'
+            AND um.status = 'sent'
+END;
+
+        return $this->dbCommand->queryOne($sql);
+    }
+
     public function subscriberForAdmin($adminId)
     {
         $sql = <<<END
-            SELECT u.uniqid
+            SELECT u.uniqid, u.email
             FROM {$this->tables['admin']} a
             JOIN {$this->tables['user']} u ON u.email = a.email
             WHERE a.id = $adminId
 END;
 
-        return $this->dbCommand->queryOne($sql);
+        return $this->dbCommand->queryRow($sql);
     }
 }
