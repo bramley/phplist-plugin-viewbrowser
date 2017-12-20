@@ -162,9 +162,9 @@ class ViewBrowserPlugin extends phplistPlugin
 
         return array(
             'XSL extension installed' => extension_loaded('xsl'),
-            'Common Plugin v3.7.7 or later installed' => (
+            'Common Plugin v3.7.8 or later installed' => (
                 phpListPlugin::isEnabled('CommonPlugin')
-                && version_compare($plugins['CommonPlugin']->version, '3.7.7') >= 0
+                && version_compare($plugins['CommonPlugin']->version, '3.7.8') >= 0
             ),
             'RSS Feed plugin v2.2.0 or later installed' => (
                 phpListPlugin::isEnabled('RssFeedPlugin')

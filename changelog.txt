@@ -1,3 +1,6 @@
+version 2.9.1+20171220
+      Update dependency on Common Plugin
+
 version 2.9.0+20171218
       Put css for the public archive page in a separate file so that it can be over-ridden.
       Use paging for the public and admin archive pages.
