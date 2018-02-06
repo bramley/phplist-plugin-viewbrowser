@@ -80,6 +80,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.9.2+20180207  Add Spanish translation
     2.9.1+20171220  Update dependency on Common Plugin
     2.9.0+20171218  Use paging on the archive pages
     2.8.0+20171206  Rework layout of campaign archive
