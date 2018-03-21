@@ -1,3 +1,6 @@
+version 2.9.3+20180419
+      Add description to be displayed on the plugins page
+
 version 2.9.2+20180207
 Elias Torres (1):
       Spanish translation

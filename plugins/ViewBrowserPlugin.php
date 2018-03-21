@@ -50,13 +50,13 @@ class ViewBrowserPlugin extends phplistPlugin
      */
     public $name = 'View in Browser plugin';
     public $authors = 'Duncan Cameron';
-    public $enabled = 1;
+    public $description = 'View a campaign email in a browser.';
+    public $documentationUrl = 'https://resources.phplist.com/plugin/viewinbrowser';
     public $settings;
     public $topMenuLinks = array(
         self::ADMIN_ARCHIVE_PAGE => array('category' => 'campaigns'),
     );
     public $publicPages = array(self::VIEW_PAGE, self::IMAGE_PAGE, self::ARCHIVE_PAGE, self::CSS_PAGE);
-    public $documentationUrl = 'https://resources.phplist.com/plugin/viewinbrowser';
 
     /*
      * Private functions
@@ -167,14 +167,12 @@ class ViewBrowserPlugin extends phplistPlugin
                 && version_compare($plugins['CommonPlugin']->version, '3.7.8') >= 0
             ),
             'RSS Feed plugin v2.2.0 or later installed' => (
-                phpListPlugin::isEnabled('RssFeedPlugin')
-                && version_compare($plugins['RssFeedPlugin']->version, '2.2.0') >= 0
-                || !phpListPlugin::isEnabled('RssFeedPlugin')
+                !phpListPlugin::isEnabled('RssFeedPlugin')
+                || version_compare($plugins['RssFeedPlugin']->version, '2.2.0') >= 0
             ),
             'Content Areas plugin v1.4.0 or later installed' => (
-                phpListPlugin::isEnabled('ContentAreas')
-                && version_compare($plugins['ContentAreas']->version, '1.4.0') >= 0
-                || !phpListPlugin::isEnabled('ContentAreas')
+                !phpListPlugin::isEnabled('ContentAreas')
+                || version_compare($plugins['ContentAreas']->version, '1.4.0') >= 0
             ),
             'PHP version 5.4 or greater' => version_compare(PHP_VERSION, '5.4') > 0,
         );
