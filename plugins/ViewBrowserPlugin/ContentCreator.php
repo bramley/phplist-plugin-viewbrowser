@@ -177,12 +177,12 @@ END;
         $url = getConfig('unsubscribeurl');
         $sep = strpos($url, '?') === false ? '?' : '&';
 
-        $p['unsubscribeurl'] = sprintf('%s%suid=%s', $url, htmlspecialchars($sep), $uid);
+        $p['unsubscribeurl'] = $uid ? sprintf('%s%suid=%s', $url, htmlspecialchars($sep), $uid) : '';
         $p['unsubscribe'] = sprintf('<a href="%s">%s</a>', $p['unsubscribeurl'], $strUnsubscribe);
 
         $url = getConfig('blacklisturl');
         $sep = strpos($url, '?') === false ? '?' : '&';
-        $p['blacklisturl'] = sprintf('%s%semail=%s', $url, htmlspecialchars($sep), $email);
+        $p['blacklisturl'] = $uid ? sprintf('%s%semail=%s', $url, htmlspecialchars($sep), $email) : '';
         $p['blacklist'] = sprintf('<a href="%s">%s</a>', $p['blacklisturl'], $strUnsubscribe);
 
         $url = getConfig('subscribeurl');
@@ -191,29 +191,31 @@ END;
 
         $url = getConfig('forwardurl');
         $sep = strpos($url, '?') === false ? '?' : '&';
-        $p['forwardurl'] = sprintf('%s%suid=%s&amp;mid=%d', $url, htmlspecialchars($sep), $uid, $messageid);
+        $p['forwardurl'] = $uid ? sprintf('%s%suid=%s&amp;mid=%d', $url, htmlspecialchars($sep), $uid, $messageid) : '';
         $p['forward'] = sprintf('<a href="%s">%s</a>', $p['forwardurl'], $strThisLink);
 
         $url = getConfig('forwardurl');
-        $p['forwardform'] = sprintf(
-            '<form method="get" action="%s" name="forwardform" class="forwardform">
-                <input type="hidden" name="uid" value="%s" />
-                <input type="hidden" name="mid" value="%d" />
-                <input type="hidden" name="p" value="forward" />
-                <input type=text name="email" value="" class="forwardinput" />
-                <input name="Send" type="submit" value="%s" class="forwardsubmit"/>
-            </form>',
-            $url, $uid, $messageid, $strForward
-        );
+        $p['forwardform'] = $uid
+            ? sprintf(
+                '<form method="get" action="%s" name="forwardform" class="forwardform">
+                    <input type="hidden" name="uid" value="%s" />
+                    <input type="hidden" name="mid" value="%d" />
+                    <input type="hidden" name="p" value="forward" />
+                    <input type=text name="email" value="" class="forwardinput" />
+                    <input name="Send" type="submit" value="%s" class="forwardsubmit"/>
+                </form>',
+                $url, $uid, $messageid, $strForward
+            )
+            : '';
 
         $url = getConfig('preferencesurl');
         $sep = strpos($url, '?') === false ? '?' : '&';
-        $p['preferencesurl'] = sprintf('%s%suid=%s', $url, htmlspecialchars($sep), $uid);
+        $p['preferencesurl'] = $uid ? sprintf('%s%suid=%s', $url, htmlspecialchars($sep), $uid) : '';
         $p['preferences'] = sprintf('<a href="%s">%s</a>', $p['preferencesurl'], $strThisLink);
 
         $url = getConfig('confirmationurl');
         $sep = strpos($url, '?') === false ? '?' : '&';
-        $p['confirmationurl'] = sprintf('%s%suid=%s', $url, htmlspecialchars($sep), $uid);
+        $p['confirmationurl'] = $uid ? sprintf('%s%suid=%s', $url, htmlspecialchars($sep), $uid) : '';
 
         $p['messageid'] = $messageid;
         $p['website'] = $website;

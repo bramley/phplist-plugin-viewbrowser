@@ -17,7 +17,7 @@ $PoweredBy
 END;
 }
 
-if (!isset($_GET['uid'])) {
+if (empty($_GET['uid'])) {
     echo s('A user uid must be specified');
     exit;
 }

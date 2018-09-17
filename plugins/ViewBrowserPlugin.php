@@ -58,11 +58,19 @@ class ViewBrowserPlugin extends phplistPlugin
     );
     public $publicPages = array(self::VIEW_PAGE, self::IMAGE_PAGE, self::ARCHIVE_PAGE, self::CSS_PAGE);
 
-    /*
-     * Private functions
+    /**
+     * Create a url to the archive page.
+     * Return an empty string when the url is being created for an anonymous user.
+     *
+     * @param string $uid the user uniqid
+     *
+     * @return string
      */
     private function archiveUrl($uid)
     {
+        if (!$uid) {
+            return '';
+        }
         $params = array(
             'p' => self::ARCHIVE_PAGE,
             'pi' => self::PLUGIN,
@@ -72,6 +80,14 @@ class ViewBrowserPlugin extends phplistPlugin
         return $this->rootUrl . '?' . http_build_query($params, '', '&');
     }
 
+    /**
+     * Create a url to the view in browser page.
+     *
+     * @param int    $messageid the message id
+     * @param string $uid       the user uniqid or an empty string for anonymous access
+     *
+     * @return string
+     */
     private function viewUrl($messageid, $uid)
     {
         $params = array('m' => $messageid);
@@ -318,7 +334,6 @@ class ViewBrowserPlugin extends phplistPlugin
             return $this->removePlaceholders($content);
         }
         $uniqid = isset($userdata['uniqid']) ? $userdata['uniqid'] : '';
-        $url = $this->viewUrl($messageid, $uniqid);
         $archiveUrl = $this->archiveUrl($uniqid);
 
         $viewLinkCallback = function (array $matches) use ($messageid, $uniqid) {
