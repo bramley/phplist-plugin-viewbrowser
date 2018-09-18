@@ -6,8 +6,9 @@ class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->pi = new ViewBrowserPlugin;
-        $this->pi->activate();
+        global $plugins;
+
+        $this->pi = $plugins['ViewBrowserPlugin'];
     }
 
     public function parseHtmlDataProvider()
@@ -40,6 +41,10 @@ class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
             'url placeholder with message id' => [
                 13, 'here is the seventh content [VIEWBROWSERURL:345]', 'fsdf@sfsd.com',  array('uniqid' => '1234567890'),
                 'here is the seventh content http://mysite.com/lists/?m=345&amp;uid=1234567890&amp;p=view&amp;pi=ViewBrowserPlugin'
+            ],
+            'url placeholder removed when forwarded with anonymous page disabled' => [
+                13, 'here is the eighth content [VIEWBROWSERURL]', 'fsdf@sfsd.com',  array(),
+                'here is the eighth content '
             ],
         ];
     }
@@ -97,6 +102,38 @@ class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(
             $expected,
             $this->pi->parseOutgoingTextMessage($mid, $content, $email, $user)
+        );
+    }
+
+    public function parseHtmlAnonymousDataProvider()
+    {
+        return [
+            'url placeholder when anonymous page enabled' => [
+                13, 'here is the content [VIEWBROWSERURL]', 'fsdf@sfsd.com',  array(),
+                'here is the content http://mysite.com/lists/?m=13&amp;p=view&amp;pi=ViewBrowserPlugin'
+            ],
+            'archive url not displayed when anonymous page enabled' => [
+                13, 'here is the archive [ARCHIVEURL]', 'fsdf@sfsd.com',  array(''),
+                'here is the archive '
+            ],
+            'archive link has empty url when anonymous page enabled' => [
+                13, 'here is the [ARCHIVE] page', 'fsdf@sfsd.com',  array(''),
+                'here is the <a href="" >archive</a> page'
+            ],
+        ];
+    }
+    /**
+     * @test
+     * @dataProvider parseHtmlAnonymousDataProvider
+     */
+    public function parseOutgoingHTMLMessageAnonymous($mid, $content, $email, $user, $expected)
+    {
+        global $phplist_config;
+
+        $phplist_config['viewbrowser_anonymous'] = true;
+        $this->assertEquals(
+            $expected,
+            $this->pi->parseOutgoingHTMLMessage($mid, $content, $email, $user)
         );
     }
 }
