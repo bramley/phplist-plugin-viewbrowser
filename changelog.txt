@@ -1,3 +1,6 @@
+version 2.9.6+20181015
+      German translation
+
 version 2.9.5+20181015
       Add missing html escape
 
