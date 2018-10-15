@@ -1,3 +1,6 @@
+version 2.9.5+20181015
+      Add missing html escape
+
 version 2.9.4+20180918
       Remove urls for sensitive placeholders (preferences, unsubscribe, forward, archive, etc) for an anonymous page.
       Rework php unit tests

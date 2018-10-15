@@ -80,6 +80,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.9.5+20181015  Minor bug fix
     2.9.4+20180918  Remove urls for sensitive placeholders for an anonymous page
     2.9.3+20180419  Add description for the Plugins page
     2.9.2+20180207  Add Spanish translation
