@@ -17,11 +17,20 @@ $PoweredBy
 END;
 }
 
-if (empty($_GET['uid'])) {
-    echo s('A user uid must be specified');
-    exit;
-}
-$uid = $_GET['uid'];
 $container = include __DIR__ . '/dic.php';
 $archive = $container->get('ArchiveCreator');
-echo displayPublicPage($archive->createArchive($uid));
+
+if (!empty($_GET['uid'])) {
+    displayPublicPage($archive->createSubscriberArchive($_GET['uid']));
+
+    return;
+}
+
+if ((isset($_GET['list']) && ctype_digit($_GET['list']))) {
+    $result = getConfig('viewbrowser_anonymous')
+        ? $archive->createListArchive($_GET['list'])
+        : s('Not allowed to view campaigns for list %d', $_GET['list']);
+} else {
+    $result = s('A user uid or a list id must be specified');
+}
+displayPublicPage($result);
