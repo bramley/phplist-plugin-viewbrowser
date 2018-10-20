@@ -288,13 +288,12 @@ END;
     /**
      * Generate the html content of the email customised for the user.
      *
-     * @param int     $mid             the message id
-     * @param int     $uid             the user unique id
-     * @param Closure $contentProvider function to provide the message content
+     * @param int $mid the message id
+     * @param int $uid the user unique id
      *
      * @return string the generated html
      */
-    public function createContent($mid, $uid, \Closure $contentProvider = null)
+    public function createContent($mid, $uid)
     {
         global $PoweredByText, $PoweredByImage, $MD;
 
