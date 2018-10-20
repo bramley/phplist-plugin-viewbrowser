@@ -60,11 +60,12 @@ class ArchiveCreator
         $items = [];
 
         foreach ($campaigns as $c) {
-            $query = http_build_query(
-                ['pi' => $_GET['pi'], 'p' => 'view', 'm' => $c['messageid'], 'uid' => $uid],
-                '',
-                '&'
-            );
+            $params = ['pi' => $_GET['pi'], 'p' => 'view', 'm' => $c['messageid']];
+
+            if ($uid) {
+                $params['uid'] = $uid;
+            }
+            $query = http_build_query($params, '', '&');
             $url = sprintf('%s/?%s', $pageroot, $query);
             $link = new PageLink($url, $c['subject'], ['target' => '_blank']);
             $items[] = [
@@ -79,6 +80,27 @@ class ArchiveCreator
         return $items;
     }
 
+    private function genericCreateArchive($uid, $totalCallback, $resultsCallback, $subject)
+    {
+        $itemsPerPage = getConfig('viewbrowser_archive_items_per_page');
+        $startPage = isset($_GET['start']) ? $_GET['start'] : 1;
+        $paginator = new Paginator(
+            $totalCallback(),
+            $itemsPerPage,
+            $startPage,
+            $this->urlPattern()
+        );
+        $campaigns = $resultsCallback(($startPage - 1) * $itemsPerPage, $itemsPerPage);
+
+        $customCssUrl = getConfig('viewbrowser_archive_custom_css_url');
+        $cssUrl = $customCssUrl ?: \ViewBrowserPlugin::CSS_URL;
+
+        return $this->render(
+            __DIR__ . '/archive.tpl.php',
+            ['items' => $this->archiveItems($uid, $campaigns), 'subject' => $subject, 'paginator' => $paginator, 'css' => $cssUrl]
+        );
+    }
+
     public function __construct(DAO $dao)
     {
         $this->dao = $dao;
@@ -91,22 +113,52 @@ class ArchiveCreator
      *
      * @return string the generated html
      */
-    public function createArchive($uid)
+    public function createSubscriberArchive($uid)
     {
         $user = $this->dao->userByUniqid($uid);
 
-        $itemsPerPage = getConfig('viewbrowser_archive_items_per_page');
-        $startPage = isset($_GET['start']) ? $_GET['start'] : 1;
-        $paginator = new Paginator($this->dao->totalMessagesForUser($uid), $itemsPerPage, $startPage, $this->urlPattern());
-        $campaigns = $this->dao->messagesForUser($uid, ($startPage - 1) * $itemsPerPage, $itemsPerPage);
+        $totalCallback = function () use ($uid) {
+            return $this->dao->totalMessagesForUser($uid);
+        };
+        $resultsCallback = function ($start, $limit) use ($uid) {
+            return $this->dao->messagesForUser($uid, $start, $limit);
+        };
 
-        $customCssUrl = getConfig('viewbrowser_archive_custom_css_url');
-        $cssUrl = $customCssUrl ?: \ViewBrowserPlugin::CSS_URL;
+        return $this->genericCreateArchive($uid, $totalCallback, $resultsCallback, $user['email']);
+    }
 
-        return $this->render(
-            __DIR__ . '/archive.tpl.php',
-            ['items' => $this->archiveItems($uid, $campaigns), 'email' => $user['email'], 'paginator' => $paginator, 'css' => $cssUrl]
-        );
+    /**
+     * Generate the listing of campaigns sent to a list.
+     * The campaigns are displayed anonymously.
+     *
+     * @param int $listId the list id
+     *
+     * @return string the generated html
+     */
+    public function createListArchive($listId)
+    {
+        $list = $this->dao->listById($listId);
+
+        if (!$list) {
+            return s('List %d does not exist', $listId);
+        }
+        $allowedLists = getConfig('viewbrowser_allowed_lists');
+        $allowed =
+            ($allowedLists == '' && $list['active'] == 1)
+            || in_array($listId, preg_split('/\s+/', $allowedLists, -1, PREG_SPLIT_NO_EMPTY));
+
+        if (!$allowed) {
+            return s('Not allowed to view campaigns for list %d', $listId);
+        }
+
+        $totalCallback = function () use ($listId) {
+            return $this->dao->totalMessagesForList($listId);
+        };
+        $resultsCallback = function ($start, $limit) use ($listId) {
+            return $this->dao->messagesForList($listId, $start, $limit);
+        };
+
+        return $this->genericCreateArchive('', $totalCallback, $resultsCallback, $list['name']);
     }
 
     /**

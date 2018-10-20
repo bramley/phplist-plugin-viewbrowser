@@ -27,7 +27,7 @@
 <link href="<?= htmlspecialchars($css); ?>" rel="stylesheet">
 <div id="archive">
     <div>
-        <h4><?= s('Campaigns sent to %s', htmlspecialchars($email)); ?></h4>
+        <h4><?= s('Campaigns sent to %s', htmlspecialchars($subject)); ?></h4>
         <ul id="archive-list">
 <?php foreach ($items as $item): ?>
             <li>

@@ -1,9 +1,4 @@
 <?php
-
-namespace phpList\plugin\ViewBrowserPlugin;
-
-use phpList\plugin\Common;
-
 /**
  * ViewBrowserPlugin for phplist.
  *
@@ -25,11 +20,20 @@ use phpList\plugin\Common;
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
+namespace phpList\plugin\ViewBrowserPlugin;
+
+use phpList\plugin\Common\DAO as CommonDAO;
+use phpList\plugin\Common\DAO\ListsTrait;
+use phpList\plugin\Common\DAO\UserTrait;
+
 /**
  * DAO class providing access to the message table.
  */
-class DAO extends Common\DAO\User
+class DAO extends CommonDAO
 {
+    use ListsTrait;
+    use UserTrait;
+
     public function forwardId($url)
     {
         $url = sql_escape($url);
@@ -162,5 +166,48 @@ END;
 END;
 
         return $this->dbCommand->queryRow($sql);
+    }
+
+    public function messagesForList($listId, $start = null, $limit = null)
+    {
+        $range = $start === null ? '' : "LIMIT $start, $limit";
+        $sql = <<<END
+            SELECT m.subject, m.id as messageid, DATE(m.sent) AS entered
+            FROM {$this->tables['message']} m
+            JOIN {$this->tables['listmessage']} lm ON lm.messageid = m.id
+            WHERE lm.listid = $listId
+            AND m.status = 'sent'
+            ORDER BY m.sent DESC
+            $range
+END;
+
+        return $this->dbCommand->queryAll($sql);
+    }
+
+    public function totalMessagesForList($listId)
+    {
+        $sql = <<<END
+            SELECT COUNT(*)
+            FROM {$this->tables['message']} m
+            JOIN {$this->tables['listmessage']} lm ON lm.messageid = m.id
+            WHERE lm.listid = $listId
+            AND m.status = 'sent'
+END;
+
+        return $this->dbCommand->queryOne($sql);
+    }
+
+    public function wasUserSentMessage($mid, $uid)
+    {
+        $sql = <<<END
+            SELECT EXISTS (
+                SELECT 1
+                FROM {$this->tables['usermessage']} um
+                JOIN {$this->tables['user']} u ON u.id = um.userid
+                WHERE um.messageid = $mid AND u.uniqid = '$uid'
+            )
+END;
+
+        return $this->dbCommand->queryOne($sql);
     }
 }

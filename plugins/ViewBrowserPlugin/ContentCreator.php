@@ -1,10 +1,4 @@
 <?php
-
-namespace phpList\plugin\ViewBrowserPlugin;
-
-use phpList\plugin\Common;
-use Iterator;
-
 /**
  * ViewBrowserPlugin for phplist.
  *
@@ -26,6 +20,11 @@ use Iterator;
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
+namespace phpList\plugin\ViewBrowserPlugin;
+
+use phpList\plugin\Common;
+use Iterator;
+
 /**
  * Class to create the content of a campaign email.
  */
@@ -39,6 +38,33 @@ class ContentCreator
     private $clickTrack;
     /** @var string The phplist root url */
     private $rootUrl;
+
+    /**
+     * Determine whether a message has been sent to an allowed list.
+     *
+     * @param int $mid
+     *
+     * @return bool
+     */
+    private function sentToAllowedList($mid)
+    {
+        $allowedLists = getConfig('viewbrowser_allowed_lists');
+        $listsForMessage = iterator_to_array($this->dao->listsForMessage($mid));
+
+        if ($allowedLists == '') {
+            $activeLists = array_filter(
+                $listsForMessage,
+                function ($list) {
+                    return $list['active'];
+                }
+            );
+
+            return count($activeLists) > 0;
+        }
+        $allowedListIds = preg_split('/\s+/', $allowedLists, -1, PREG_SPLIT_NO_EMPTY);
+
+        return count(array_intersect($allowedListIds, array_column($listsForMessage, 'id'))) > 0;
+    }
 
     /**
      * Convert file size to appropriate unit.
@@ -73,7 +99,7 @@ class ContentCreator
             $size = $this->human_filesize($a['size']);
             $html .= <<<END
 <img src="./?p=image&amp;pi=CommonPlugin&amp;image=attach.png" alt="" title="" />
-$description 
+$description
 <a href="./dl.php?id={$a['id']}">$remotefile</a>
 $size<br/>
 END;
@@ -285,8 +311,16 @@ END;
             if (!$user) {
                 return s('User with uid %s does not exist', $uid);
             }
+            $allow = $this->dao->wasUserSentMessage($mid, $uid) || $this->sentToAllowedList($mid);
+
+            if (!$allow) {
+                return s('Not allowed to view message %d', $mid);
+            }
             $attributeValues = $this->dao->getUserAttributeValues($user['email']);
         } else {
+            if (!$this->sentToAllowedList($mid)) {
+                return s('Not allowed to view message %d', $mid);
+            }
             $user = array('email' => '', 'uniqid' => '');
             $attributeValues = array();
 

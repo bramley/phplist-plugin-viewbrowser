@@ -178,9 +178,9 @@ class ViewBrowserPlugin extends phplistPlugin
 
         return array(
             'XSL extension installed' => extension_loaded('xsl'),
-            'Common Plugin v3.7.8 or later installed' => (
+            'Common Plugin v3.9.2 or later installed' => (
                 phpListPlugin::isEnabled('CommonPlugin')
-                && version_compare($plugins['CommonPlugin']->version, '3.7.8') >= 0
+                && version_compare($plugins['CommonPlugin']->version, '3.9.2') >= 0
             ),
             'RSS Feed plugin v2.2.0 or later installed' => (
                 !phpListPlugin::isEnabled('RssFeedPlugin')
@@ -229,6 +229,13 @@ class ViewBrowserPlugin extends phplistPlugin
                 'description' => s('Whether the plugin should provide an anonymous page'),
                 'type' => 'boolean',
                 'allowempty' => false,
+                'category' => 'View in Browser',
+            ),
+            'viewbrowser_allowed_lists' => array(
+                'value' => '',
+                'description' => s('Restrict the anonymous page and archive to these list IDs. Leave empty to allow all public lists.'),
+                'type' => 'text',
+                'allowempty' => true,
                 'category' => 'View in Browser',
             ),
             'viewbrowser_plugins' => array(
