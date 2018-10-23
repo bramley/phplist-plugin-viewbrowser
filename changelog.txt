@@ -1,3 +1,10 @@
+version 2.10.0+20181023
+      Create anonymous archive of campaigns sent to a specific list.
+      Add config setting of allowed lists to restrict anonymous archive and anonymous email.
+      Remove redundant parameter
+      Add additional English translations
+      Add unit tests for list archive anonymous access
+
 version 2.9.6+20181015
       German translation
 

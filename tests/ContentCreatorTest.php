@@ -190,7 +190,39 @@ Forward a Message to Someone [FORWARD]',
                 'sendurl' => '',
                 'uuid' => 'ad51c93a-f6e6-4a68-aae0-d962e7c0fcb2',
             ],
+            35 => [
+                'message' => 'here is the message content email address is [email] name is [name%%default name] uniqid is [uniqid] more',
+                'id' => 35,
+                'template' => 0,
+                'subject' => 'a test message',
+                'footer' => '',
+                'fromemail' => 'from@email.com',
+                'sendmethod' => 'xxx',
+                'sendurl' => '',
+                'uuid' => '12a78839-e6af-4f44-8a6b-6a02a51796b2',
+            ],
             999 => false,
+        ];
+
+        $this->userMessage = [
+            '2f93856905d26f592c7cfefbff599a0e' => [
+                25, 26, 27, 28, 29
+            ],
+        ];
+
+        $this->listForMessage = [
+            25 => [
+                ['id' => 1, 'active' => 1],
+            ],
+            26 => [
+                ['id' => 2, 'active' => 1],
+            ],
+            28 => [
+                ['id' => 1, 'active' => 0],
+            ],
+            35 => [
+                ['id' => 3, 'active' => 0],
+            ],
         ];
 
         $this->forwardIds = [
@@ -299,6 +331,25 @@ Forward a Message to Someone [FORWARD]',
                 )
             );
 
+        $this->daoStub->method('wasUserSentMessage')
+            ->will(
+                $this->returnCallback(
+                    function ($messageId, $uid) {
+                        return in_array($messageId, $this->userMessage[$uid]);
+                    }
+                )
+            );
+
+        $this->daoStub->method('listsForMessage')
+            ->will(
+                $this->returnCallback(
+                    function ($messageId) {
+                        $a = $this->listForMessage[$messageId] ?? $this->listForMessage[25];
+                        return new ArrayIterator($a);
+                        //~ return new ArrayIterator($this->listForMessage[$messageId]);
+                    }
+                )
+            );
         $this->daoAttrStub = $this->getMockBuilder('phpList\plugin\Common\DAO\Attribute')
             ->disableOriginalConstructor()
             ->getMock();
@@ -526,12 +577,99 @@ Forward a Message to Someone [FORWARD]',
         $result = $cc->createContent(28, '2f93856905d26f592c7cfefbff599a0e');
         $expected =
 '<p>Attachments:<br><img src="./?p=image&amp;pi=CommonPlugin&amp;image=attach.png" alt="" title="">
-an attachment 
+an attachment
 <a href="./dl.php?id=12">attachment.doc</a>
 123.5kB<br><img src="./?p=image&amp;pi=CommonPlugin&amp;image=attach.png" alt="" title="">
-another attachment 
+another attachment
 <a href="./dl.php?id=13">attachment2.doc</a>
 7.7kB<br></p>';
+        $this->assertContains($expected, $result);
+    }
+
+    public function allowAccessDataProvider()
+    {
+        $data = [
+            'allowAnonymousToPublicList' => [
+                true,
+                '',
+                25,
+                '',
+                'here is the message content',
+            ],
+            'allowAnonymousToSpecificList' => [
+                true,
+                '2',
+                26,
+                '',
+                'here is a cat',
+            ],
+            'notAllowAnonymousToPrivateList' => [
+                true,
+                '',
+                28,
+                '',
+                'Not allowed to view message 28',
+            ],
+            'notAllowAnonymousToSpecificList' => [
+                true,
+                '3 4',
+                26,
+                '',
+                'Not allowed to view message 26',
+            ],
+            'allowUserSentMessage' => [
+                false,
+                '',
+                26,
+                '2f93856905d26f592c7cfefbff599a0e',
+                'here is a cat',
+            ],
+            'allowUserMessagePublicList' => [
+                false,
+                '',
+                30,
+                '2f93856905d26f592c7cfefbff599a0e',
+                'More',
+            ],
+            'notAllowUserMessagePrivateList' => [
+                false,
+                '',
+                35,
+                '2f93856905d26f592c7cfefbff599a0e',
+                'Not allowed to view message',
+            ],
+            'allowUserMessageAllowedList' => [
+                true,
+                '3 4',
+                35,
+                '2f93856905d26f592c7cfefbff599a0e',
+                'here is the message content',
+            ],
+            'notAllowUserMessageNotAllowedList' => [
+                true,
+                '4 5',
+                35,
+                '2f93856905d26f592c7cfefbff599a0e',
+                'Not allowed to view message',
+            ],
+        ];
+
+        return $data;
+    }
+
+    /**
+     * @test
+     * @dataProvider allowAccessDataProvider
+     */
+    public function allowAnonymousAndUserAccess($anonymous, $allowed, $mid, $uid, $expected)
+    {
+        global $phplist_config;
+
+        $phplist_config['viewbrowser_anonymous'] = $anonymous;
+        $phplist_config['viewbrowser_allowed_lists'] = $allowed;
+
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false, getConfig('version'));
+        $result = $cc->createContent($mid, $uid);
         $this->assertContains($expected, $result);
     }
 }
