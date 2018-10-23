@@ -13,6 +13,7 @@ $phplist_config = [
     'viewbrowser_attributes' => '',
     'viewbrowser_plugins' => "ContentAreas\nconditionalPlaceholderPlugin\nRssFeedPlugin\nViewBrowserPlugin",
     'viewbrowser_anonymous' => false,
+    'viewbrowser_allowed_lists' => '',
     'viewbrowser_archive_link' => 'archive',
     'viewbrowser_archive_styles' => '',
     'html_email_style' => '<style></style>',

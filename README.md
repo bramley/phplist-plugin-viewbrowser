@@ -80,6 +80,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.10.0+20181023 Provide anonymous archive of emails sent to a list
     2.9.6+20181015  German translation
     2.9.5+20181015  Minor bug fix
     2.9.4+20180918  Remove urls for sensitive placeholders for an anonymous page
