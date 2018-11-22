@@ -80,6 +80,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.10.1+20181122 Change to the messages that a subscriber can view
     2.10.0+20181023 Provide anonymous archive of emails sent to a list
     2.9.6+20181015  German translation
     2.9.5+20181015  Minor bug fix

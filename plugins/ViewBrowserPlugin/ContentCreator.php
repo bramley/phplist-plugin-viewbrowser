@@ -40,9 +40,11 @@ class ContentCreator
     private $rootUrl;
 
     /**
-     * Determine whether a message has been sent to an allowed list.
+     * For an anonymous page determine whether a message has been sent to an allowed list.
+     * Either any active list to which the message has been sent, or
+     * any specified list to which the message has been sent.
      *
-     * @param int $mid
+     * @param int $mid message id
      *
      * @return bool
      */
@@ -310,7 +312,7 @@ END;
             if (!$user) {
                 return s('User with uid %s does not exist', $uid);
             }
-            $allow = $this->dao->wasUserSentMessage($mid, $uid) || $this->sentToAllowedList($mid);
+            $allow = $this->dao->wasUserSentMessage($mid, $uid) || (getConfig('viewbrowser_anonymous') && $this->sentToAllowedList($mid));
 
             if (!$allow) {
                 return s('Not allowed to view message %d', $mid);

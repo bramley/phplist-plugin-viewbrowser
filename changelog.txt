@@ -1,3 +1,7 @@
+version 2.10.1+20181122
+      Revise unit tests
+      Change which messages a subscriber can view to include those sent to their lists
+
 version 2.10.0+20181023
       Create anonymous archive of campaigns sent to a specific list.
       Add config setting of allowed lists to restrict anonymous archive and anonymous email.

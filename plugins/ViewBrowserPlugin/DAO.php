@@ -197,8 +197,30 @@ END;
         return $this->dbCommand->queryOne($sql);
     }
 
+    /**
+     * Determine whether the user belongs to a list to which the message has been sent, not
+     * necessarily having been sent the message to allow for sending a test message.
+     *
+     * @param int $mid the message id
+     * @param int $uid the user unique id
+     *
+     * @return bool
+     */
     public function wasUserSentMessage($mid, $uid)
     {
+        $sql = <<<END
+            SELECT EXISTS (
+                SELECT 1
+                FROM {$this->tables['listuser']} lu
+                JOIN {$this->tables['listmessage']} lm ON lm.listid = lu.listid
+                JOIN {$this->tables['user']} u ON u.id = lu.userid
+                WHERE lm.messageid = $mid AND u.uniqid = '$uid'
+            )
+END;
+
+        if ($this->dbCommand->queryOne($sql)) {
+            return true;
+        }
         $sql = <<<END
             SELECT EXISTS (
                 SELECT 1
