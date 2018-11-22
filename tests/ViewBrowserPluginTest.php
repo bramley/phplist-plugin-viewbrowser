@@ -1,6 +1,7 @@
 <?php
+use PHPUnit\Framework\TestCase;
 
-class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
+class ViewBrowserPluginTest extends TestCase
 {
     private $pi;
 
@@ -54,6 +55,10 @@ class ViewBrowserPluginTest extends PHPUnit_Framework_TestCase
      */
     public function parseOutgoingHTMLMessage($mid, $content, $email, $user, $expected)
     {
+        global $phplist_config;
+
+        $phplist_config['viewbrowser_anonymous'] = false;
+        $phplist_config['viewbrowser_allowed_lists'] = '';
         $this->assertEquals(
             $expected,
             $this->pi->parseOutgoingHTMLMessage($mid, $content, $email, $user)

@@ -1,6 +1,7 @@
 <?php
+use PHPUnit\Framework\TestCase;
 
-class ContentCreatorTest extends PHPUnit_Framework_TestCase
+class ContentCreatorTest extends TestCase
 {
     protected function setUp()
     {
@@ -206,7 +207,7 @@ Forward a Message to Someone [FORWARD]',
 
         $this->userMessage = [
             '2f93856905d26f592c7cfefbff599a0e' => [
-                25, 26, 27, 28, 29
+                25, 26, 27, 28, 29, 30, 31, 32, 33, 34
             ],
         ];
 
@@ -218,6 +219,21 @@ Forward a Message to Someone [FORWARD]',
                 ['id' => 2, 'active' => 1],
             ],
             28 => [
+                ['id' => 1, 'active' => 0],
+            ],
+            30 => [
+                ['id' => 1, 'active' => 0],
+            ],
+            31 => [
+                ['id' => 1, 'active' => 0],
+            ],
+            32 => [
+                ['id' => 1, 'active' => 0],
+            ],
+            33 => [
+                ['id' => 1, 'active' => 0],
+            ],
+            34 => [
                 ['id' => 1, 'active' => 0],
             ],
             35 => [
@@ -453,6 +469,10 @@ Forward a Message to Someone [FORWARD]',
      */
     public function createsEmailContent($messageId, $uniqid, $expected, $unexpected = array())
     {
+        global $phplist_config;
+
+        $phplist_config['viewbrowser_anonymous'] = false;
+        $phplist_config['viewbrowser_allowed_lists'] = '';
         $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, true, '3.2.0');
         $result = $cc->createContent($messageId, $uniqid);
 
