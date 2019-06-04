@@ -51,7 +51,7 @@ function parsePlaceHolders($content, $array = array())
     #  print '<br/>'.$key.' '.$val.'<hr/>'.htmlspecialchars($content).'<hr/>';
       if (stripos($content,'['.$key.']') !== false) {
         $content = str_ireplace('['.$key.']',$val,$content);
-      } 
+      }
       if (preg_match('/\['.$key.'%%([^\]]+)\]/i',$content,$regs)) { ## @@todo, check for quoting */ etc
     #    var_dump($regs);
         if (!empty($val)) {
@@ -154,4 +154,13 @@ function parseText($text)
     $text = str_replace('<!--DOLL-->', '$', $text);
 
     return $text;
+}
+
+function parseVCardHTMLPlaceholder($content) {
+    preg_match_all('/\[CONTACT\:?(\d+)?\]/i', $content, $contactInstances);
+    foreach ($contactInstances[0] as $index => $contactInstance) {
+        $content = str_ireplace($contactInstance, '<a href="'.htmlentities(getConfig('vcardurl')).'">'.$GLOBALS['strContactMessage'].'</a>', $content);
+    }
+
+    return $content;
 }

@@ -65,7 +65,7 @@ class ContentCreatorTest extends TestCase
                 'uuid' => '5a4d86ce-986d-4c00-a44f-3c8fa717759e',
             ],
             26 => [
-                'message' => 
+                'message' =>
 '<div>
 <p>here is a link <a href="http://www.bbc.co.uk">to the bbc</a></p>
 <p>a link that contains http <a href="http://www.aaa.com">http://www.aaa.com</a></p>
@@ -83,7 +83,7 @@ class ContentCreatorTest extends TestCase
                 'uuid' => '2f404bcc-e060-4675-8d50-96b329962f92',
             ],
             27 => [
-                'message' => 
+                'message' =>
 '<div>
 <p>here is a link <a href="http://www.bbc.co.uk">to the bbc</a></p>
 <p>a link that contains http <a href="http://www.aaa.com">http://www.aaa.com</a></p>
@@ -177,7 +177,7 @@ Forward a Message to Someone [FORWARD]',
                 'subject' => 'a test message',
                 'footer' =>
 '--
-  
+
     <div class="footer" style="text-align:left; font-size: 75%;">
       <p>This message was sent to [EMAIL] by [FROMEMAIL]</p>
       <p>To forward this message, please do not use the forward button of your email application, because this message was made specifically for you only. Instead use the <a href="[FORWARDURL]">forward page</a> in our newsletter system.<br/>
@@ -202,12 +202,34 @@ Forward a Message to Someone [FORWARD]',
                 'sendurl' => '',
                 'uuid' => '12a78839-e6af-4f44-8a6b-6a02a51796b2',
             ],
+            36 => [
+                'message' => 'here is the message content [CONTACT]',
+                'id' => 36,
+                'template' => 0,
+                'subject' => 'a test message',
+                'footer' => '',
+                'fromemail' => 'from@email.com',
+                'sendmethod' => 'xxx',
+                'sendurl' => '',
+                'uuid' => '12a78839-e6af-4f44-8a6b-6a02a51796b2',
+            ],
+            37 => [
+                'message' => 'here is the message content <a href="[CONTACTURL]">Download</a>',
+                'id' => 37,
+                'template' => 0,
+                'subject' => 'a test message',
+                'footer' => '',
+                'fromemail' => 'from@email.com',
+                'sendmethod' => 'xxx',
+                'sendurl' => '',
+                'uuid' => '12a78839-e6af-4f44-8a6b-6a02a51796b2',
+            ],
             999 => false,
         ];
 
         $this->userMessage = [
             '2f93856905d26f592c7cfefbff599a0e' => [
-                25, 26, 27, 28, 29, 30, 31, 32, 33, 34
+                25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 36, 37
             ],
         ];
 
@@ -237,6 +259,12 @@ Forward a Message to Someone [FORWARD]',
                 ['id' => 1, 'active' => 0],
             ],
             35 => [
+                ['id' => 3, 'active' => 0],
+            ],
+            36 => [
+                ['id' => 3, 'active' => 0],
+            ],
+            37 => [
                 ['id' => 3, 'active' => 0],
             ],
         ];
@@ -458,6 +486,18 @@ Forward a Message to Someone [FORWARD]',
                 '2f93856905d26f592c7cfefbff599a0e',
                 ["<br>\nIf you do not want to receive any more newsletters,"],
             ],
+            //~ 'replaces CONTACT placeholder' => [
+                //~ 36,
+                //~ '2f93856905d26f592c7cfefbff599a0e',
+                //~ ['<a href="http://mysite.com/lists/?p=vcard">Add us to your address book</a>'],
+                //~ ['CONTACT'],
+            //~ ],
+            //~ 'replaces CONTACTURL placeholder' => [
+                //~ 37,
+                //~ '2f93856905d26f592c7cfefbff599a0e',
+                //~ ['<a href="http://strontian/lists/?p=vcard">Download</a>'],
+                //~ ['CONTACTURL'],
+            //~ ],
         ];
 
         return $data;
@@ -474,6 +514,44 @@ Forward a Message to Someone [FORWARD]',
         $phplist_config['viewbrowser_anonymous'] = false;
         $phplist_config['viewbrowser_allowed_lists'] = '';
         $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, true, '3.2.0');
+        $result = $cc->createContent($messageId, $uniqid);
+
+        foreach ($expected as $e) {
+            $this->assertContains($e, $result);
+        }
+
+        foreach ($unexpected as $e) {
+            $this->assertNotContains($e, $result);
+        }
+    }
+
+    public function replacesContactPlaceholdersDataProvider()
+    {
+        $data = [
+            'replaces CONTACT placeholder' => [
+                36,
+                '2f93856905d26f592c7cfefbff599a0e',
+                ['<a href="http://mysite.com/lists/?p=vcard">Add us to your address book</a>'],
+                ['CONTACT'],
+            ],
+            'replaces CONTACTURL placeholder' => [
+                37,
+                '2f93856905d26f592c7cfefbff599a0e',
+                ['<a href="http://mysite.com/lists/?p=vcard">Download</a>'],
+                ['CONTACTURL'],
+            ],
+        ];
+
+        return $data;
+    }
+
+    /**
+     * @test
+     * @dataProvider replacesContactPlaceholdersDataProvider
+     */
+    public function replacesContactPlaceholders($messageId, $uniqid, $expected, $unexpected = array())
+    {
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false, '3.2.0');
         $result = $cc->createContent($messageId, $uniqid);
 
         foreach ($expected as $e) {

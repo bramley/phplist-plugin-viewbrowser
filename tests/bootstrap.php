@@ -27,6 +27,7 @@ $GLOBALS['PoweredByImage'] = 'mysite.com';
 $GLOBALS['strForwardTitle'] = 'Forward a Message to Someone';
 $GLOBALS['strToUnsubscribe'] = 'If you do not want to receive any more newsletters, ';
 $GLOBALS['strToUpdate'] = 'To update your preferences and to unsubscribe visit';
+$GLOBALS['strContactMessage'] = 'Add us to your address book';
 
 $_GET['pi'] = 'ViewBrowserPlugin';
 

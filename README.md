@@ -2,7 +2,7 @@
 
 ## Description ##
 
-The plugin generates a page that displays a campaign email customised with subscriber and phplist placeholders, and 
+The plugin generates a page that displays a campaign email customised with subscriber and phplist placeholders, and
 link tracking.
 A placeholder, [VIEWBROWSER], is included in a campaign and is replaced by a link to the page when the email is created by phplist.
 Alternatively the placeholder [VIEWBROWSERURL] can be used for the URL of the page.
@@ -29,7 +29,7 @@ The benefit of this is that plugins will not be affected when you upgrade phplis
 ### Install through phplist ###
 Install on the Plugins page (menu Config > Manage Plugins) using the package URL `https://github.com/bramley/phplist-plugin-viewbrowser/archive/master.zip`.
 
-In phplist releases 3.0.5 and earlier there is a bug that can cause a plugin to be incompletely installed on some configurations (<https://mantis.phplist.com/view.php?id=16865>). 
+In phplist releases 3.0.5 and earlier there is a bug that can cause a plugin to be incompletely installed on some configurations (<https://mantis.phplist.com/view.php?id=16865>).
 Check that these files are in the plugin directory. If not then you will need to install manually. The bug has been fixed in release 3.0.6.
 
 * the file ViewBrowserPlugin.php
@@ -80,6 +80,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.10.2+20190604 Replace CONTACT and CONTACTURL placeholders
     2.10.1+20181122 Change to the messages that a subscriber can view
     2.10.0+20181023 Provide anonymous archive of emails sent to a list
     2.9.6+20181015  German translation

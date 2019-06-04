@@ -1,3 +1,7 @@
+version 2.10.2+20190604
+      Replace CONTACT and CONTACTURL placeholders
+      Add unit tests for CONTACT and CONTACTURL placeholders
+
 version 2.10.1+20181122
       Revise unit tests
       Change which messages a subscriber can view to include those sent to their lists
