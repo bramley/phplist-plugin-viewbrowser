@@ -250,6 +250,7 @@ END;
         $p['domain'] = $domain;
         $p['subject'] = $message['subject'];
         $p['fromemail'] = $message['fromemail'];
+        $p['contacturl'] = getConfig('vcardurl');
 
         return $p;
     }
@@ -366,6 +367,7 @@ END;
         $content = parsePlaceHolders($content, $user);
         $content = parsePlaceHolders($content, $attributeValues);
         $content = parsePlaceHolders($content, $this->systemPlaceholders($uid, $user['email'], $message));
+        $content = parseVCardHTMLPlaceholder($content);
 
         if (version_compare(getConfig('version'), \ViewBrowserPlugin::LOGO_VERSION) >= 0) {
             $content = parseLogoPlaceholders($content);
