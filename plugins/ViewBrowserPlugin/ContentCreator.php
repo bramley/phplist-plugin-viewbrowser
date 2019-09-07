@@ -87,11 +87,12 @@ class ContentCreator
     /**
      * Generate html to display each attachment with its download link.
      *
+     * @param string   $uid
      * @param Iterator $attachments attachments
      *
      * @return string the html
      */
-    private function addAttachments(Iterator $attachments)
+    private function addAttachments($uid, Iterator $attachments)
     {
         $html = '<p>Attachments:<br/>';
 
@@ -102,7 +103,7 @@ class ContentCreator
             $html .= <<<END
 <img src="./?p=image&amp;pi=CommonPlugin&amp;image=attach.png" alt="" title="" />
 $description
-<a href="./dl.php?id={$a['id']}">$remotefile</a>
+<a href="./dl.php?id={$a['id']}&amp;uid=$uid">$remotefile</a>
 $size<br/>
 END;
         }
@@ -374,8 +375,9 @@ END;
         }
         $content = $this->replaceUserTrack($content, $mid, $uid);
 
-        if (count($attachments = $this->dao->attachments($mid)) > 0) {
-            $content = addHTMLFooter($content, $this->addAttachments($attachments));
+        // phplist restricts download of attachments to subscribers only
+        if ($personalise && count($attachments = $this->dao->attachments($mid)) > 0) {
+            $content = addHTMLFooter($content, $this->addAttachments($uid, $attachments));
         }
         $destinationEmail = $user['email'];
 
