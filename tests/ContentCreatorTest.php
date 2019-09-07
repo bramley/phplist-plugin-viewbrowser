@@ -676,12 +676,27 @@ Forward a Message to Someone [FORWARD]',
         $expected =
 '<p>Attachments:<br><img src="./?p=image&amp;pi=CommonPlugin&amp;image=attach.png" alt="" title="">
 an attachment
-<a href="./dl.php?id=12">attachment.doc</a>
+<a href="./dl.php?id=12&amp;uid=2f93856905d26f592c7cfefbff599a0e">attachment.doc</a>
 123.5kB<br><img src="./?p=image&amp;pi=CommonPlugin&amp;image=attach.png" alt="" title="">
 another attachment
-<a href="./dl.php?id=13">attachment2.doc</a>
+<a href="./dl.php?id=13&amp;uid=2f93856905d26f592c7cfefbff599a0e">attachment2.doc</a>
 7.7kB<br></p>';
         $this->assertContains($expected, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function notAddAttachmentForAnonymous()
+    {
+        global $phplist_config;
+
+        $phplist_config['viewbrowser_anonymous'] = true;
+
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false, getConfig('version'));
+        $result = $cc->createContent(25, '');
+        $this->assertContains('here is the message content', $result);
+        $this->assertNotContains('dl.php', $result);
     }
 
     public function allowAccessDataProvider()
