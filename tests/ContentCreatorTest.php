@@ -390,7 +390,6 @@ Forward a Message to Someone [FORWARD]',
                     function ($messageId) {
                         $a = $this->listForMessage[$messageId] ?? $this->listForMessage[25];
                         return new ArrayIterator($a);
-                        //~ return new ArrayIterator($this->listForMessage[$messageId]);
                     }
                 )
             );
@@ -486,18 +485,6 @@ Forward a Message to Someone [FORWARD]',
                 '2f93856905d26f592c7cfefbff599a0e',
                 ["<br>\nIf you do not want to receive any more newsletters,"],
             ],
-            //~ 'replaces CONTACT placeholder' => [
-                //~ 36,
-                //~ '2f93856905d26f592c7cfefbff599a0e',
-                //~ ['<a href="http://mysite.com/lists/?p=vcard">Add us to your address book</a>'],
-                //~ ['CONTACT'],
-            //~ ],
-            //~ 'replaces CONTACTURL placeholder' => [
-                //~ 37,
-                //~ '2f93856905d26f592c7cfefbff599a0e',
-                //~ ['<a href="http://strontian/lists/?p=vcard">Download</a>'],
-                //~ ['CONTACTURL'],
-            //~ ],
         ];
 
         return $data;

@@ -80,6 +80,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.10.3+20190907 Restrict downloading attachments to subscribers only
     2.10.2+20190604 Replace CONTACT and CONTACTURL placeholders
     2.10.1+20181122 Change to the messages that a subscriber can view
     2.10.0+20181023 Provide anonymous archive of emails sent to a list

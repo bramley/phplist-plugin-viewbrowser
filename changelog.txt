@@ -1,3 +1,8 @@
+version 2.10.3+20190907
+      Update tests to reflect restriction on downloading attachments
+      Restrict downloading attachments to subscribers only
+      Remove unnecessary commented-out code
+
 version 2.10.2+20190604
       Replace CONTACT and CONTACTURL placeholders
       Add unit tests for CONTACT and CONTACTURL placeholders
