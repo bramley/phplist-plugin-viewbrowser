@@ -33,8 +33,6 @@ class ViewBrowserPlugin extends phplistPlugin
     const CSS_PAGE = 'archivecss';
     const CSS_URL = './?pi=ViewBrowserPlugin&p=archivecss';
     const ADMIN_ARCHIVE_PAGE = 'adminarchive';
-    const VIEW_FILE = 'view.php';
-    const PUBLIC_PAGE_VERSION = '3.0.7';
     const LOGO_VERSION = '3.2.2';
     const TRACKID_VERSION = '3.3';
 
@@ -95,15 +93,9 @@ class ViewBrowserPlugin extends phplistPlugin
         if ($uid) {
             $params['uid'] = $uid;
         }
-
         $url = $this->rootUrl;
-
-        if (version_compare(getConfig('version'), self::PUBLIC_PAGE_VERSION) < 0) {
-            $url .= self::VIEW_FILE;
-        } else {
-            $params['p'] = self::VIEW_PAGE;
-            $params['pi'] = self::PLUGIN;
-        }
+        $params['p'] = self::VIEW_PAGE;
+        $params['pi'] = self::PLUGIN;
 
         return $url . '?' . http_build_query($params, '', '&');
     }
@@ -177,6 +169,7 @@ class ViewBrowserPlugin extends phplistPlugin
         global $plugins;
 
         return array(
+            'phpList version 3.0.7 or later' => version_compare(VERSION, '3.0.7') >= 0,
             'XSL extension installed' => extension_loaded('xsl'),
             'Common Plugin v3.9.2 or later installed' => (
                 phpListPlugin::isEnabled('CommonPlugin')

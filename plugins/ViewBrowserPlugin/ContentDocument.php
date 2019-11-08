@@ -53,13 +53,9 @@ class ContentDocument
             $src = $element->getAttribute('src');
 
             if ($row = $this->dao->templateImage($templateId, $src)) {
-                if (version_compare(getConfig('version'), \ViewBrowserPlugin::PUBLIC_PAGE_VERSION) < 0) {
-                    $data = "data:{$row['mimetype']};base64," . $row['data'];
-                } else {
-                    $data = $this->rootUrl . '?' . http_build_query(
-                        array('pi' => \ViewBrowserPlugin::PLUGIN, 'p' => \ViewBrowserPlugin::IMAGE_PAGE, 'id' => $row['id']), '', '&'
-                    );
-                }
+                $data = $this->rootUrl . '?' . http_build_query(
+                    array('pi' => \ViewBrowserPlugin::PLUGIN, 'p' => \ViewBrowserPlugin::IMAGE_PAGE, 'id' => $row['id']), '', '&'
+                );
                 $element->setAttribute('src', $data);
             }
         }

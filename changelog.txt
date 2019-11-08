@@ -1,3 +1,7 @@
+version 2.10.4+20191108
+      Update unit tests for phpunit 8.
+      Remove support for phplist versions prior to 3.0.7.
+
 version 2.10.3+20190907
       Update tests to reflect restriction on downloading attachments
       Restrict downloading attachments to subscribers only

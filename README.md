@@ -13,28 +13,15 @@ The plugin can also generate an anonymous page, where subscriber placeholders ar
 
 ### Dependencies ###
 
-Requires php version 5.4 or later.
+Requires phplist release 3.0.7 or later and php version 5.4 or later.
 
-This plugin requires the Common Plugin v3.6.3 or later to also be installed, and will not work without that.
-**You must install that plugin or upgrade to the latest version if it is already installed**.
-See <https://github.com/bramley/phplist-plugin-common>
+This plugin requires the Common Plugin v3.9.2 or later to be installed, and will not work without that.
+phplist now includes Common Plugin so you should only need to enable it on the Manage Plugins page.
 
 Requires the XSL extension to be included in php. You can verify this through phpinfo.
 
-### Set the plugin directory ###
-The default plugin directory is `plugins` within the phplist `admin` directory but you can use a directory outside of the web root by
-changing the definition of `PLUGIN_ROOTDIR` in config.php.
-The benefit of this is that plugins will not be affected when you upgrade phplist.
-
 ### Install through phplist ###
 Install on the Plugins page (menu Config > Manage Plugins) using the package URL `https://github.com/bramley/phplist-plugin-viewbrowser/archive/master.zip`.
-
-In phplist releases 3.0.5 and earlier there is a bug that can cause a plugin to be incompletely installed on some configurations (<https://mantis.phplist.com/view.php?id=16865>).
-Check that these files are in the plugin directory. If not then you will need to install manually. The bug has been fixed in release 3.0.6.
-
-* the file ViewBrowserPlugin.php
-* the directory ViewBrowserPlugin
-
 Then click the button to enable the plugin.
 
 ### Install manually ###
@@ -47,21 +34,6 @@ This should contain
 * the directory ViewBrowserPlugin
 
 Then click the button to enable the plugin.
-
-### Install view.php (phplist 3.0.6 and earlier) ###
-
-This step is necessary only for phplist releases 3.0.6 and earlier.
-
-Copy the file `view_3.0.6.php` from the ViewBrowserPlugin directory to the phplist directory - this is usually `/lists`,
-and rename to `view.php`.
-
-Amend .htaccess in the phplist directory to allow the file to be accessed. Change this line
-
-    <FilesMatch "(index.php|dl.php|ut.php|lt.php|download.php|connector.php)$">
-to
-
-    <FilesMatch "(index.php|dl.php|ut.php|lt.php|download.php|connector.php|view.php)$">
-
 
 ## Usage ##
 
@@ -80,6 +52,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.10.4+20191108 Remove support for phplist versions prior to 3.0.7
     2.10.3+20190907 Restrict downloading attachments to subscribers only
     2.10.2+20190604 Replace CONTACT and CONTACTURL placeholders
     2.10.1+20181122 Change to the messages that a subscriber can view
