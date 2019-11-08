@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 
 class ArchiveCreatorTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->usermessage = [
             '2f93856905d26f592c7cfefbff599a0e' => [
@@ -126,7 +126,7 @@ class ArchiveCreatorTest extends TestCase
         $result = $archive->createSubscriberArchive($uniqid);
 
         foreach ($expected as $e) {
-            $this->assertContains($e, $result);
+            $this->assertStringContainsString($e, $result);
         }
 
         foreach ($unexpected as $e) {
@@ -171,6 +171,6 @@ class ArchiveCreatorTest extends TestCase
         $archive = new phpList\plugin\ViewBrowserPlugin\ArchiveCreator($this->daoStub);
         $result = $archive->createListArchive($listId);
 
-        $this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
     }
 }

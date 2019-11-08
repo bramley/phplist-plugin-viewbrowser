@@ -5,7 +5,7 @@ class ViewBrowserPluginTest extends TestCase
 {
     private $pi;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         global $plugins;
 

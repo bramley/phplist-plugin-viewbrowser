@@ -3,7 +3,7 @@ use PHPUnit\Framework\TestCase;
 
 class ContentCreatorTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->users = [
             '2f93856905d26f592c7cfefbff599a0e' => [
@@ -504,11 +504,11 @@ Forward a Message to Someone [FORWARD]',
         $result = $cc->createContent($messageId, $uniqid);
 
         foreach ($expected as $e) {
-            $this->assertContains($e, $result);
+            $this->assertStringContainsString($e, $result);
         }
 
         foreach ($unexpected as $e) {
-            $this->assertNotContains($e, $result);
+            $this->assertStringNotContainsString($e, $result);
         }
     }
 
@@ -542,11 +542,11 @@ Forward a Message to Someone [FORWARD]',
         $result = $cc->createContent($messageId, $uniqid);
 
         foreach ($expected as $e) {
-            $this->assertContains($e, $result);
+            $this->assertStringContainsString($e, $result);
         }
 
         foreach ($unexpected as $e) {
-            $this->assertNotContains($e, $result);
+            $this->assertStringNotContainsString($e, $result);
         }
     }
 
@@ -573,11 +573,11 @@ Forward a Message to Someone [FORWARD]',
         $result = $cc->createContent($messageId, $uniqid);
 
         foreach ($expected as $e) {
-            $this->assertContains($e, $result);
+            $this->assertStringContainsString($e, $result);
         }
 
         foreach ($unexpected as $e) {
-            $this->assertNotContains($e, $result);
+            $this->assertStringNotContainsString($e, $result);
         }
     }
 
@@ -604,11 +604,11 @@ Forward a Message to Someone [FORWARD]',
         $result = $cc->createContent($messageId, $uniqid);
 
         foreach ($expected as $e) {
-            $this->assertContains($e, $result);
+            $this->assertStringContainsString($e, $result);
         }
 
         foreach ($unexpected as $e) {
-            $this->assertNotContains($e, $result);
+            $this->assertStringNotContainsString($e, $result);
         }
     }
 
@@ -634,11 +634,11 @@ Forward a Message to Someone [FORWARD]',
         $result = $cc->createContent($messageId, $uniqid);
 
         foreach ($expected as $e) {
-            $this->assertContains($e, $result);
+            $this->assertStringContainsString($e, $result);
         }
 
         foreach ($unexpected as $e) {
-            $this->assertNotContains($e, $result);
+            $this->assertStringNotContainsString($e, $result);
         }
     }
     /**
@@ -649,9 +649,9 @@ Forward a Message to Someone [FORWARD]',
         $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false, getConfig('version'));
         $result = $cc->createContent(34, '2f93856905d26f592c7cfefbff599a0e');
         $expected = '<div class="footer" style="text-align:left; font-size: 75%;">';
-        $this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
         $expected2 = '<a href="http://mysite.com/lists/?p=preferences&amp;uid=2f93856905d26f592c7cfefbff599a0e">preferences page</a>';
-        $this->assertContains($expected2, $result);
+        $this->assertStringContainsString($expected2, $result);
     }
     /**
      * @test
@@ -668,7 +668,7 @@ an attachment
 another attachment
 <a href="./dl.php?id=13&amp;uid=2f93856905d26f592c7cfefbff599a0e">attachment2.doc</a>
 7.7kB<br></p>';
-        $this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
     }
 
     /**
@@ -682,8 +682,8 @@ another attachment
 
         $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false, getConfig('version'));
         $result = $cc->createContent(25, '');
-        $this->assertContains('here is the message content', $result);
-        $this->assertNotContains('dl.php', $result);
+        $this->assertStringContainsString('here is the message content', $result);
+        $this->assertStringNotContainsString('dl.php', $result);
     }
 
     public function allowAccessDataProvider()
@@ -770,6 +770,6 @@ another attachment
 
         $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false, getConfig('version'));
         $result = $cc->createContent($mid, $uid);
-        $this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
     }
 }
