@@ -9,13 +9,16 @@ Alternatively the placeholder [VIEWBROWSERURL] can be used for the URL of the pa
 
 The plugin can also generate an anonymous page, where subscriber placeholders are removed.
 
+It also provides an archive page that lists all emails sent to a subscriber.
+That page is accessed by including a placeholder, [ARCHIVE] or [ARCHIVEURL], in a campaign email.
+
 ## Installation ##
 
 ### Dependencies ###
 
-Requires phplist release 3.0.7 or later and php version 5.4 or later.
+Requires phplist release 3.0.7 or later and php version 5.5 or later.
 
-This plugin requires the Common Plugin v3.9.2 or later to be installed, and will not work without that.
+This plugin requires the Common Plugin v3.10.0 or later to be installed, and will not work without that.
 phplist now includes Common Plugin so you should only need to enable it on the Manage Plugins page.
 
 Requires the XSL extension to be included in php. You can verify this through phpinfo.
@@ -52,6 +55,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.11.0+20200417 Use core phplist functions to format dates.
     2.10.4+20191108 Remove support for phplist versions prior to 3.0.7
     2.10.3+20190907 Restrict downloading attachments to subscribers only
     2.10.2+20190604 Replace CONTACT and CONTACTURL placeholders

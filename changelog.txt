@@ -1,3 +1,8 @@
+version 2.11.0+20200417
+      Update config file
+      Use core phplist function to format dates so that the date format configuration setting will be applied.
+      Rework to simplify and remove unnecessary code.
+
 version 2.10.4+20191108
       Update unit tests for phpunit 8.
       Remove support for phplist versions prior to 3.0.7.

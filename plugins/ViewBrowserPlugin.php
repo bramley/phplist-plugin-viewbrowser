@@ -171,9 +171,9 @@ class ViewBrowserPlugin extends phplistPlugin
         return array(
             'phpList version 3.0.7 or later' => version_compare(VERSION, '3.0.7') >= 0,
             'XSL extension installed' => extension_loaded('xsl'),
-            'Common Plugin v3.9.2 or later installed' => (
+            'Common Plugin v3.10.0 or later installed' => (
                 phpListPlugin::isEnabled('CommonPlugin')
-                && version_compare($plugins['CommonPlugin']->version, '3.9.2') >= 0
+                && version_compare($plugins['CommonPlugin']->version, '3.10.0') >= 0
             ),
             'RSS Feed plugin v2.2.0 or later installed' => (
                 !phpListPlugin::isEnabled('RssFeedPlugin')
@@ -183,7 +183,7 @@ class ViewBrowserPlugin extends phplistPlugin
                 !phpListPlugin::isEnabled('ContentAreas')
                 || version_compare($plugins['ContentAreas']->version, '1.4.0') >= 0
             ),
-            'PHP version 5.4 or greater' => version_compare(PHP_VERSION, '5.4') > 0,
+            'PHP version 5.5 or greater' => version_compare(PHP_VERSION, '5.5') > 0,
         );
     }
 

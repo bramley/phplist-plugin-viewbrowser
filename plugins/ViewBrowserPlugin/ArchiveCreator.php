@@ -22,11 +22,11 @@
 
 namespace phpList\plugin\ViewBrowserPlugin;
 
-use phpList\plugin\Common\Controller as CommonController;
 use phpList\plugin\Common\Listing;
 use phpList\plugin\Common\PageLink;
 use phpList\plugin\Common\Paginator;
 use phpList\plugin\Common\Populator;
+use phpList\plugin\Common\View;
 
 /**
  * Class to create an archive page.
@@ -36,15 +36,6 @@ class ArchiveCreator
     /** @var phpList\plugin\ViewBrowserPlugin\DAO DAO */
     private $dao;
 
-    private function render($template, $params)
-    {
-        extract($params);
-        ob_start();
-        require $template;
-
-        return ob_get_clean();
-    }
-
     private function urlPattern()
     {
         $params = $_GET;
@@ -53,11 +44,17 @@ class ArchiveCreator
         return sprintf('./?%s&start=%s', http_build_query($params), Paginator::NUM_PLACEHOLDER);
     }
 
+    /**
+     * Create fields for an archive item from campaign fields.
+     *
+     * @param string   $uid       user unique id
+     * @param iterable $campaigns
+     *
+     * @return Generator
+     */
     private function archiveItems($uid, $campaigns)
     {
         global $pageroot;
-
-        $items = [];
 
         foreach ($campaigns as $c) {
             $params = ['pi' => $_GET['pi'], 'p' => 'view', 'm' => $c['messageid']];
@@ -68,7 +65,8 @@ class ArchiveCreator
             $query = http_build_query($params, '', '&');
             $url = sprintf('%s/?%s', $pageroot, $query);
             $link = new PageLink($url, $c['subject'], ['target' => '_blank']);
-            $items[] = [
+
+            yield [
                 'id' => $c['messageid'],
                 'subject' => $c['subject'],
                 'url' => $url,
@@ -76,8 +74,6 @@ class ArchiveCreator
                 'entered' => formatDate($c['entered']),
             ];
         }
-
-        return $items;
     }
 
     private function genericCreateArchive($uid, $totalCallback, $resultsCallback, $subject)
@@ -95,7 +91,7 @@ class ArchiveCreator
         $customCssUrl = getConfig('viewbrowser_archive_custom_css_url');
         $cssUrl = $customCssUrl ?: \ViewBrowserPlugin::CSS_URL;
 
-        return $this->render(
+        return (string) new View(
             __DIR__ . '/archive.tpl.php',
             ['items' => $this->archiveItems($uid, $campaigns), 'subject' => $subject, 'paginator' => $paginator, 'css' => $cssUrl]
         );
@@ -109,7 +105,7 @@ class ArchiveCreator
     /**
      * Generate the listing of campaigns sent to a subscriber.
      *
-     * @param int $uid the user unique id
+     * @param string $uid the user unique id
      *
      * @return string the generated html
      */
@@ -193,14 +189,10 @@ class ArchiveCreator
             return $this->dao->totalMessagesForUser($uid);
         };
         $populator = new Populator($populateCallback, $totalCallback);
-        $listing = new Listing(new Controller(), $populator);
+        $listing = new Listing($populator);
         $itemsPerPage = getConfig('viewbrowser_archive_items_per_page');
         $listing->pager->setItemsPerPage([$itemsPerPage], $itemsPerPage);
 
         return $listing->display();
     }
-}
-
-class Controller extends CommonController
-{
 }
