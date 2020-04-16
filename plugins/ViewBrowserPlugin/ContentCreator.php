@@ -22,8 +22,8 @@
 
 namespace phpList\plugin\ViewBrowserPlugin;
 
-use phpList\plugin\Common;
 use Iterator;
+use phpList\plugin\Common;
 
 /**
  * Class to create the content of a campaign email.
