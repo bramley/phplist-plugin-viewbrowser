@@ -73,7 +73,7 @@ class ArchiveCreator
                 'subject' => $c['subject'],
                 'url' => $url,
                 'link' => $link,
-                'entered' => date_format(date_create($c['entered']), 'd/m/y'),
+                'entered' => formatDate($c['entered']),
             ];
         }
 

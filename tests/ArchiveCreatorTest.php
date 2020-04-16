@@ -102,7 +102,7 @@ class ArchiveCreatorTest extends TestCase
             ],
             'contains date' => [
                 '2f93856905d26f592c7cfefbff599a0e',
-                ['02/10/17']
+                ['2017-10-02']
             ],
             'contains view in browser url' => [
                 '2f93856905d26f592c7cfefbff599a0e',

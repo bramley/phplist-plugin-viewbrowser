@@ -164,3 +164,8 @@ function parseVCardHTMLPlaceholder($content) {
 
     return $content;
 }
+
+function formatDate($date)
+{
+    return  $date;
+}
