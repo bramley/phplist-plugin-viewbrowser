@@ -1,3 +1,6 @@
+version 2.11.1+20200519
+      Replace USERID placeholder as a synonym for UNIQID
+
 version 2.11.0+20200417
       Update config file
       Use core phplist function to format dates so that the date format configuration setting will be applied.

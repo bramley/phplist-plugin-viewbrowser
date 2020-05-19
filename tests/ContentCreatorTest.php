@@ -54,7 +54,10 @@ class ContentCreatorTest extends TestCase
 
         $this->messages = [
             25 => [
-                'message' => 'here is the message content email address is [email] name is [name%%default name] uniqid is [uniqid] more',
+                'message' => <<<'END'
+here is the message content email address is [email] name is [name%%default name] uniqid is [uniqid] userid is [userid] more
+END
+                ,
                 'id' => 25,
                 'template' => 0,
                 'subject' => 'a test message',
@@ -417,6 +420,11 @@ Forward a Message to Someone [FORWARD]',
                 '2f93856905d26f592c7cfefbff599a0e',
                 ['email address is aaa@bbb.com']
             ],
+            'replaces userid placeholder' => [
+                25,
+                '2f93856905d26f592c7cfefbff599a0e',
+                ['userid is 2f93856905d26f592c7cfefbff599a0e']
+            ],
             'replaces user attribute' => [
                 25,
                 '2f93856905d26f592c7cfefbff599a0e',
@@ -435,7 +443,7 @@ Forward a Message to Someone [FORWARD]',
             'shows no personal fields for anonymous user' => [
                 25,
                 '',
-                ['email address is  name is default name uniqid is  more']
+                ['email address is  name is default name uniqid is  userid is  more']
             ],
             'does not convert a link whose text contains http' => [
                 26,

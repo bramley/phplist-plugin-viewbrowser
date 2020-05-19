@@ -55,6 +55,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.11.1+20200519 Replace USERID placeholder as a synonym for UNIQID
     2.11.0+20200417 Use core phplist functions to format dates.
     2.10.4+20191108 Remove support for phplist versions prior to 3.0.7
     2.10.3+20190907 Restrict downloading attachments to subscribers only

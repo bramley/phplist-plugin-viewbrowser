@@ -331,6 +331,7 @@ END;
                 $attributeValues[$v['name']] = '';
             }
         }
+        $user['userid'] = $user['uniqid'];
 
         $callPlugins = $this->pluginsToCall();
         $message = $this->dao->loadMessageData($mid);
