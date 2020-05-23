@@ -234,7 +234,7 @@ class ViewBrowserPlugin extends phplistPlugin
             'viewbrowser_plugins' => array(
                 'description' => s('Plugins to be used when creating the email. Usually leave this unchanged.'),
                 'type' => 'textarea',
-                'value' => "ContentAreas\nconditionalPlaceholderPlugin\nRssFeedPlugin\nViewBrowserPlugin\nSubscribersPlugin",
+                'value' => "ContentAreas\nconditionalPlaceholderPlugin\nRssFeedPlugin\nViewBrowserPlugin\nSubscribersPlugin\ndateplaceholder",
                 'allowempty' => true,
                 'category' => 'View in Browser',
             ),

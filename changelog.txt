@@ -1,3 +1,6 @@
+version 2.11.2+20200523
+      Add the date placeholder plugin to the list of plugins that can transform the generated email.
+
 version 2.11.1+20200519
       Replace USERID placeholder as a synonym for UNIQID
 
