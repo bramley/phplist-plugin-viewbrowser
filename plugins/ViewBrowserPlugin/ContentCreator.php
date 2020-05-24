@@ -314,7 +314,9 @@ END;
             if (!$user) {
                 return s('User with uid %s does not exist', $uid);
             }
-            $allow = $this->dao->wasUserSentMessage($mid, $uid) || (getConfig('viewbrowser_anonymous') && $this->sentToAllowedList($mid));
+            $allow = $this->dao->wasUserSentMessage($mid, $uid)
+                || (getConfig('viewbrowser_anonymous') && $this->sentToAllowedList($mid))
+                || $this->dao->isUserSuperAdmin($uid);
 
             if (!$allow) {
                 return s('Not allowed to view message %d', $mid);

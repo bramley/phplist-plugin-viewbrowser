@@ -230,6 +230,29 @@ END;
             )
 END;
 
-        return $this->dbCommand->queryOne($sql);
+        return (bool) $this->dbCommand->queryOne($sql);
+    }
+
+    /**
+     * Determine whether the user is a super admin.
+     *
+     * @param int $uid the user unique id
+     *
+     * @return bool
+     */
+    public function isUserSuperAdmin($uid)
+    {
+        $sql = <<<END
+            SELECT EXISTS (
+                SELECT *
+                FROM {$this->tables['admin']} a
+                JOIN {$this->tables['user']} u ON u.email = a.email
+                WHERE u.uniqid = '$uid'
+                AND a.superuser = 1
+                AND a.disabled = 0
+            )
+END;
+
+        return (bool) $this->dbCommand->queryOne($sql);
     }
 }

@@ -1,3 +1,7 @@
+version 2.11.3+20200524
+      Remove the ContentAreas plugin from the list of plugins that can transform the generated email.
+      Allow a superadmin to view any campaign.
+
 version 2.11.2+20200523
       Add the date placeholder plugin to the list of plugins that can transform the generated email.
 
