@@ -372,10 +372,7 @@ END;
         $content = parsePlaceHolders($content, $attributeValues);
         $content = parsePlaceHolders($content, $this->systemPlaceholders($uid, $user['email'], $message));
         $content = parseVCardHTMLPlaceholder($content);
-
-        if (version_compare(getConfig('version'), \ViewBrowserPlugin::LOGO_VERSION) >= 0) {
-            $content = parseLogoPlaceholders($content);
-        }
+        $content = parseLogoPlaceholders($content);
         $content = $this->replaceUserTrack($content, $mid, $uid);
 
         // phplist restricts download of attachments to subscribers only

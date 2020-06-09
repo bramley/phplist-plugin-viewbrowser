@@ -16,7 +16,7 @@ That page is accessed by including a placeholder, [ARCHIVE] or [ARCHIVEURL], in 
 
 ### Dependencies ###
 
-Requires phplist release 3.0.7 or later and php version 5.5 or later.
+Requires phplist release 3.3.0 or later and php version 5.5 or later.
 
 This plugin requires the Common Plugin v3.10.0 or later to be installed, and will not work without that.
 phplist now includes Common Plugin so you should only need to enable it on the Manage Plugins page.
@@ -55,6 +55,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.11.4+20200609 Change the required version of phplist to 3.3
     2.11.3+20200524 Allow a superadmin to view any campaign.
     2.11.2+20200523 Add the date placeholder plugin to the list of supported plugins
     2.11.1+20200519 Replace USERID placeholder as a synonym for UNIQID

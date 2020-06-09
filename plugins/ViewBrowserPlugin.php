@@ -33,8 +33,6 @@ class ViewBrowserPlugin extends phplistPlugin
     const CSS_PAGE = 'archivecss';
     const CSS_URL = './?pi=ViewBrowserPlugin&p=archivecss';
     const ADMIN_ARCHIVE_PAGE = 'adminarchive';
-    const LOGO_VERSION = '3.2.2';
-    const TRACKID_VERSION = '3.3';
 
     /*
      *  Private variables
@@ -169,19 +167,11 @@ class ViewBrowserPlugin extends phplistPlugin
         global $plugins;
 
         return array(
-            'phpList version 3.0.7 or later' => version_compare(VERSION, '3.0.7') >= 0,
+            'phpList version 3.3.0 or later' => version_compare(VERSION, '3.3') >= 0,
             'XSL extension installed' => extension_loaded('xsl'),
             'Common Plugin v3.10.0 or later installed' => (
                 phpListPlugin::isEnabled('CommonPlugin')
                 && version_compare($plugins['CommonPlugin']->version, '3.10.0') >= 0
-            ),
-            'RSS Feed plugin v2.2.0 or later installed' => (
-                !phpListPlugin::isEnabled('RssFeedPlugin')
-                || version_compare($plugins['RssFeedPlugin']->version, '2.2.0') >= 0
-            ),
-            'Content Areas plugin v1.4.0 or later installed' => (
-                !phpListPlugin::isEnabled('ContentAreas')
-                || version_compare($plugins['ContentAreas']->version, '1.4.0') >= 0
             ),
             'PHP version 5.5 or greater' => version_compare(PHP_VERSION, '5.5') > 0,
         );

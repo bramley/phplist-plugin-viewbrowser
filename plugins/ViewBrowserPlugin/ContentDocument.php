@@ -74,31 +74,18 @@ class ContentDocument
                 || stripos($href, $linkTrackUrl) !== false) {
                 continue;
             }
-
             $url = cleanUrl($href, array('PHPSESSID', 'uid'));
+            $linkUuid = $this->dao->forwardUuid($url);
 
-            if (version_compare($version, \ViewBrowserPlugin::TRACKID_VERSION) >= 0) {
-                $linkUuid = $this->dao->forwardUuid($url);
+            if ($linkUuid) {
+                $tid = sprintf('H|%s|%s|%s', $linkUuid, $message['uuid'], $user['uuid']) ^ XORmask;
+                $tidEncoded = urlencode(rtrim(base64_encode($tid), '='));
+                $url = $linkTrackUrl . '?tid=' . $tidEncoded;
 
-                if ($linkUuid) {
-                    $tid = sprintf('H|%s|%s|%s', $linkUuid, $message['uuid'], $user['uuid']) ^ XORmask;
-                    $tidEncoded = urlencode(rtrim(base64_encode($tid), '='));
-                    $url = $linkTrackUrl . '?tid=' . $tidEncoded;
-
-                    if (SIGN_WITH_HMAC) {
-                        $url .= '&hm=' . hash_hmac(HASH_ALGO, $url, HMACKEY);
-                    }
-                    $node->setAttribute('href', $url);
+                if (SIGN_WITH_HMAC) {
+                    $url .= '&hm=' . hash_hmac(HASH_ALGO, $url, HMACKEY);
                 }
-            } else {
-                $linkid = $this->dao->forwardId($url);
-
-                if ($linkid) {
-                    $id = sprintf('H|%s|%s|%s', $linkid, $message['id'], $user['id']) ^ XORmask;
-                    $idEncoded = urlencode(rtrim(base64_encode($id), '='));
-                    $url = $linkTrackUrl . '?id=' . $idEncoded;
-                    $node->setAttribute('href', $url);
-                }
+                $node->setAttribute('href', $url);
             }
         }
     }

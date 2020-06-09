@@ -589,37 +589,6 @@ Forward a Message to Someone [FORWARD]',
         }
     }
 
-    public function encodesLinksPreviousDataProvider()
-    {
-        $data = [
-            'converts a link when link tracking is enabled' => [
-                26,
-                '2f93856905d26f592c7cfefbff599a0e',
-                ['http://mysite.com/lists/lt.php?id=fhoFAAgfBwBEBAU'],
-                ['<a href="http://www.bbc.co.uk">'],
-            ],
-        ];
-
-        return $data;
-    }
-    /**
-     * @test
-     * @dataProvider encodesLinksPreviousDataProvider
-     */
-    public function encodesLinksPrevious($messageId, $uniqid, $expected, $unexpected = array())
-    {
-        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, true, '3.2.0');
-        $result = $cc->createContent($messageId, $uniqid);
-
-        foreach ($expected as $e) {
-            $this->assertStringContainsString($e, $result);
-        }
-
-        foreach ($unexpected as $e) {
-            $this->assertStringNotContainsString($e, $result);
-        }
-    }
-
     public function doesNotEncodeLinksDataProvider()
     {
         $data = [
