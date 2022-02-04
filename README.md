@@ -55,6 +55,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.11.5+20220204 Small internal changes
     2.11.4+20200609 Change the required version of phplist to 3.3
     2.11.3+20200524 Allow a superadmin to view any campaign.
     2.11.2+20200523 Add the date placeholder plugin to the list of supported plugins

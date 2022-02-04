@@ -299,14 +299,19 @@ Forward a Message to Someone [FORWARD]',
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->daoStub->method('message')
+        $this->daoStub->method('messageById')
             ->will(
                 $this->returnCallback(
                     function ($messageId) {
-                        return isset($this->messages[$messageId])
-                            && isset($this->templates[$this->messages[$messageId]['template']])
-                            ? $this->templates[$this->messages[$messageId]['template']]
-                            : false;
+                        return $this->messages[$messageId] ?? false;
+                    }
+                )
+            );
+        $this->daoStub->method('templateById')
+            ->will(
+                $this->returnCallback(
+                    function ($id) {
+                        return $this->templates[$id];
                     }
                 )
             );
