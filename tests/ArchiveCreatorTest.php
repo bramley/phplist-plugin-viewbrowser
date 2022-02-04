@@ -6,6 +6,16 @@ class ArchiveCreatorTest extends TestCase
 {
     protected function setUp(): void
     {
+        $this->users = [
+            '2f93856905d26f592c7cfefbff599a0e' => [
+                'id' => 51,
+                'email' => 'aaa@bbb.com',
+                'uniqid' => '2f93856905d26f592c7cfefbff599a0e',
+                'uuid' => 'e446db8d-7bb0-4811-a054-d2951bf4176d'
+            ],
+            '' => ['id' => '', 'email' => 'no email', 'uniqid' => '', 'uuid' => ''],
+        ];
+
         $this->usermessage = [
             '2f93856905d26f592c7cfefbff599a0e' => [
                 ['subject' => 'first subject',
@@ -50,6 +60,15 @@ class ArchiveCreatorTest extends TestCase
         $this->daoStub = $this->getMockBuilder('phpList\plugin\ViewBrowserPlugin\DAO')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->daoStub->method('userByUniqid')
+            ->will(
+                $this->returnCallback(
+                    function ($uniqid) {
+                        return $this->users[$uniqid];
+                    }
+                )
+            );
 
         $this->daoStub->method('messagesForUser')
             ->will(

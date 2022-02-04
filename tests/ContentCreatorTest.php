@@ -227,7 +227,6 @@ Forward a Message to Someone [FORWARD]',
                 'sendurl' => '',
                 'uuid' => '12a78839-e6af-4f44-8a6b-6a02a51796b2',
             ],
-            999 => false,
         ];
 
         $this->userMessage = [
@@ -304,7 +303,8 @@ Forward a Message to Someone [FORWARD]',
             ->will(
                 $this->returnCallback(
                     function ($messageId) {
-                        return isset($this->templates[$this->messages[$messageId]['template']])
+                        return isset($this->messages[$messageId])
+                            && isset($this->templates[$this->messages[$messageId]['template']])
                             ? $this->templates[$this->messages[$messageId]['template']]
                             : false;
                     }
