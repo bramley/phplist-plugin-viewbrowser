@@ -301,7 +301,7 @@ END;
     {
         global $PoweredByText, $PoweredByImage, $MD;
 
-        $row = $this->dao->message($mid);
+        $row = $this->dao->messageById($mid);
 
         if (!$row) {
             return s('Message with id %d does not exist', $mid);
@@ -338,11 +338,6 @@ END;
         $callPlugins = $this->pluginsToCall();
         $message = $this->dao->loadMessageData($mid);
         $styles = '';
-        $templateBody = $row['template'];
-
-        if ($templateBody) {
-            $templateBody = stripslashes($templateBody);
-        }
 
         if ($message['sendmethod'] == 'remoteurl') {
             $content = $this->dao->fetchUrl($message['sendurl'], $user);
@@ -351,6 +346,13 @@ END;
                 return s('Unable to retrieve URL %s', $message['sendurl']);
             }
         } else {
+            if ($message['template'] != 0) {
+                $row = $this->dao->templateById($message['template']);
+                $templateBody = stripslashes($row['template']);
+            } else {
+                $templateBody = '';
+            }
+
             foreach ($callPlugins as $plugin) {
                 if (method_exists($plugin, 'viewBrowserHook')) {
                     $plugin->viewBrowserHook($templateBody, $message);

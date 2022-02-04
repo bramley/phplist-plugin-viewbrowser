@@ -18,7 +18,7 @@ That page is accessed by including a placeholder, [ARCHIVE] or [ARCHIVEURL], in 
 
 Requires phplist release 3.3.0 or later and php version 5.5 or later.
 
-This plugin requires the Common Plugin v3.10.0 or later to be installed, and will not work without that.
+This plugin requires the Common Plugin v3.10.7 or later to be installed, and will not work without that.
 phplist now includes Common Plugin so you should only need to enable it on the Manage Plugins page.
 
 Requires the XSL extension to be included in php. You can verify this through phpinfo.

@@ -24,6 +24,8 @@ namespace phpList\plugin\ViewBrowserPlugin;
 
 use phpList\plugin\Common\DAO as CommonDAO;
 use phpList\plugin\Common\DAO\ListsTrait;
+use phpList\plugin\Common\DAO\MessageTrait;
+use phpList\plugin\Common\DAO\TemplateTrait;
 use phpList\plugin\Common\DAO\UserTrait;
 
 /**
@@ -32,6 +34,8 @@ use phpList\plugin\Common\DAO\UserTrait;
 class DAO extends CommonDAO
 {
     use ListsTrait;
+    use MessageTrait;
+    use TemplateTrait;
     use UserTrait;
 
     public function forwardId($url)
@@ -54,19 +58,6 @@ class DAO extends CommonDAO
             WHERE ltf.url = '$url'";
 
         return $this->dbCommand->queryOne($sql);
-    }
-
-    public function message($id)
-    {
-        $sql = sprintf('
-            SELECT t.template
-            FROM %s AS m
-            LEFT JOIN %s AS t ON t.id = m.template
-            WHERE m.id = %d',
-            $this->tables['message'], $this->tables['template'], $id
-        );
-
-        return $this->dbCommand->queryRow($sql);
     }
 
     /**
