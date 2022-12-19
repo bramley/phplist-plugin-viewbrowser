@@ -1,3 +1,6 @@
+version 2.11.6+20221231
+      Remove dynamic property
+
 version 2.11.5+20220204
       Refactor of code
       Avoid using null template body
