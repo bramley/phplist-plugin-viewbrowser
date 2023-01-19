@@ -34,8 +34,7 @@ return new Picotainer([
         return new ContentCreator(
             $container->get('DAO'),
             $container->get('DAOAttr'),
-            CLICKTRACK,
-            getConfig('version')
+            CLICKTRACK
         );
     },
     'DAO' => function (ContainerInterface $container) {

@@ -61,7 +61,7 @@ class ContentDocument
         }
     }
 
-    public function addLinkTrack(array $message, array $user, $version)
+    public function addLinkTrack(array $message, array $user)
     {
         $linkTrackUrl = $this->rootUrl . 'lt.php';
         $nodes = $this->dom->getElementsByTagName('a');

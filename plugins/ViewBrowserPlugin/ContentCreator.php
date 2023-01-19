@@ -277,15 +277,13 @@ END;
     public function __construct(
         DAO $dao,
         Common\DAO\Attribute $daoAttr,
-        $clickTrack,
-        $version
+        $clickTrack
     ) {
         global $public_scheme, $pageroot;
 
         $this->dao = $dao;
         $this->daoAttr = $daoAttr;
         $this->clickTrack = $clickTrack;
-        $this->version = $version;
         $this->rootUrl = sprintf('%s://%s%s/', $public_scheme, getConfig('website'), $pageroot);
     }
 
@@ -394,7 +392,7 @@ END;
         $doc->addTemplateImages($mid, $message['template']);
 
         if ($this->clickTrack && $personalise) {
-            $doc->addLinkTrack($message, $user, $this->version);
+            $doc->addLinkTrack($message, $user);
         }
         $doc->addTitle($message['subject'], $styles);
 
