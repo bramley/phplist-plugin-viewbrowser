@@ -72,6 +72,17 @@ class ContentDocument
         }
     }
 
+    public function trimLinkUrls()
+    {
+        foreach ($this->dom->getElementsByTagName('a') as $element) {
+            $href = $element->getAttribute('href');
+
+            if (($trimmed = trim($href)) != $href) {
+                $element->setAttribute('href', $trimmed);
+            }
+        }
+    }
+
     public function addLinkTrack(array $message, array $user)
     {
         $linkTrackUrl = $this->rootUrl . 'lt.php';

@@ -392,6 +392,7 @@ END;
         $doc = new ContentDocument($content, $this->dao, $this->rootUrl);
         $doc->addTemplateImages($mid, $message['template']);
         $doc->trimImageUrls();
+        $doc->trimLinkUrls();
 
         if ($this->clickTrack && $personalise) {
             $doc->addLinkTrack($message, $user);
