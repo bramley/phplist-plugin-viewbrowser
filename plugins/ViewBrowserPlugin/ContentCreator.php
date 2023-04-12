@@ -344,11 +344,12 @@ END;
                 return s('Unable to retrieve URL %s', $message['sendurl']);
             }
         } else {
+            $templateBody = '';
+
             if ($message['template'] != 0) {
-                $row = $this->dao->templateById($message['template']);
-                $templateBody = stripslashes($row['template']);
-            } else {
-                $templateBody = '';
+                if ($row = $this->dao->templateById($message['template'])) {
+                    $templateBody = stripslashes($row['template']);
+                }
             }
 
             foreach ($callPlugins as $plugin) {
