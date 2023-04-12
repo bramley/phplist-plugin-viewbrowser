@@ -55,6 +55,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.11.7+20230412 Remove surrounding white space from image URLs
     2.11.6+20221231 Remove dynamic property to avoid php 8 deprecation
     2.11.5+20220204 Small internal changes
     2.11.4+20200609 Change the required version of phplist to 3.3

@@ -61,6 +61,17 @@ class ContentDocument
         }
     }
 
+    public function trimImageUrls()
+    {
+        foreach ($this->dom->getElementsByTagName('img') as $element) {
+            $src = $element->getAttribute('src');
+
+            if (($trimmed = trim($src)) != $src) {
+                $element->setAttribute('src', $trimmed);
+            }
+        }
+    }
+
     public function addLinkTrack(array $message, array $user)
     {
         $linkTrackUrl = $this->rootUrl . 'lt.php';

@@ -1,3 +1,9 @@
+version 2.11.7+20230412
+      Remove redundant $version parameter
+      Update cs fixer
+      Handle message template not existing
+      Remove leading and trailing whitespace from image URLs to avoid them being % encoded
+
 version 2.11.6+20221231
       Remove dynamic property
 
