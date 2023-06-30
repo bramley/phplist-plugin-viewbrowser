@@ -34,6 +34,7 @@ class ContentDocument
     private $dom;
     private $docType;
     private $dao;
+    private $errors;
     private $rootUrl;
 
     public function __construct($content, $dao, $rootUrl)
@@ -43,8 +44,20 @@ class ContentDocument
         libxml_use_internal_errors(true);
         $this->dom = new DOMDocument();
         $this->dom->encoding = 'UTF-8';
+        libxml_clear_errors();
+
         $this->dom->loadHTML('<?xml encoding="utf-8" ?>' . $content);
+        $this->errors = libxml_get_errors();
+
+        if (count($this->errors) > 0) {
+            \phpList\plugin\Common\Logger::instance()->debug(print_r($this->errors, true));
+        }
         $this->docType = $this->dom->doctype;
+    }
+
+    public function htmlParseErrors()
+    {
+        return $this->errors;
     }
 
     public function addTemplateImages($messageId, $templateId)
