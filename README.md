@@ -55,6 +55,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.11.9+20230630 Log libxml parse errors
     2.11.8+20230412 Remove leading and trailing whitespace from link URLs to avoid them being % encoded
     2.11.7+20230412 Remove surrounding white space from image URLs
     2.11.6+20221231 Remove dynamic property to avoid php 8 deprecation

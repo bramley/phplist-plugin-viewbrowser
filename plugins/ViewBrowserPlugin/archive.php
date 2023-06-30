@@ -26,7 +26,7 @@ if (!empty($_GET['uid'])) {
     return;
 }
 
-if ((isset($_GET['list']) && ctype_digit($_GET['list']))) {
+if (isset($_GET['list']) && ctype_digit($_GET['list'])) {
     $result = getConfig('viewbrowser_anonymous')
         ? $archive->createListArchive($_GET['list'])
         : s('Not allowed to view campaigns for list %d', $_GET['list']);
