@@ -23,6 +23,8 @@
 /**
  * Registers the plugin with phplist.
  */
+use function phpList\plugin\Common\publicBaseUrl;
+
 class ViewBrowserPlugin extends phplistPlugin
 {
     const VERSION_FILE = 'version.txt';
@@ -170,11 +172,11 @@ class ViewBrowserPlugin extends phplistPlugin
         return array(
             'phpList version 3.3.0 or later' => version_compare(VERSION, '3.3') >= 0,
             'XSL extension installed' => extension_loaded('xsl'),
-            'Common Plugin v3.10.7 or later installed' => (
+            'Common Plugin v3.29.0 or later installed' => (
                 phpListPlugin::isEnabled('CommonPlugin')
-                && version_compare($plugins['CommonPlugin']->version, '3.10.7') >= 0
+                && version_compare($plugins['CommonPlugin']->version, '3.29.0') >= 0
             ),
-            'PHP version 5.5 or greater' => version_compare(PHP_VERSION, '5.5') > 0,
+            'PHP version 7 or greater' => version_compare(PHP_VERSION, '7') > 0,
         );
     }
 
@@ -257,12 +259,10 @@ class ViewBrowserPlugin extends phplistPlugin
 
     public function activate()
     {
-        global $public_scheme, $pageroot;
-
         parent::activate();
         $this->linkText = getConfig('viewbrowser_link');
         $this->archiveLinkText = getConfig('viewbrowser_archive_link');
-        $this->rootUrl = sprintf('%s://%s%s/', $public_scheme, getConfig('website'), $pageroot);
+        $this->rootUrl = publicBaseUrl() . '/';
     }
 
     /**

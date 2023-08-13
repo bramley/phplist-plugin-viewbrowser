@@ -25,6 +25,8 @@ namespace phpList\plugin\ViewBrowserPlugin;
 use Iterator;
 use phpList\plugin\Common;
 
+use function phpList\plugin\Common\publicBaseUrl;
+
 /**
  * Class to create the content of a campaign email.
  */
@@ -279,12 +281,10 @@ END;
         Common\DAO\Attribute $daoAttr,
         $clickTrack
     ) {
-        global $public_scheme, $pageroot;
-
         $this->dao = $dao;
         $this->daoAttr = $daoAttr;
         $this->clickTrack = $clickTrack;
-        $this->rootUrl = sprintf('%s://%s%s/', $public_scheme, getConfig('website'), $pageroot);
+        $this->rootUrl = publicBaseUrl() . '/';
     }
 
     /**

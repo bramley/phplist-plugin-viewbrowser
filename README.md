@@ -16,26 +16,15 @@ That page is accessed by including a placeholder, [ARCHIVE] or [ARCHIVEURL], in 
 
 ### Dependencies ###
 
-Requires phplist release 3.3.0 or later and php version 5.5 or later.
+Requires phplist release 3.3.0 or later and php version 7 or later.
 
-This plugin requires the Common Plugin v3.10.7 or later to be installed, and will not work without that.
+This plugin requires the Common Plugin v3.29.0 or later to be installed, and will not work without that.
 phplist now includes Common Plugin so you should only need to enable it on the Manage Plugins page.
 
 Requires the XSL extension to be included in php. You can verify this through phpinfo.
 
 ### Install through phplist ###
 Install on the Plugins page (menu Config > Manage Plugins) using the package URL `https://github.com/bramley/phplist-plugin-viewbrowser/archive/master.zip`.
-Then click the button to enable the plugin.
-
-### Install manually ###
-Download the plugin zip file from <https://github.com/bramley/phplist-plugin-viewbrowser/archive/master.zip>
-
-Expand the zip file, then copy the contents of the plugins directory to your phplist plugins directory.
-This should contain
-
-* the file ViewBrowserPlugin.php
-* the directory ViewBrowserPlugin
-
 Then click the button to enable the plugin.
 
 ## Usage ##

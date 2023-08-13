@@ -28,6 +28,8 @@ use phpList\plugin\Common\Paginator;
 use phpList\plugin\Common\Populator;
 use phpList\plugin\Common\View;
 
+use function phpList\plugin\Common\publicBaseUrl;
+
 /**
  * Class to create an archive page.
  */
@@ -54,8 +56,6 @@ class ArchiveCreator
      */
     private function archiveItems($uid, $campaigns)
     {
-        global $pageroot;
-
         foreach ($campaigns as $c) {
             $params = ['pi' => $_GET['pi'], 'p' => 'view', 'm' => $c['messageid']];
 
@@ -63,7 +63,7 @@ class ArchiveCreator
                 $params['uid'] = $uid;
             }
             $query = http_build_query($params, '', '&');
-            $url = sprintf('%s/?%s', $pageroot, $query);
+            $url = sprintf('%s/?%s', publicBaseUrl(), $query);
             $link = new PageLink($url, $c['subject'], ['target' => '_blank']);
 
             yield [
