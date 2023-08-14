@@ -8,4 +8,8 @@
       <directory>tests</directory>
     </testsuite>
   </testsuites>
+    <php>
+        <includePath>/home/duncan/Development/GitHub/phplist-plugin-common/plugins/:plugins</includePath>
+        <var name="systemroot" value="/home/duncan/www/lists/admin"/>
+    </php>
 </phpunit>

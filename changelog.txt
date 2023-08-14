@@ -1,3 +1,7 @@
+version 2.11.10+20230814
+      Use function to get the public URL
+      Revise unit tests
+
 version 2.11.9+20230630
       Log libxml parse errors
       cs fixer changes

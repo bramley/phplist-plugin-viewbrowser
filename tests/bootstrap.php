@@ -3,9 +3,8 @@
 require __DIR__ . '/config_table.php';
 require __DIR__ . '/phplist.php';
 
-$GLOBALS['systemroot'] = '/home/duncan/www/lists';
 define('PHPLISTINIT', 1);
-define("PLUGIN_ROOTDIR", $GLOBALS['systemroot'] . '/admin/plugins');
+define("PLUGIN_ROOTDIR", 'plugins');
 define("PLUGIN_ROOTDIRS", "");
 define('EMAILTEXTCREDITS', true);
 define('ALWAYS_ADD_USERTRACK', true);
@@ -31,11 +30,12 @@ $GLOBALS['strContactMessage'] = 'Add us to your address book';
 
 $_GET['pi'] = 'ViewBrowserPlugin';
 
-require __DIR__ . '/../plugins/ViewBrowserPlugin.php';
+require 'ViewBrowserPlugin.php';
 $pi = new ViewBrowserPlugin();
-$pi->activate();
-
 $GLOBALS['plugins'] = [
     'ViewBrowserPlugin' => $pi,
 ];
-require PLUGIN_ROOTDIR . '/CommonPlugin/Autoloader.php';
+require 'CommonPlugin/Autoloader.php';
+
+$pi->activate();
+
