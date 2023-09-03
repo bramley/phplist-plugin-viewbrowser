@@ -25,7 +25,7 @@ namespace phpList\plugin\ViewBrowserPlugin;
 use Iterator;
 use phpList\plugin\Common;
 
-use function phpList\plugin\Common\publicBaseUrl;
+use function phpList\plugin\Common\publicUrl;
 
 /**
  * Class to create the content of a campaign email.
@@ -38,8 +38,6 @@ class ContentCreator
     private $daoAttr;
     /** @var bool Whether click tracking is enabled */
     private $clickTrack;
-    /** @var string The phplist root url */
-    private $rootUrl;
 
     /**
      * For an anonymous page determine whether a message has been sent to an allowed list.
@@ -172,8 +170,8 @@ END;
     private function replaceUserTrack($content, $mid, $uid)
     {
         $image = sprintf(
-            '<img src="%sut.php?u=%s&amp;m=%d" width="1" height="1" border="0" />',
-            $this->rootUrl, $uid, $mid
+            '<img src="%s" width="1" height="1" border="0" />',
+            publicUrl('ut.php', ['u' => $uid, 'm' => $mid])
         );
 
         $content = preg_replace('/\[USERTRACK]/i', $image, $content, 1, $count);
@@ -284,7 +282,6 @@ END;
         $this->dao = $dao;
         $this->daoAttr = $daoAttr;
         $this->clickTrack = $clickTrack;
-        $this->rootUrl = publicBaseUrl() . '/';
     }
 
     /**
@@ -389,7 +386,7 @@ END;
         foreach ($callPlugins as $plugin) {
             $content = $plugin->parseOutgoingHTMLMessage($mid, $content, $destinationEmail, $user);
         }
-        $doc = new ContentDocument($content, $this->dao, $this->rootUrl);
+        $doc = new ContentDocument($content, $this->dao);
         $doc->addTemplateImages($mid, $message['template']);
         $doc->trimImageUrls();
         $doc->trimLinkUrls();

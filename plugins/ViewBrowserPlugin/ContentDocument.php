@@ -1,10 +1,4 @@
 <?php
-
-namespace phpList\plugin\ViewBrowserPlugin;
-
-use DomDocument;
-use XSLTProcessor;
-
 /**
  * ViewBrowserPlugin for phplist.
  *
@@ -29,18 +23,24 @@ use XSLTProcessor;
 /**
  * Class to manipulate the content as an HTML DOM document.
  */
+
+namespace phpList\plugin\ViewBrowserPlugin;
+
+use DomDocument;
+use XSLTProcessor;
+
+use function phpList\plugin\Common\publicUrl;
+
 class ContentDocument
 {
     private $dom;
     private $docType;
     private $dao;
     private $errors;
-    private $rootUrl;
 
-    public function __construct($content, $dao, $rootUrl)
+    public function __construct($content, $dao)
     {
         $this->dao = $dao;
-        $this->rootUrl = $rootUrl;
         libxml_use_internal_errors(true);
         $this->dom = new DOMDocument();
         $this->dom->encoding = 'UTF-8';
@@ -66,9 +66,11 @@ class ContentDocument
             $src = $element->getAttribute('src');
 
             if ($row = $this->dao->templateImage($templateId, $src)) {
-                $data = $this->rootUrl . '?' . http_build_query(
-                    array('pi' => \ViewBrowserPlugin::PLUGIN, 'p' => \ViewBrowserPlugin::IMAGE_PAGE, 'id' => $row['id']), '', '&'
-                );
+                $data = publicUrl([
+                    'pi' => \ViewBrowserPlugin::PLUGIN,
+                    'p' => \ViewBrowserPlugin::IMAGE_PAGE,
+                    'id' => $row['id'],
+                ]);
                 $element->setAttribute('src', $data);
             }
         }
@@ -98,7 +100,6 @@ class ContentDocument
 
     public function addLinkTrack(array $message, array $user)
     {
-        $linkTrackUrl = $this->rootUrl . 'lt.php';
         $nodes = $this->dom->getElementsByTagName('a');
 
         foreach ($nodes as $node) {
@@ -106,7 +107,7 @@ class ContentDocument
             $href = $node->getAttribute('href');
 
             if (stripos($text, 'http') === 0 || stripos($href, 'www.phplist.com') !== false
-                || stripos($href, $linkTrackUrl) !== false) {
+                || stripos($href, '/lt.php') !== false) {
                 continue;
             }
             $url = cleanUrl($href, array('PHPSESSID', 'uid'));
@@ -114,8 +115,7 @@ class ContentDocument
 
             if ($linkUuid) {
                 $tid = sprintf('H|%s|%s|%s', $linkUuid, $message['uuid'], $user['uuid']) ^ XORmask;
-                $tidEncoded = urlencode(rtrim(base64_encode($tid), '='));
-                $url = $linkTrackUrl . '?tid=' . $tidEncoded;
+                $url = publicUrl('lt.php', ['tid' => rtrim(base64_encode($tid), '=')]);
 
                 if (SIGN_WITH_HMAC) {
                     $url .= '&hm=' . hash_hmac(HASH_ALGO, $url, HMACKEY);

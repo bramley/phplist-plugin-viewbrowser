@@ -23,7 +23,7 @@
 /**
  * Registers the plugin with phplist.
  */
-use function phpList\plugin\Common\publicBaseUrl;
+use function phpList\plugin\Common\publicUrl;
 
 class ViewBrowserPlugin extends phplistPlugin
 {
@@ -41,7 +41,6 @@ class ViewBrowserPlugin extends phplistPlugin
      */
     private $archiveLinkText;
     private $linkText;
-    private $rootUrl;
     private $dao;
 
     /*
@@ -70,13 +69,8 @@ class ViewBrowserPlugin extends phplistPlugin
         if (!$uid) {
             return '';
         }
-        $params = array(
-            'p' => self::ARCHIVE_PAGE,
-            'pi' => self::PLUGIN,
-            'uid' => $uid,
-        );
 
-        return $this->rootUrl . '?' . http_build_query($params, '', '&');
+        return publicUrl(['p' => self::ARCHIVE_PAGE, 'pi' => self::PLUGIN, 'uid' => $uid]);
     }
 
     /**
@@ -94,11 +88,10 @@ class ViewBrowserPlugin extends phplistPlugin
         if ($uid) {
             $params['uid'] = $uid;
         }
-        $url = $this->rootUrl;
         $params['p'] = self::VIEW_PAGE;
         $params['pi'] = self::PLUGIN;
 
-        return $url . '?' . http_build_query($params, '', '&');
+        return publicUrl($params);
     }
 
     private function link($linkText, $url, $attributes)
@@ -172,9 +165,9 @@ class ViewBrowserPlugin extends phplistPlugin
         return array(
             'phpList version 3.3.0 or later' => version_compare(VERSION, '3.3') >= 0,
             'XSL extension installed' => extension_loaded('xsl'),
-            'Common Plugin v3.29.0 or later installed' => (
+            'Common Plugin v3.29.1 or later installed' => (
                 phpListPlugin::isEnabled('CommonPlugin')
-                && version_compare($plugins['CommonPlugin']->version, '3.29.0') >= 0
+                && version_compare($plugins['CommonPlugin']->version, '3.29.1') >= 0
             ),
             'PHP version 7 or greater' => version_compare(PHP_VERSION, '7') > 0,
         );
@@ -262,7 +255,6 @@ class ViewBrowserPlugin extends phplistPlugin
         parent::activate();
         $this->linkText = getConfig('viewbrowser_link');
         $this->archiveLinkText = getConfig('viewbrowser_archive_link');
-        $this->rootUrl = publicBaseUrl() . '/';
     }
 
     /**
