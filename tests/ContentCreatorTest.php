@@ -513,7 +513,7 @@ Forward a Message to Someone [FORWARD]',
 
         $phplist_config['viewbrowser_anonymous'] = false;
         $phplist_config['viewbrowser_allowed_lists'] = '';
-        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, true, '3.2.0');
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, true);
         $result = $cc->createContent($messageId, $uniqid);
 
         foreach ($expected as $e) {
@@ -551,7 +551,7 @@ Forward a Message to Someone [FORWARD]',
      */
     public function replacesContactPlaceholders($messageId, $uniqid, $expected, $unexpected = array())
     {
-        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false, '3.2.0');
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false);
         $result = $cc->createContent($messageId, $uniqid);
 
         foreach ($expected as $e) {
@@ -582,7 +582,7 @@ Forward a Message to Someone [FORWARD]',
      */
     public function encodesLinksCurrent($messageId, $uniqid, $expected, $unexpected = array())
     {
-        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, true, '3.3.0');
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, true);
         $result = $cc->createContent($messageId, $uniqid);
 
         foreach ($expected as $e) {
@@ -612,7 +612,7 @@ Forward a Message to Someone [FORWARD]',
      */
     public function doesNotEncodeLinks($messageId, $uniqid, $expected, $unexpected = array())
     {
-        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false, '3.2.0');
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false);
         $result = $cc->createContent($messageId, $uniqid);
 
         foreach ($expected as $e) {
@@ -628,7 +628,7 @@ Forward a Message to Someone [FORWARD]',
      */
     public function createsHtmlFormatFooter()
     {
-        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false, getConfig('version'));
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false);
         $result = $cc->createContent(34, '2f93856905d26f592c7cfefbff599a0e');
         $expected = '<div class="footer" style="text-align:left; font-size: 75%;">';
         $this->assertStringContainsString($expected, $result);
@@ -640,7 +640,7 @@ Forward a Message to Someone [FORWARD]',
      */
     public function addsAttachment()
     {
-        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false, getConfig('version'));
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false);
         $result = $cc->createContent(28, '2f93856905d26f592c7cfefbff599a0e');
         $expected =
 '<p>Attachments:<br><img src="./?p=image&amp;pi=CommonPlugin&amp;image=attach.png" alt="" title="">
@@ -662,7 +662,7 @@ another attachment
 
         $phplist_config['viewbrowser_anonymous'] = true;
 
-        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false, getConfig('version'));
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false);
         $result = $cc->createContent(25, '');
         $this->assertStringContainsString('here is the message content', $result);
         $this->assertStringNotContainsString('dl.php', $result);

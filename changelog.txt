@@ -1,3 +1,7 @@
+version 2.11.11+20230906
+      Use publicUrl() function
+      Revise unit test
+
 version 2.11.10+20230814
       Use function to get the public URL
       Revise unit tests
