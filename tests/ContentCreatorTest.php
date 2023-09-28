@@ -513,6 +513,7 @@ Forward a Message to Someone [FORWARD]',
 
         $phplist_config['viewbrowser_anonymous'] = false;
         $phplist_config['viewbrowser_allowed_lists'] = '';
+        $phplist_config['viewbrowser_target'] = false;
         $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, true);
         $result = $cc->createContent($messageId, $uniqid);
 
@@ -661,6 +662,7 @@ another attachment
         global $phplist_config;
 
         $phplist_config['viewbrowser_anonymous'] = true;
+        $phplist_config['viewbrowser_target'] = false;
 
         $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false);
         $result = $cc->createContent(25, '');
@@ -753,5 +755,35 @@ another attachment
         $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, false, getConfig('version'));
         $result = $cc->createContent($mid, $uid);
         $this->assertStringContainsString($expected, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function addsTarget()
+    {
+        global $phplist_config;
+
+        $phplist_config['viewbrowser_target'] = true;
+
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, true);
+        $result = $cc->createContent(26, '2f93856905d26f592c7cfefbff599a0e');
+        $this->assertStringContainsString('target="_blank"', $result);
+
+    }
+
+    /**
+     * @test
+     */
+    public function doesNotAddTarget()
+    {
+        global $phplist_config;
+
+        $phplist_config['viewbrowser_target'] = false;
+
+        $cc = new phpList\plugin\ViewBrowserPlugin\ContentCreator($this->daoStub, $this->daoAttrStub, true);
+        $result = $cc->createContent(26, '2f93856905d26f592c7cfefbff599a0e');
+        $this->assertStringNotContainsString('target="_blank"', $result);
+
     }
 }
