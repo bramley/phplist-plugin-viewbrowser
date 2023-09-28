@@ -394,6 +394,10 @@ END;
         if ($this->clickTrack && $personalise) {
             $doc->addLinkTrack($message, $user);
         }
+
+        if (getConfig('viewbrowser_target')) {
+            $doc->addTargetAttribute();
+        }
         $doc->addTitle($message['subject'], $styles);
 
         return $doc->toHtml();

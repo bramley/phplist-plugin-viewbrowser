@@ -125,6 +125,15 @@ class ContentDocument
         }
     }
 
+    public function addTargetAttribute()
+    {
+        foreach ($this->dom->getElementsByTagName('a') as $element) {
+            if ($element->getAttribute('target') == '') {
+                $element->setAttribute('target', '_blank');
+            }
+        }
+    }
+
     public function toHtml()
     {
         if ($this->docType && $this->docType->publicId && $this->docType->systemId) {

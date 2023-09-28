@@ -240,6 +240,13 @@ class ViewBrowserPlugin extends phplistPlugin
                 'allowempty' => true,
                 'category' => 'View in Browser',
             ),
+            'viewbrowser_target' => [
+                'value' => false,
+                'description' => s('Whether links should open in a new window/tab'),
+                'type' => 'boolean',
+                'allowempty' => true,
+                'category' => 'View in Browser',
+            ],
         );
         $this->pageTitles = array(
             self::ADMIN_ARCHIVE_PAGE => s('Campaign archive'),
