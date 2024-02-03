@@ -63,7 +63,7 @@ class ArchiveCreator
                 $params['uid'] = $uid;
             }
             $url = publicUrl($params);
-            $link = new PageLink($url, $c['subject'], ['target' => '_blank']);
+            $link = new PageLink($url, $c['subject'], ['target' => getConfig('viewbrowser_target') ? '_blank' : '']);
 
             yield [
                 'id' => $c['messageid'],
@@ -181,7 +181,7 @@ class ArchiveCreator
                 $key = $row['id'];
                 $w->addElement($key);
                 $w->addColumn($key, s('Sent'), $row['entered']);
-                $w->addColumn($key, s('Campaign'), $row['subject'], $row['url'], '', ['target' => '_blank']);
+                $w->addColumn($key, s('Campaign'), $row['subject'], $row['url'], '', ['target' => getConfig('viewbrowser_target') ? '_blank' : '']);
             }
         };
         $totalCallback = function () use ($uid) {
