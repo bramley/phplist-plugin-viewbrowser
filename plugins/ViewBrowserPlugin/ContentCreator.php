@@ -357,6 +357,9 @@ END;
             $content = $message['message'];
 
             if ($templateBody) {
+                if (preg_match('|<body.*?>(.+)</body>|is', $content, $matches)) {
+                    $content = $matches[1];
+                }
                 $content = str_ireplace('[CONTENT]', $content, $templateBody);
             } else {
                 $styles = trim(getConfig('html_email_style'));
