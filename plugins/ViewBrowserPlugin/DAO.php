@@ -150,9 +150,9 @@ END;
     public function subscriberForAdmin($adminId)
     {
         $sql = <<<END
-            SELECT u.uniqid, u.email
+            SELECT u.uniqid, u.email, a.email AS admin_email
             FROM {$this->tables['admin']} a
-            JOIN {$this->tables['user']} u ON u.email = a.email
+            LEFT JOIN {$this->tables['user']} u ON u.email = a.email
             WHERE a.id = $adminId
 END;
 

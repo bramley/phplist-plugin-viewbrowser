@@ -167,8 +167,8 @@ class ArchiveCreator
     {
         $user = $this->dao->subscriberForAdmin($adminId);
 
-        if ($user === false) {
-            return s('No campaigns found');
+        if ($user['email'] === null) {
+            return s('Admin email %s is not a subscriber', $user['admin_email']);
         }
         $uid = $user['uniqid'];
         $title = s('Campaigns sent to %s', $user['email']);
