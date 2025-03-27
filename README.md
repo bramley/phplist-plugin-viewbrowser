@@ -44,6 +44,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2.12.1+20250327 When a campaign has a template use only the content of the <body> element
     2.12.0+20230928 Add config option to open links in new browser window
     2.11.11+20230906 Use publicUrl() function
     2.11.10+20230814 Use function to get the public URL

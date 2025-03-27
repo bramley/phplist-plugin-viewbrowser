@@ -26,7 +26,7 @@
 
 namespace phpList\plugin\ViewBrowserPlugin;
 
-use DomDocument;
+use DOMDocument;
 use XSLTProcessor;
 
 use function phpList\plugin\Common\publicUrl;
