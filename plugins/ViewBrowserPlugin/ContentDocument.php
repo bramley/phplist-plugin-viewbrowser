@@ -33,9 +33,9 @@ use function phpList\plugin\Common\publicUrl;
 
 class ContentDocument
 {
-    private $dom;
-    private $docType;
-    private $dao;
+    protected $dom;
+    protected $docType;
+    protected $dao;
     private $errors;
 
     public function __construct($content, $dao)

@@ -7,4 +7,5 @@ return [
     'phpList\plugin\ViewBrowserPlugin\ContentCreator' => $pluginsDir . '/ViewBrowserPlugin/ContentCreator.php',
     'phpList\plugin\ViewBrowserPlugin\ContentDocument' => $pluginsDir . '/ViewBrowserPlugin/ContentDocument.php',
     'phpList\plugin\ViewBrowserPlugin\DAO' => $pluginsDir . '/ViewBrowserPlugin/DAO.php',
+    'phpList\plugin\ViewBrowserPlugin\HtmlContentDocument' => $pluginsDir . '/ViewBrowserPlugin/HtmlContentDocument.php',
 ];

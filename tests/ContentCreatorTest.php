@@ -56,7 +56,7 @@ class ContentCreatorTest extends TestCase
 
         $this->templates = [
             0 => ['template' => ''],
-            1 => ['template' => '<html><head></head><body>template body[CONTENT]</body></html>']
+            1 => ['template' => '<!DOCTYPE html><html><head></head><body>template body[CONTENT]</body></html>']
         ];
 
         $this->templateImages = [
@@ -176,7 +176,7 @@ END
                 'uuid' => '1bfde45d-3b12-4a7b-849a-35a47276d902',
             ],
             33 => [
-                'message' => 'here is the message content email address is [email] name is [name%%default name] uniqid is [uniqid] more',
+                'message' => '<!DOCTYPE html><html><body>here is the message content email address is [email] name is [name%%default name] uniqid is [uniqid] more</body></html>',
                 'id' => 33,
                 'template' => 0,
                 'subject' => 'a test message',

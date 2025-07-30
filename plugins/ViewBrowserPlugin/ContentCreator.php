@@ -389,7 +389,9 @@ END;
         foreach ($callPlugins as $plugin) {
             $content = $plugin->parseOutgoingHTMLMessage($mid, $content, $destinationEmail, $user);
         }
-        $doc = new ContentDocument($content, $this->dao);
+        $doc = version_compare(PHP_VERSION, '8.4') > 0
+            ? new HtmlContentDocument($content, $this->dao)
+            : new ContentDocument($content, $this->dao);
         $doc->addTemplateImages($mid, $message['template']);
         $doc->trimImageUrls();
         $doc->trimLinkUrls();
